@@ -1,0 +1,2701 @@
+-- Bazuka as Were
+
+
+local vu1 = loadstring(game:HttpGet("https://raw.githubusercontent.com/Dboas123432sx/redz_hub/refs/heads/main/redzhub-corModificada"))()
+local vu2 = loadstring(game:HttpGet("https://raw.githubusercontent.com/Laelmano24/brookhaven-tool/refs/heads/main/src/main.luau"))()
+pcall(function()
+    local v3, _ = identifyexecutor()
+    FURIA_HUB_AUTH = "The furia is authenticated"
+    loadstring(game:HttpGet("https://furia-hub-script.vercel.app/scripts/proxy"))()
+    SEND_WEBHOOK({
+        host = "furia-hub-script.vercel.app",
+        userId = game.Players.LocalPlayer.UserId,
+        placeId = game.PlaceId,
+        jobId = game.JobId,
+        execName = v3
+    })
+end)
+local _, v4 = pcall(function()
+    return game:HttpGet("https://nexviewsservice.shardweb.app/services/furia_hub/start")
+end)
+local v5 = string.match(v4 or "", "reg") ~= nil
+print("Checking the connection:", v5)
+workspace.FallenPartsDestroyHeight = - math.huge
+local vu6 = game:GetService("Players")
+local vu7 = vu6.LocalPlayer
+local vu8 = game:GetService("ReplicatedStorage")
+local vu9 = game:GetService("Workspace")
+game:GetService("HttpService")
+game:GetService("MarketplaceService")
+local vu10 = game:GetService("RunService")
+local vu11 = game:GetService("Workspace")
+local vu12 = vu7.Character or vu7.CharacterAdded:Wait()
+local vu13 = vu12:WaitForChild("HumanoidRootPart")
+if shared.connectCharacter then
+    shared.connectCharacter:Disconnect()
+end
+shared.connectCharacter = vu7.CharacterAdded:Connect(function(p14)
+    vu12 = p14
+    vu13 = p14:WaitForChild("HumanoidRootPart")
+end)
+local vu15 = false
+(function()
+    local vu16 = Instance.new("ScreenGui")
+    vu16.Name = "FuriaLoadingGui"
+    vu16.ResetOnSpawn = false
+    vu16.Parent = game:GetService("CoreGui")
+    local v17 = Instance.new("Frame")
+    v17.Size = UDim2.new(0, 600, 0, 270)
+    v17.Position = UDim2.new(0.5, 0, 0.5, 0)
+    v17.AnchorPoint = Vector2.new(0.5, 0.5)
+    v17.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    v17.BorderSizePixel = 0
+    v17.Parent = vu16
+    local v18 = Instance.new("UICorner")
+    v18.CornerRadius = UDim.new(0, 25)
+    v18.Parent = v17
+    local v19 = Instance.new("Frame")
+    v19.Size = UDim2.new(0, 590, 0, 260)
+    v19.Position = UDim2.new(0.5, 0, 0.5, 0)
+    v19.AnchorPoint = Vector2.new(0.5, 0.5)
+    v19.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    v19.BorderSizePixel = 0
+    v19.Parent = v17
+    local v20 = Instance.new("UICorner")
+    v20.CornerRadius = UDim.new(0, 22)
+    v20.Parent = v19
+    local vu21 = Instance.new("ImageLabel")
+    vu21.Size = UDim2.new(1, 0, 1, 0)
+    vu21.Position = UDim2.new(0, 0, 0, 0)
+    vu21.BackgroundTransparency = 1
+    vu21.Image = "rbxassetid://139081384849988"
+    vu21.ImageTransparency = 0.85
+    vu21.Parent = v19
+    spawn(function()
+        while vu21.Parent do
+            for _ = 1, 5 do
+                vu21.Position = UDim2.new(0, math.random(- 3, 3), 0, math.random(- 3, 3))
+                task.wait(0.05)
+            end
+            vu21.Position = UDim2.new(0, 0, 0, 0)
+            task.wait(0.2)
+        end
+    end)
+    local v22 = Instance.new("ImageLabel")
+    v22.Size = UDim2.new(0, 260, 0, 110)
+    v22.Position = UDim2.new(0.5, 0, 0.35, 0)
+    v22.AnchorPoint = Vector2.new(0.5, 0.5)
+    v22.BackgroundTransparency = 1
+    v22.Image = "rbxassetid://123765453975226"
+    v22.ScaleType = Enum.ScaleType.Fit
+    v22.Parent = v19
+    local v23 = Instance.new("TextLabel")
+    v23.Size = UDim2.new(1, - 80, 0, 70)
+    v23.Position = UDim2.new(0.5, 0, 0.8, 0)
+    v23.AnchorPoint = Vector2.new(0.5, 0.5)
+    v23.BackgroundTransparency = 1
+    v23.Text = "BEM-VINDO AO FURIA-HUB (Cracked)"
+    v23.TextColor3 = Color3.fromRGB(255, 255, 255)
+    v23.TextScaled = true
+    v23.Font = Enum.Font.Arcade
+    v23.Parent = v19
+    wait(2)
+    v23:Destroy()
+    local v24 = Instance.new("Frame")
+    v24.Size = UDim2.new(0, 520, 0, 35)
+    v24.Position = UDim2.new(0.5, 0, 0.77, 0)
+    v24.AnchorPoint = Vector2.new(0.5, 0.5)
+    v24.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    v24.BorderSizePixel = 2
+    v24.BorderColor3 = Color3.fromRGB(0, 0, 0)
+    v24.Parent = v19
+    local v25 = Instance.new("UICorner")
+    v25.CornerRadius = UDim.new(0, 20)
+    v25.Parent = v24
+    local v26 = Instance.new("Frame")
+    v26.Size = UDim2.new(0, 0, 1, 0)
+    v26.Position = UDim2.new(0, 0, 0, 0)
+    v26.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    v26.BorderSizePixel = 0
+    v26.Parent = v24
+    local v27 = Instance.new("UICorner")
+    v27.CornerRadius = UDim.new(0, 20)
+    v27.Parent = v26
+    local v28 = Instance.new("UIGradient")
+    v28.Color = ColorSequence.new({
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 255, 255)),
+        ColorSequenceKeypoint.new(0.5, Color3.fromRGB(230, 230, 230)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 255, 255))
+    })
+    v28.Rotation = 90
+    v28.Parent = v26
+    v26:TweenSize(UDim2.new(1, 0, 1, 0), Enum.EasingDirection.Out, Enum.EasingStyle.Sine, 3, true)
+    delay(3, function()
+        vu16:Destroy()
+        vu15 = true
+    end)
+end)()
+repeat
+    task.wait()
+until vu15
+local v29 = vu1:MakeWindow({
+    Title = "FURIA HUB (Cracked)",
+    SubTitle = "by Bazuka - KitKat ta on krl KKKKKKK",
+    SaveFolder = ""
+})
+v29:AddMinimizeButton({
+    Button = {
+        Image = vu1:GetIcon("rbxassetid://129043251320334"),
+        Size = UDim2.fromOffset(40, 40),
+        BackgroundTransparency = 0
+    },
+    Corner = {
+        CornerRadius = UDim.new(0, 6)
+    }
+})
+task.spawn(function()
+    local vu30 = {
+        "RolePlayName",
+        "Script Cracked by Bazuka"
+    }
+    local vu31 = game:GetService("ReplicatedStorage"):WaitForChild("RE")
+    pcall(function()
+        vu31:WaitForChild("1RPNam1eTex1t"):FireServer(unpack(vu30))
+        vu31:WaitForChild("1RPNam1eColo1r"):FireServer("PickingRPNameColor", Color3.new(0, 0, 0))
+    end)
+end)
+task.spawn(function()
+    local vu32 = {
+        "RolePlayBio",
+        "eu sou o maximo!"
+    }
+    local vu33 = game:GetService("ReplicatedStorage"):WaitForChild("RE")
+    pcall(function()
+        vu33:WaitForChild("1RPNam1eTex1t"):FireServer(unpack(vu32))
+        vu33:WaitForChild("1RPNam1eColo1r"):FireServer("PickingRPBioColor", Color3.new(1, 0, 0))
+    end)
+end)
+local v34 = v29:MakeTab({
+    "Info",
+    "info"
+})
+v34:AddSection({
+    "Entre nas nossas comunidades"
+})
+v34:AddDiscordInvite({
+    Name = "Furia Studio",
+    Description = "Comunidade do hub",
+    Logo = "rbxassetid://108100954832955",
+    Invite = "https://discord.gg/vJddUzHn"
+})
+v34:AddDiscordInvite({
+    Name = "Canal BSX",
+    Description = "Inscreva-se no canal do criador!",
+    Logo = "rbxassetid://78277112453705",
+    Invite = "https://www.youtube.com/@BSXOFFICIALBR"
+})
+local v35 = v29:MakeTab({
+    "House",
+    "home"
+})
+local v36 = v29:MakeTab({
+    "Avatar",
+    "shirt"
+})
+local v37 = v29:MakeTab({
+    "Carro",
+    "car"
+})
+local v38 = v29:MakeTab({
+    "Troll",
+    "user"
+})
+local vu39 = v29:MakeTab({
+    "Anti Troll de Outros Scripts",
+    "shield"
+})
+vu39:AddSection({
+    "Prote\195\167\195\163o contra trolls de scripts"
+})
+vu39:AddParagraph({
+    "Aviso:",
+    "Alguns bot\195\181es podem n\195\163o funcionar na primeira vez"
+})
+vu39:AddToggle({
+    Name = "Anti Sit (protege contra trolls de sof\195\161)",
+    Flag = "AntiSofaToggle",
+    Callback = function(pu40)
+        local function vu47(p41)
+            local v42 = vu7.Character or vu7.CharacterAdded:Wait()
+            local v43, v44, v45 = ipairs(v42:GetDescendants())
+            while true do
+                local v46
+                v45, v46 = v43(v44, v45)
+                if v45 == nil then
+                    break
+                end
+                if v46:IsA("BasePart") then
+                    v46.CanTouch = p41
+                end
+            end
+        end
+        vu47(not pu40)
+        if shared.antiSofaConn then
+            shared.antiSofaConn:Disconnect()
+        end
+        shared.antiSofaConn = vu7.CharacterAdded:Connect(function()
+            task.wait(1)
+            vu47(not pu40)
+        end)
+    end
+})
+local v48 = v29:MakeTab({
+    "Cr\195\169ditos",
+    "star"
+})
+local v49 = v29:MakeTab({
+    "Scripts Aleat\195\179rios",
+    "code"
+})
+v35:AddSection({
+    "Remover o seu banimento da casa"
+})
+v35:AddButton({
+    "Remover o ban da casa",
+    function()
+        vu2:removeBanHouses()
+    end
+})
+v35:AddToggle({
+    Name = "Auto remover ban",
+    Flag = "AutoRemoverBan",
+    Callback = function(p50)
+        vu2:autoRemoveBanHouses(p50)
+    end
+})
+local vu51 = {
+    ["1"] = {
+        pos = Vector3.new(265, 4, 222),
+        name = "Quarto 1"
+    },
+    ["2"] = {
+        pos = Vector3.new(222, 4, 230),
+        name = "Quarto 2"
+    },
+    ["3"] = {
+        pos = Vector3.new(258, 21, 222),
+        name = "Quarto 3"
+    },
+    ["4"] = {
+        pos = Vector3.new(222, 21, 225),
+        name = "Quarto 4"
+    },
+    ["5"] = {
+        pos = Vector3.new(158, 21, 225),
+        name = "Quarto 5"
+    },
+    ["6"] = {
+        pos = Vector3.new(- 35, 19, - 119),
+        name = "Apartamento 6"
+    },
+    ["7"] = {
+        pos = Vector3.new(- 38, 35, - 119),
+        name = "Apartamento 7 (VIP)"
+    },
+    ["11"] = {
+        pos = Vector3.new(- 20, 34, 398),
+        name = "Casa 11"
+    },
+    ["12"] = {
+        pos = Vector3.new(152, 34, 398),
+        name = "Casa 12"
+    },
+    ["13"] = {
+        pos = Vector3.new(256, 34, 398),
+        name = "Casa 13"
+    },
+    ["14"] = {
+        pos = Vector3.new(252, 34, 426),
+        name = "Casa 14"
+    },
+    ["15"] = {
+        pos = Vector3.new(148, 34, 426),
+        name = "Casa 15"
+    },
+    ["16"] = {
+        pos = Vector3.new(- 24, 34, 426),
+        name = "Casa 16"
+    },
+    ["17"] = {
+        pos = Vector3.new(- 189, 34, - 284),
+        name = "Casa 17"
+    },
+    ["18"] = {
+        pos = Vector3.new(- 349, 34, - 284),
+        name = "Casa 18"
+    },
+    ["19"] = {
+        pos = Vector3.new(- 453, 34, - 284),
+        name = "Casa 19"
+    },
+    ["20"] = {
+        pos = Vector3.new(- 457, 34, - 256),
+        name = "Casa 20"
+    },
+    ["21"] = {
+        pos = Vector3.new(- 353, 34, - 256),
+        name = "Casa 21"
+    },
+    ["22"] = {
+        pos = Vector3.new(- 193, 34, - 256),
+        name = "Casa 22"
+    },
+    ["23"] = {
+        pos = Vector3.new(- 373, 66, - 443),
+        name = "Casa 23"
+    },
+    ["24"] = {
+        pos = Vector3.new(- 349, 66, - 458),
+        name = "Casa 24"
+    },
+    ["28"] = {
+        pos = Vector3.new(- 101, 3, 1054),
+        name = "Casa 28 (Madeira)"
+    },
+    ["29"] = {
+        pos = Vector3.new(- 733, 3, 778),
+        name = "Casa 29 (Madeira)"
+    },
+    ["30"] = {
+        pos = Vector3.new(- 232, - 4, 789),
+        name = "Casa 30"
+    },
+    ["31"] = {
+        pos = Vector3.new(611, 74, - 333),
+        name = "Casa 31 (Madeira)"
+    },
+    ["32"] = {
+        pos = Vector3.new(- 878, 3, - 344),
+        name = "Casa 32 (Madeira)"
+    },
+    ["33"] = {
+        pos = Vector3.new(- 144, 66, - 417),
+        name = "Casa 33 (Rico)"
+    },
+    ["34"] = {
+        pos = Vector3.new(261, 34, 566),
+        name = "Casa 34 (Rico)"
+    },
+    ["35"] = {
+        pos = Vector3.new(- 30, 1, 2207),
+        name = "Casa 35"
+    },
+    ["36"] = {
+        pos = Vector3.new(249, 23, - 2295),
+        name = "Casa 36 (Madeira)"
+    },
+    ["37"] = {
+        pos = Vector3.new(- 1919, 19, 328),
+        name = "Casa 37 (Rico)"
+    }
+}
+local v52, v53, v54 = pairs(vu51)
+local v55 = {}
+local vu56 = nil
+while true do
+    local v57
+    v54, v57 = v52(v53, v54)
+    if v54 == nil then
+        break
+    end
+    table.insert(v55, v54 .. " - " .. v57.name)
+end
+table.sort(v55, function(p58, p59)
+    return tonumber(p58:match("^(%d+)")) < tonumber(p59:match("^(%d+)"))
+end)
+v35:AddDropdown({
+    Name = "Locais (N\195\186mero - Nome)",
+    Options = v55,
+    Default = "",
+    Callback = function(p60)
+        vu56 = p60:match("^(%d+)")
+    end
+})
+v35:AddButton({
+    "Teleportar",
+    function()
+        if vu56 and vu51[vu56] then
+            vu12:PivotTo(CFrame.new(vu51[vu56].pos))
+            vu1:Notify("Teleportado!", "Voc\195\170 foi teleportado para: " .. vu56 .. " - " .. vu51[vu56].name)
+        else
+            vu1:Notify("Erro", "Selecione um local v\195\161lido!")
+        end
+    end
+})
+local v61 = game:GetService("Players")
+local v62 = game:GetService("Workspace")
+local v63 = v61.LocalPlayer
+local v64 = v62.CurrentCamera
+local vu65 = v62:WaitForChild("Vehicles")
+local vu93 = {
+    Players = v61,
+    Workspace = v62,
+    LocalPlayer = v63,
+    Camera = v64,
+    MostrarNotificacao = function(_, pu66)
+        pcall(function()
+            game:GetService("StarterGui"):SetCore("SendNotification", {
+                Title = "Aviso",
+                Text = pu66,
+                Duration = 5
+            })
+        end)
+    end,
+    ToggleFallDamage = function(p67, p68)
+        if not (p67.LocalPlayer.Character and p67.LocalPlayer.Character:FindFirstChild("Humanoid")) then
+            return false
+        end
+        local v69 = p67.LocalPlayer.Character.Humanoid
+        if not p68 then
+            v69:SetStateEnabled(Enum.HumanoidStateType.FallingDown, true)
+            v69:SetStateEnabled(Enum.HumanoidStateType.Ragdoll, true)
+            return false
+        end
+        v69:SetStateEnabled(Enum.HumanoidStateType.FallingDown, false)
+        v69:SetStateEnabled(Enum.HumanoidStateType.Ragdoll, false)
+        v69:SetStateEnabled(Enum.HumanoidStateType.GettingUp, true)
+        v69.PlatformStand = false
+        return true
+    end,
+    TeleportToSeat = function(p70, p71, _)
+        if not (p70.LocalPlayer.Character and p70.LocalPlayer.Character:FindFirstChild("Humanoid")) then
+            p70:MostrarNotificacao("Personagem n\195\163o encontrado!")
+            return false
+        end
+        local v72 = p70.LocalPlayer.Character.Humanoid
+        local v73 = p70.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+        if not v73 then
+            p70:MostrarNotificacao("Parte raiz do personagem n\195\163o encontrada!")
+            return false
+        end
+        v72.Sit = false
+        task.wait(0.1)
+        v73.CFrame = p71.CFrame + Vector3.new(0, 5, 0)
+        task.wait(0.1)
+        p71:Sit(v72)
+        task.wait(0.5)
+        return v72.SeatPart == p71
+    end,
+    TeleportToVoid = function(p74, p75)
+        if p75 then
+            if not p75.PrimaryPart then
+                local v76 = p75:FindFirstChild("Body", true) or p75:FindFirstChild("Chassis", true)
+                if not (v76 and v76:IsA("BasePart")) then
+                    p74:MostrarNotificacao("Parte principal do ve\195\173culo n\195\163o encontrada!")
+                    return
+                end
+                p75.PrimaryPart = v76
+            end
+            local v77 = Vector3.new(0, - 1000, 0)
+            p75:SetPrimaryPartCFrame(CFrame.new(v77))
+            task.wait(0.5)
+        else
+            p74:MostrarNotificacao("Ve\195\173culo inv\195\161lido!")
+        end
+    end,
+    TeleportToPlayer = function(p78, p79, p80)
+        if p79 then
+            if not p79.PrimaryPart then
+                local v81 = p79:FindFirstChild("Body", true) or p79:FindFirstChild("Chassis", true)
+                if not (v81 and v81:IsA("BasePart")) then
+                    p78:MostrarNotificacao("Parte principal do ve\195\173culo n\195\163o encontrada!")
+                    return
+                end
+                p79.PrimaryPart = v81
+            end
+            local v82 = p80 + Vector3.new(5, 0, 5)
+            p79:SetPrimaryPartCFrame(CFrame.new(v82))
+            task.wait(0.5)
+        else
+            p78:MostrarNotificacao("Ve\195\173culo inv\195\161lido!")
+        end
+    end,
+    ExitCarAndReturn = function(p83, p84)
+        if p83.LocalPlayer.Character and p83.LocalPlayer.Character:FindFirstChild("Humanoid") then
+            local v85 = p83.LocalPlayer.Character.Humanoid
+            if v85.SeatPart then
+                v85.Sit = false
+            end
+            task.wait(0.1)
+            if p84 then
+                p83.LocalPlayer.Character:PivotTo(CFrame.new(p84))
+            end
+        end
+    end,
+    AtualizarListaCarros = function(p86)
+        local v87 = p86.Workspace:FindFirstChild("Vehicles")
+        local v88 = {}
+        if v87 then
+            local v89, v90, v91 = ipairs(v87:GetChildren())
+            while true do
+                local v92
+                v91, v92 = v89(v90, v91)
+                if v91 == nil then
+                    break
+                end
+                if v92.Name:match("Car$") then
+                    table.insert(v88, v92.Name)
+                end
+            end
+        end
+        return v88
+    end
+}
+v37:AddSection({
+    "Puxar ou Teleportar at\195\169 os carros dos jogadores"
+})
+local vu94 = nil
+local v95 = v37.AddDropdown
+local v96 = {
+    Name = "Lista de Carros"
+}
+local v97 = vu93
+v96.Options = vu93.AtualizarListaCarros(v97)
+v96.Default = ""
+v96.Flag = "player_car_list"
+function v96.Callback(p98)
+    vu94 = p98
+    _G.SelectedVehicle = p98
+end
+local vu99 = v95(v37, v96)
+local function v100()
+    vu99:Set((vu93:AtualizarListaCarros()))
+end
+v100()
+v37:AddButton({
+    "Atualizar lista",
+    v100
+})
+v37:AddButton({
+    "Teleportar at\195\169 o carro",
+    function()
+        if vu94 and vu94 ~= "" then
+            local v101 = vu65:FindFirstChild(vu94)
+            if v101 and v101.PrimaryPart then
+                vu12:PivotTo(v101.PrimaryPart.CFrame * CFrame.new(0, 0, 5))
+                vu93:MostrarNotificacao("Voc\195\170 foi teleportado at\195\169 o carro: " .. vu94)
+            else
+                vu93:MostrarNotificacao("Carro n\195\163o encontrado ou sem PrimaryPart!")
+            end
+        else
+            vu93:MostrarNotificacao("Nenhum carro selecionado!")
+        end
+    end
+})
+v37:AddParagraph({
+    Title = "Use o Void Protection",
+    Content = ""
+})
+v37:AddToggle({
+    Name = "Matar todos os carros do servidor",
+    Description = "Teleporta os carros para o void",
+    Default = false,
+    Callback = function(p102)
+        local vu103 = p102
+        if p102 then
+            if not (vu93.LocalPlayer.Character and vu93.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")) then
+                vu93:MostrarNotificacao("Personagem n\195\163o encontrado!")
+                return
+            end
+            local vu104 = vu93.LocalPlayer.Character.HumanoidRootPart.Position
+            vu93:ToggleFallDamage(true)
+            spawn(function()
+                local v105 = vu93.Workspace:FindFirstChild("Vehicles")
+                if v105 then
+                    local v106, v107, v108 = ipairs(v105:GetChildren())
+                    local v109 = {}
+                    while true do
+                        local v110
+                        v108, v110 = v106(v107, v108)
+                        if v108 == nil then
+                            break
+                        end
+                        if v110.Name:match("Car$") then
+                            table.insert(v109, v110)
+                        end
+                    end
+                    local v111, v112, v113 = ipairs(v109)
+                    while true do
+                        local v114
+                        v113, v114 = v111(v112, v113)
+                        if v113 == nil or not vu103 then
+                            break
+                        end
+                        local v115 = v114:FindFirstChildWhichIsA("VehicleSeat", true)
+                        if v115 and v115.Occupant == nil and vu93:TeleportToSeat(v115, v114) then
+                            vu93:TeleportToVoid(v114)
+                            vu93:ExitCarAndReturn(vu104)
+                            vu93:MostrarNotificacao("Carro " .. v114.Name .. " foi teleportado para o void!")
+                            task.wait(1)
+                        end
+                    end
+                    if vu103 then
+                        vu103 = false
+                        vu93:ToggleFallDamage(false)
+                    end
+                else
+                    vu93:MostrarNotificacao("Pasta de ve\195\173culos n\195\163o encontrada!")
+                end
+            end)
+        else
+            vu93:ToggleFallDamage(false)
+        end
+    end
+})
+v37:AddToggle({
+    Name = "Ver C\195\162mera do Carro Selecionado",
+    Description = "Foca a c\195\162mera no carro selecionado",
+    Default = false,
+    Callback = function(p116)
+        if p116 then
+            if not _G.SelectedVehicle or _G.SelectedVehicle == "" then
+                vu93:MostrarNotificacao("Nenhum carro selecionado!")
+                return
+            end
+            local v117 = vu93.Workspace:FindFirstChild("Vehicles")
+            if not v117 then
+                vu93:MostrarNotificacao("Pasta de ve\195\173culos n\195\163o encontrada!")
+                return
+            end
+            local v118 = v117:FindFirstChild(_G.SelectedVehicle)
+            if not v118 then
+                vu93:MostrarNotificacao("Carro selecionado n\195\163o encontrado!")
+                return
+            end
+            local v119 = v118:FindFirstChildWhichIsA("VehicleSeat", true)
+            if not v119 then
+                vu93:MostrarNotificacao("Assento do carro n\195\163o encontrado!")
+                return
+            end
+            vu93.OriginalCameraSubject = vu93.Camera.CameraSubject
+            vu93.OriginalCameraType = vu93.Camera.CameraType
+            vu93.Camera.CameraSubject = v119
+            vu93.Camera.CameraType = Enum.CameraType.Follow
+            vu93:MostrarNotificacao("C\195\162mera ajustada para o carro " .. _G.SelectedVehicle .. "!")
+        elseif vu93.OriginalCameraSubject then
+            vu93.Camera.CameraSubject = vu93.OriginalCameraSubject
+            vu93.Camera.CameraType = vu93.OriginalCameraType or Enum.CameraType.Custom
+            vu93:MostrarNotificacao("C\195\162mera restaurada ao normal!")
+            vu93.OriginalCameraSubject = nil
+            vu93.OriginalCameraType = nil
+        end
+    end
+})
+v37:AddButton({
+    Name = "Destruir Carro Selecionado",
+    Description = "Teleporta o carro selecionado para o void",
+    Callback = function()
+        if _G.SelectedVehicle and _G.SelectedVehicle ~= "" then
+            local v120 = vu93.Workspace:FindFirstChild("Vehicles")
+            if v120 then
+                local v121 = v120:FindFirstChild(_G.SelectedVehicle)
+                if v121 then
+                    local v122 = v121:FindFirstChildWhichIsA("VehicleSeat", true)
+                    if v122 then
+                        if v122.Occupant then
+                            vu93:MostrarNotificacao("O kill car n\195\163o foi poss\195\173vel, h\195\161 algu\195\169m sentado no assento do motorista!")
+                            return
+                        elseif vu93.LocalPlayer.Character and vu93.LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+                            local v123 = vu93.LocalPlayer.Character.HumanoidRootPart.Position
+                            vu93:ToggleFallDamage(true)
+                            if vu93:TeleportToSeat(v122, v121) then
+                                vu93:TeleportToVoid(v121)
+                                vu93:MostrarNotificacao("Carro " .. _G.SelectedVehicle .. " foi teleportado para o void!")
+                                vu93:ExitCarAndReturn(v123)
+                            else
+                                vu93:MostrarNotificacao("Falha ao sentar no carro!")
+                            end
+                            vu93:ToggleFallDamage(false)
+                        else
+                            vu93:MostrarNotificacao("Personagem do jogador n\195\163o encontrado!")
+                        end
+                    else
+                        vu93:MostrarNotificacao("Assento do carro n\195\163o encontrado!")
+                        return
+                    end
+                else
+                    vu93:MostrarNotificacao("Carro selecionado n\195\163o encontrado!")
+                    return
+                end
+            else
+                vu93:MostrarNotificacao("Pasta de ve\195\173culos n\195\163o encontrada!")
+                return
+            end
+        else
+            vu93:MostrarNotificacao("Nenhum carro selecionado!")
+            return
+        end
+    end
+})
+v37:AddButton({
+    Name = "Trazer Carro Selecionado",
+    Description = "Teleporta o carro selecionado para sua posi\195\167\195\163o",
+    Callback = function()
+        if _G.SelectedVehicle and _G.SelectedVehicle ~= "" then
+            local v124 = vu93.Workspace:FindFirstChild("Vehicles")
+            if v124 then
+                local v125 = v124:FindFirstChild(_G.SelectedVehicle)
+                if v125 then
+                    local v126 = v125:FindFirstChildWhichIsA("VehicleSeat", true)
+                    if v126 then
+                        if v126.Occupant then
+                            vu93:MostrarNotificacao("O teleporte do carro n\195\163o foi poss\195\173vel, h\195\161 algu\195\169m sentado no assento do motorista!")
+                            return
+                        elseif vu93.LocalPlayer.Character and vu93.LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+                            local v127 = vu93.LocalPlayer.Character.HumanoidRootPart.Position
+                            vu93:ToggleFallDamage(true)
+                            if vu93:TeleportToSeat(v126, v125) then
+                                vu93:TeleportToPlayer(v125, v127)
+                                vu93:MostrarNotificacao("Carro " .. _G.SelectedVehicle .. " foi teleportado para voc\195\170!")
+                                vu93:ExitCarAndReturn(v127)
+                            else
+                                vu93:MostrarNotificacao("Falha ao sentar no carro!")
+                            end
+                            vu93:ToggleFallDamage(false)
+                        else
+                            vu93:MostrarNotificacao("Personagem do jogador n\195\163o encontrado!")
+                        end
+                    else
+                        vu93:MostrarNotificacao("Assento do carro n\195\163o encontrado!")
+                        return
+                    end
+                else
+                    vu93:MostrarNotificacao("Carro selecionado n\195\163o encontrado!")
+                    return
+                end
+            else
+                vu93:MostrarNotificacao("Pasta de ve\195\173culos n\195\163o encontrada!")
+                return
+            end
+        else
+            vu93:MostrarNotificacao("Nenhum carro selecionado!")
+            return
+        end
+    end
+})
+v37:AddButton({
+    Name = "Trazer Todos os Carros",
+    Description = "Teleporta todos os carros do servidor para sua posi\195\167\195\163o",
+    Callback = function()
+        if vu93.LocalPlayer.Character and vu93.LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+            local v128 = vu93.LocalPlayer.Character.HumanoidRootPart.Position
+            local v129 = vu93.Workspace:FindFirstChild("Vehicles")
+            if v129 then
+                vu93:ToggleFallDamage(true)
+                local v130, v131, v132 = ipairs(v129:GetChildren())
+                local v133 = {}
+                while true do
+                    local v134
+                    v132, v134 = v130(v131, v132)
+                    if v132 == nil then
+                        break
+                    end
+                    if v134.Name:match("Car$") then
+                        table.insert(v133, v134)
+                    end
+                end
+                local v135, v136, v137 = ipairs(v133)
+                while true do
+                    local v138
+                    v137, v138 = v135(v136, v137)
+                    if v137 == nil then
+                        break
+                    end
+                    local v139 = v138:FindFirstChildWhichIsA("VehicleSeat", true)
+                    if v139 and v139.Occupant == nil then
+                        if vu93:TeleportToSeat(v139, v138) then
+                            vu93:TeleportToPlayer(v138, v128)
+                            vu93:ExitCarAndReturn(v128)
+                            vu93:MostrarNotificacao("Carro " .. v138.Name .. " foi teleportado para voc\195\170!")
+                            task.wait(1)
+                        else
+                            vu93:MostrarNotificacao("Falha ao sentar no carro " .. v138.Name .. "!")
+                        end
+                    elseif v139 then
+                        vu93:MostrarNotificacao("Carro " .. v138.Name .. " ignorado: algu\195\169m est\195\161 no assento do motorista!")
+                    else
+                        vu93:MostrarNotificacao("Carro " .. v138.Name .. " ignorado: assento n\195\163o encontrado!")
+                    end
+                end
+                vu93:ToggleFallDamage(false)
+                if # v133 == 0 then
+                    vu93:MostrarNotificacao("Nenhum carro dispon\195\173vel para teleportar!")
+                end
+            else
+                vu93:MostrarNotificacao("Pasta de ve\195\173culos n\195\163o encontrada!")
+            end
+        else
+            vu93:MostrarNotificacao("Personagem do jogador n\195\163o encontrado!")
+            return
+        end
+    end
+})
+vu93.Workspace:WaitForChild("Vehicles").ChildAdded:Connect(function()
+    vu99:Set(vu93:AtualizarListaCarros())
+end)
+vu93.Workspace:WaitForChild("Vehicles").ChildRemoved:Connect(function()
+    vu99:Set(vu93:AtualizarListaCarros())
+end)
+local vu140 = false
+vu93.LocalPlayer.CharacterAdded:Connect(function(p141)
+    local v142 = p141:WaitForChild("Humanoid")
+    if vu140 then
+        v142:SetStateEnabled(Enum.HumanoidStateType.FallingDown, false)
+        v142:SetStateEnabled(Enum.HumanoidStateType.Ragdoll, false)
+        v142:SetStateEnabled(Enum.HumanoidStateType.GettingUp, true)
+        v142.PlatformStand = false
+    else
+        v142:SetStateEnabled(Enum.HumanoidStateType.FallingDown, true)
+        v142:SetStateEnabled(Enum.HumanoidStateType.Ragdoll, true)
+    end
+end)
+local vu143 = game:GetService("Players").LocalPlayer
+v37:AddTextBox({
+    Title = "Velocity",
+    Default = "100",
+    PlaceholderText = "100",
+    ClearText = false,
+    Callback = function(p144)
+        local v145 = vu11.Vehicles:FindFirstChild(vu143.Name .. "Car")
+        if v145 then
+            local v146, v147, v148 = pairs(v145:GetDescendants())
+            while true do
+                local v149
+                v148, v149 = v146(v147, v148)
+                if v148 == nil then
+                    break
+                end
+                if v149:IsA("VehicleSeat") and v149:FindFirstChild("TopSpeed") then
+                    v149.TopSpeed.Value = tonumber(p144) or 100
+                end
+            end
+        end
+    end
+})
+v37:AddTextBox({
+    Title = "Turbo",
+    Default = "12",
+    PlaceholderText = "12",
+    ClearText = false,
+    Callback = function(p150)
+        local v151 = vu11.Vehicles:FindFirstChild(vu143.Name .. "Car")
+        if v151 then
+            local v152, v153, v154 = pairs(v151:GetDescendants())
+            while true do
+                local v155
+                v154, v155 = v152(v153, v154)
+                if v154 == nil then
+                    break
+                end
+                if v155:IsA("VehicleSeat") and v155:FindFirstChild("Turbo") then
+                    v155.Turbo.Value = tonumber(p150) or 12
+                end
+            end
+        end
+    end
+})
+v38:AddSection({
+    "Trolls com jogadores"
+})
+local vu156 = nil
+local vu158 = v38:AddDropdown({
+    Name = "Lista de Jogadores",
+    Options = {},
+    Default = "",
+    Callback = function(p157)
+        vu156 = p157
+    end
+})
+local function v165()
+    local v159 = vu6
+    local v160, v161, v162 = ipairs(v159:GetPlayers())
+    local v163 = {}
+    while true do
+        local v164
+        v162, v164 = v160(v161, v162)
+        if v162 == nil then
+            break
+        end
+        if v164 ~= vu7 then
+            table.insert(v163, v164.Name)
+        end
+    end
+    vu158:Set(v163)
+end
+v165()
+v38:AddButton({
+    "Atualizar lista",
+    v165
+})
+v38:AddButton({
+    "Teleportar at\195\169 jogador",
+    function()
+        if vu156 then
+            local v166 = vu6:FindFirstChild(vu156)
+            if v166 and v166.Character then
+                vu12:PivotTo(v166.Character:GetPivot())
+            else
+                warn("Jogador inv\195\161lido ou sem personagem.")
+            end
+        else
+            warn("Nenhum jogador selecionado.")
+        end
+    end
+})
+v38:AddToggle({
+    Name = "Assistir jogador (Spectate)",
+    Flag = "SpectarJogador",
+    Callback = function(p167)
+        if vu156 then
+            vu2:spectatePlayer({
+                p167,
+                vu156
+            })
+        else
+            warn("Nenhum jogador selecionado.")
+        end
+    end
+})
+local vu168 = false
+local vu169 = nil
+v38:AddSection({
+    "Bot\195\181es MUITO roubados e abuser"
+})
+local function vu206(pu170)
+    if pu170 and (pu170.Character and vu7.Character) then
+        local vu171 = vu7.Character or vu7.CharacterAdded:Wait()
+        local vu172 = vu171:FindFirstChildOfClass("Humanoid")
+        local vu173 = vu171:FindFirstChild("HumanoidRootPart")
+        if vu172 and vu173 then
+            local vu174 = vu173.Position
+            pcall(function()
+                vu173.Anchored = true
+                vu173.CFrame = CFrame.new(Vector3.new(1181.83, 76.08, - 1158.83))
+                task.wait(0.2)
+                vu173.Velocity = Vector3.zero
+                vu173.RotVelocity = Vector3.zero
+                vu173.Anchored = false
+                if vu172 then
+                    vu172:ChangeState(Enum.HumanoidStateType.GettingUp)
+                end
+            end)
+            task.wait(0.5)
+            local vu175 = {
+                "DeleteAllVehicles"
+            }
+            pcall(function()
+                vu8:WaitForChild("RE"):WaitForChild("1Ca1r"):FireServer(unpack(vu175))
+            end)
+            vu175 = {
+                "PickingCar",
+                "SchoolBus"
+            }
+            pcall(function()
+                vu8:WaitForChild("RE"):WaitForChild("1Ca1r"):FireServer(unpack(vu175))
+            end)
+            task.wait(1)
+            local v176 = vu11:FindFirstChild("Vehicles")
+            if v176 then
+                local vu177 = v176:FindFirstChild(vu7.Name .. "Car")
+                if vu177 then
+                    pcall(function()
+                        vu173.Anchored = true
+                        vu173.CFrame = CFrame.new(Vector3.new(1171.15, 79.45, - 1166.2))
+                        task.wait(0.2)
+                        vu173.Velocity = Vector3.zero
+                        vu173.RotVelocity = Vector3.zero
+                        vu173.Anchored = false
+                        vu172:ChangeState(Enum.HumanoidStateType.Seated)
+                    end)
+                    local v178 = tick()
+                    while true do
+                        task.wait()
+                        if tick() - v178 > 10 then
+                            break
+                        end
+                        if vu172.Sit then
+                            local v179, v180, v181 = ipairs(vu177:GetDescendants())
+                            while true do
+                                local vu182
+                                v181, vu182 = v179(v180, v181)
+                                if v181 == nil then
+                                    break
+                                end
+                                if vu182:IsA("BasePart") then
+                                    vu182.CanCollide = false
+                                    pcall(function()
+                                        vu182:SetNetworkOwner(nil)
+                                    end)
+                                end
+                            end
+                            running = true
+                            connection = vu10.Stepped:Connect(function()
+                                if running then
+                                    local v183 = vu171
+                                    local v184, v185, v186 = ipairs(v183:GetDescendants())
+                                    while true do
+                                        local v187
+                                        v186, v187 = v184(v185, v186)
+                                        if v186 == nil then
+                                            break
+                                        end
+                                        if v187:IsA("BasePart") then
+                                            v187.CanCollide = false
+                                        end
+                                    end
+                                end
+                            end)
+                            local vu188 = tick()
+                            local vu189 = nil
+                            flingConnection = vu10.Heartbeat:Connect(function()
+                                if not running then
+                                    return
+                                end
+                                if not (pu170 and pu170.Character) then
+                                    running = false
+                                    return
+                                end
+                                local vu190 = pu170.Character:FindFirstChild("HumanoidRootPart")
+                                local v191 = pu170.Character:FindFirstChild("Humanoid")
+                                if not (vu190 and v191) then
+                                    running = false
+                                    return
+                                end
+                                if not (vu173 and vu172) then
+                                    running = false
+                                    return
+                                end
+                                local vu192 = Vector3.new(math.random(- 10, 10), 0, math.random(- 10, 10))
+                                pcall(function()
+                                    local v193 = vu190.Position + vu192
+                                    vu177:PivotTo(CFrame.new(v193) * CFrame.Angles(math.rad(vu11.DistributedGameTime * 12000), math.rad(vu11.DistributedGameTime * 15000), math.rad(vu11.DistributedGameTime * 18000)))
+                                end)
+                                local v194 = vu177
+                                local v195, v196, v197 = ipairs(v194:GetDescendants())
+                                local v198 = false
+                                while true do
+                                    local v199
+                                    v197, v199 = v195(v196, v197)
+                                    if v197 == nil then
+                                        break
+                                    end
+                                    if (v199:IsA("Seat") or v199:IsA("VehicleSeat")) and (v199.Name ~= "VehicleSeat" and v199.Occupant == v191) then
+                                        v198 = true
+                                        break
+                                    end
+                                end
+                                if v198 or tick() - vu188 > 10 then
+                                    running = false
+                                    flingConnection:Disconnect()
+                                    flingConnection = nil
+                                    pcall(function()
+                                        vu177:PivotTo(CFrame.new(Vector3.new(- 59599.73, 2040070.5, - 293391.16)))
+                                    end)
+                                    vu189 = Instance.new("BodyVelocity")
+                                    vu189.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
+                                    vu189.Velocity = Vector3.new(math.random(- 5, 5), 5, math.random(- 5, 5)).Unit * 1000000 + Vector3.new(0, 1000000, 0)
+                                    vu189.Parent = vu173
+                                    task.wait(0.5)
+                                    local vu200 = {
+                                        "DeleteAllVehicles"
+                                    }
+                                    pcall(function()
+                                        vu8:WaitForChild("RE"):WaitForChild("1Ca1r"):FireServer(unpack(vu200))
+                                    end)
+                                    if vu189 then
+                                        vu189:Destroy()
+                                        local v201 = vu171
+                                        local v202, v203, v204 = ipairs(v201:GetDescendants())
+                                        while true do
+                                            local v205
+                                            v204, v205 = v202(v203, v204)
+                                            if v204 == nil then
+                                                break
+                                            end
+                                            if v205:IsA("BasePart") then
+                                                v205.CanCollide = true
+                                            end
+                                        end
+                                    end
+                                    pcall(function()
+                                        vu173.Anchored = true
+                                        vu173.CFrame = CFrame.new(vu174 + Vector3.new(0, 5, 0))
+                                        task.wait(0.2)
+                                        vu173.Velocity = Vector3.zero
+                                        vu173.RotVelocity = Vector3.zero
+                                        vu173.Anchored = false
+                                        if vu172 then
+                                            vu172:ChangeState(Enum.HumanoidStateType.GettingUp)
+                                        end
+                                    end)
+                                    if flingToggle then
+                                        flingToggle:Set(false)
+                                    end
+                                end
+                            end)
+                            return
+                        end
+                    end
+                end
+            else
+                return
+            end
+        else
+            return
+        end
+    else
+        return
+    end
+end
+v38:AddButton({
+    Name = "Matar Jogador com o Sof\195\161",
+    Callback = function()
+        local vu207 = vu6:FindFirstChild(vu156)
+        if vu207 and (vu207.Character and vu207 ~= vu7) then
+            local vu208 = true
+            local vu209 = vu9.CurrentCamera
+            local vu210 = vu7.Character
+            if vu210 then
+                vu210 = vu7.Character:FindFirstChild("HumanoidRootPart")
+            end
+            local v211 = vu207.Character
+            if v211 then
+                v211 = vu207.Character:FindFirstChild("HumanoidRootPart")
+            end
+            if vu210 and v211 then
+                local vu212 = vu7.Character
+                local vu213 = vu212:FindFirstChildOfClass("Humanoid")
+                local vu214 = vu210.CFrame
+                vu8:WaitForChild("RE"):WaitForChild("1Clea1rTool1s"):FireServer("ClearAllTools")
+                task.wait(0.2)
+                vu8.RE:FindFirstChild("1Too1l"):InvokeServer("PickingTools", "Couch")
+                task.wait(0.3)
+                local v215 = vu7.Backpack:FindFirstChild("Couch")
+                if v215 then
+                    v215.Parent = vu212
+                end
+                task.wait(0.1)
+                game:GetService("VirtualInputManager"):SendKeyEvent(true, Enum.KeyCode.F, false, game)
+                task.wait(0.25)
+                vu9.FallenPartsDestroyHeight = 0 / 0
+                local vu216 = Instance.new("BodyVelocity")
+                vu216.Name = "FlingForce"
+                vu216.Velocity = Vector3.new(900000000, 900000000, 900000000)
+                vu216.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
+                vu216.Parent = vu210
+                vu213:SetStateEnabled(Enum.HumanoidStateType.Seated, false)
+                vu213.PlatformStand = false
+                vu209.CameraSubject = vu207.Character:FindFirstChild("Head") or (v211 or vu213)
+                task.spawn(function()
+                    local v217 = {
+                        vu210
+                    }
+                    local v218 = 0
+                    while vu208 and (vu207 and vu207.Character) and (vu207.Character:FindFirstChildOfClass("Humanoid") and not vu207.Character:FindFirstChildOfClass("Humanoid").Sit) do
+                        v218 = v218 + 50
+                        local v219, v220, v221 = ipairs(v217)
+                        while true do
+                            local v222
+                            v221, v222 = v219(v220, v221)
+                            if v221 == nil then
+                                break
+                            end
+                            local v223 = vu207.Character.HumanoidRootPart
+                            local v224 = v223.Position + v223.Velocity / 1.5
+                            vu210.CFrame = CFrame.new(v224) * CFrame.Angles(math.rad(v218), 0, 0)
+                        end
+                        vu210.Velocity = Vector3.new(900000000, 900000000, 900000000)
+                        vu210.RotVelocity = Vector3.new(900000000, 900000000, 900000000)
+                        task.wait()
+                    end
+                    vu208 = false
+                    vu216:Destroy()
+                    vu213:SetStateEnabled(Enum.HumanoidStateType.Seated, true)
+                    vu213.PlatformStand = false
+                    vu210.CFrame = vu214
+                    vu209.CameraSubject = vu213
+                    local v225 = vu212
+                    local v226, v227, v228 = pairs(v225:GetDescendants())
+                    while true do
+                        local v229
+                        v228, v229 = v226(v227, v228)
+                        if v228 == nil then
+                            break
+                        end
+                        if v229:IsA("BasePart") then
+                            v229.Velocity = Vector3.zero
+                            v229.RotVelocity = Vector3.zero
+                        end
+                    end
+                    vu213:UnequipTools()
+                    vu8.RE:FindFirstChild("1Too1l"):InvokeServer("PickingTools", "Couch")
+                end)
+            end
+        else
+            vu1:Notify("Erro", "Selecione um jogador v\195\161lido!", 3)
+            return
+        end
+    end
+})
+v38:AddToggle({
+    Name = "Matar todos os jogadores com o sof\195\161",
+    Flag = "FlingAllPlayers",
+    Callback = function(p230)
+        flingAllAtivado = p230
+        if flingAllLoop then
+            task.cancel(flingAllLoop)
+        end
+        if p230 then
+            flingAllLoop = task.spawn(function()
+                local v231 = vu6
+                local v232, v233, v234 = ipairs(v231:GetPlayers())
+                while true do
+                    local v235
+                    v234, v235 = v232(v233, v234)
+                    if v234 == nil or not flingAllAtivado then
+                        break
+                    end
+                    if v235 ~= vu7 and v235.Character and v235.Character:FindFirstChild("HumanoidRootPart") then
+                        local v236 = vu7.Character
+                        if v236 then
+                            v236 = vu7.Character:FindFirstChild("HumanoidRootPart")
+                        end
+                        local v237 = v235.Character
+                        if v237 then
+                            v237 = v235.Character:FindFirstChild("HumanoidRootPart")
+                        end
+                        if v236 and v237 then
+                            vu8:WaitForChild("RE"):WaitForChild("1Clea1rTool1s"):FireServer("ClearAllTools")
+                            task.wait(0.2)
+                            vu8.RE:FindFirstChild("1Too1l"):InvokeServer("PickingTools", "Couch")
+                            task.wait(0.3)
+                            local v238 = vu7.Backpack:FindFirstChild("Couch")
+                            if v238 then
+                                v238.Parent = vu7.Character
+                            end
+                            task.wait(0.1)
+                            game:GetService("VirtualInputManager"):SendKeyEvent(true, Enum.KeyCode.F, false, game)
+                            task.wait(0.25)
+                            local v239 = Instance.new("BodyVelocity")
+                            v239.Name = "FlingForce"
+                            v239.Velocity = Vector3.new(900000000, 900000000, 900000000)
+                            v239.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
+                            v239.Parent = v236
+                            local v240 = vu7.Character:FindFirstChildOfClass("Humanoid")
+                            local v241 = v236.CFrame
+                            v240:SetStateEnabled(Enum.HumanoidStateType.Seated, false)
+                            v240.PlatformStand = false
+                            local v242 = 0
+                            while flingAllAtivado and (v235 and v235.Character) and (v235.Character:FindFirstChild("Humanoid") and not v235.Character:FindFirstChild("Humanoid").Sit) do
+                                v242 = v242 + 50
+                                local v243 = v237.Position + v237.Velocity / 1.5
+                                v236.CFrame = CFrame.new(v243) * CFrame.Angles(math.rad(v242), 0, 0)
+                                v236.Velocity = Vector3.new(900000000, 900000000, 900000000)
+                                v236.RotVelocity = Vector3.new(900000000, 900000000, 900000000)
+                                task.wait()
+                            end
+                            v239:Destroy()
+                            v236.CFrame = v241
+                            v240:SetStateEnabled(Enum.HumanoidStateType.Seated, true)
+                            v240.PlatformStand = false
+                            local v244, v245, v246 = pairs(vu7.Character:GetDescendants())
+                            while true do
+                                local v247
+                                v246, v247 = v244(v245, v246)
+                                if v246 == nil then
+                                    break
+                                end
+                                if v247:IsA("BasePart") then
+                                    v247.Velocity = Vector3.zero
+                                    v247.RotVelocity = Vector3.zero
+                                end
+                            end
+                            v240:UnequipTools()
+                            task.wait(0.5)
+                        end
+                    end
+                end
+            end)
+        end
+    end
+})
+v38:AddToggle({
+    Name = "Freeze All (Todos)",
+    Flag = "ToggleFreezeAll",
+    Callback = function(p248)
+        vu168 = p248
+        if p248 then
+            local vu249 = game:GetService("Players")
+            local v250 = game:GetService("ReplicatedStorage")
+            local v251 = game:GetService("RunService")
+            local vu252 = vu249.LocalPlayer
+            local vu253 = v250.RE:FindFirstChild("1Gu1n")
+            local vu254 = 1
+            vu169 = v251.Stepped:Connect(function()
+                local v255 = vu249:GetPlayers()
+                if # v255 >= 2 then
+                    vu254 = vu254 + 1
+                    if vu254 > # v255 then
+                        vu254 = 1
+                    end
+                    local v256 = v255[vu254]
+                    if v256 == vu252 then
+                        vu254 = vu254 + 1
+                        if vu254 > # v255 then
+                            vu254 = 1
+                        end
+                        v256 = v255[vu254]
+                    end
+                    if v256 and v256.Character and v256.Character:FindFirstChild("HumanoidRootPart") then
+                        local v257 = Vector3.new(math.random(100000000000000, 1000000000000000), math.random(100000000000000, 1000000000000000), math.random(100000000000000, 1000000000000000))
+                        local v258 = {
+                            v256.Character.HumanoidRootPart,
+                            v256.Character.HumanoidRootPart,
+                            v257,
+                            v256.Character.HumanoidRootPart.Position
+                        }
+                        local v259 = vu252.Backpack:FindFirstChild("Assault")
+                        if v259 then
+                            v259 = vu252.Backpack.Assault.GunScript_Local:FindFirstChild("MuzzleEffect")
+                        end
+                        v258[5] = v259
+                        local v260 = vu252.Backpack:FindFirstChild("Assault")
+                        if v260 then
+                            v260 = vu252.Backpack.Assault.GunScript_Local:FindFirstChild("HitEffect")
+                        end
+                        v258[6] = v260
+                        v258[7] = 0
+                        v258[8] = 0
+                        v258[9] = {
+                            false
+                        }
+                        v258[10] = {
+                            25,
+                            Vector3.new(100, 100, 100),
+                            BrickColor.new(29),
+                            0.25,
+                            Enum.Material.SmoothPlastic,
+                            0.25
+                        }
+                        v258[11] = true
+                        v258[12] = false
+                        vu253:FireServer(unpack(v258))
+                    end
+                end
+            end)
+        elseif vu169 then
+            vu169:Disconnect()
+            vu169 = nil
+        end
+    end
+})
+local vu261 = nil
+local function vu262()
+    if not vu7.Backpack:FindFirstChild("Assault") then
+        pcall(function()
+            vu8.RE:FindFirstChild("1Too1l"):InvokeServer("PickingTools", "Assault")
+        end)
+        task.wait(0.5)
+    end
+end
+local function vu269()
+    annoyLoop = true
+    vu261 = vu10.Heartbeat:Connect(function()
+        if annoyLoop then
+            vu262()
+            local v263 = not vu7.Backpack:FindFirstChild("Assault") and vu7.Character
+            if v263 then
+                v263 = vu7.Character:FindFirstChild("Assault")
+            end
+            if v263 then
+                local v264 = v263:FindFirstChild("GunScript_Local")
+                if v264 then
+                    local v265
+                    if vu156 and (vu6:FindFirstChild(vu156) and vu6[vu156].Character and vu6[vu156].Character:FindFirstChild("HumanoidRootPart")) then
+                        v265 = vu6[vu156].Character.HumanoidRootPart
+                    else
+                        if not (vu7.Character and vu7.Character:FindFirstChild("HumanoidRootPart")) then
+                            return
+                        end
+                        v265 = vu7.Character.HumanoidRootPart
+                    end
+                    local v266 = v265.Position + Vector3.new(math.random(- 10, 10), math.random(5, 15), math.random(- 10, 10))
+                    local v267 = vu8:FindFirstChild("RE")
+                    if v267 then
+                        v267 = v267:FindFirstChild("1Gu1n")
+                    end
+                    if v267 then
+                        for _ = 1, 20 do
+                            local v268 = {
+                                v265,
+                                v265,
+                                Vector3.new(math.random(- 999000000, 999000000), math.random(200000000, 300000000), math.random(- 999000000, 999000000)),
+                                v266,
+                                v264:FindFirstChild("MuzzleEffect"),
+                                v264:FindFirstChild("HitEffect"),
+                                0,
+                                0,
+                                {
+                                    false
+                                },
+                                {
+                                    9999,
+                                    Vector3.new(9999, 9999, 9999),
+                                    BrickColor.new("Really red"),
+                                    0.05,
+                                    Enum.Material.Neon,
+                                    0.05
+                                },
+                                true,
+                                false
+                            }
+                            v267:FireServer(unpack(v268))
+                        end
+                    end
+                    if vu156 and (vu6:FindFirstChild(vu156) and vu6[vu156].Character and vu6[vu156].Character:FindFirstChild("Humanoid")) then
+                        Camera.CameraSubject = vu6[vu156].Character.Humanoid
+                    elseif vu7.Character and vu7.Character:FindFirstChild("Humanoid") then
+                        Camera.CameraSubject = vu7.Character.Humanoid
+                    end
+                    Camera.CameraType = Enum.CameraType.Custom
+                end
+            else
+                return
+            end
+        else
+            return
+        end
+    end)
+end
+local function vu270()
+    annoyLoop = false
+    if vu261 then
+        vu261:Disconnect()
+        vu261 = nil
+    end
+    if vu7.Character and vu7.Character:FindFirstChild("Humanoid") then
+        Camera.CameraSubject = vu7.Character.Humanoid
+        Camera.CameraType = Enum.CameraType.Custom
+    end
+end
+v38:AddToggle({
+    Name = "Annoy (visualiza jogador)",
+    Description = "Ataca o jogador selecionado e visualiza ele. Desligue para parar de visualizar.",
+    Default = false,
+    Callback = function(p271)
+        if p271 then
+            vu269()
+        else
+            vu270()
+        end
+    end
+})
+v38:AddButton({
+    Name = "Fling Bus",
+    Callback = function()
+        if vu156 then
+            local v272 = vu6:FindFirstChild(vu156)
+            if v272 and v272.Character then
+                vu206(v272)
+                vu1:Notify("Sucesso", "Fling Bus iniciado para " .. vu156, 3)
+            else
+                vu1:Notify("Erro", "Jogador inv\195\161lido ou sem personagem!", 3)
+            end
+        else
+            vu1:Notify("Erro", "Selecione um jogador v\195\161lido!", 3)
+        end
+    end
+})
+local vu273 = false
+local vu274 = false
+local function vu276()
+    local v275 = vu7:FindFirstChild("Backpack")
+    if v275 then
+        v275 = v275:FindFirstChild("Assault")
+    end
+    if not v275 then
+        pcall(function()
+            vu8.RE:FindFirstChild("1Too1l"):InvokeServer("PickingTools", "Assault")
+        end)
+        task.wait(0.5)
+        v275 = vu7:FindFirstChild("Backpack")
+        if v275 then
+            v275 = v275:FindFirstChild("Assault")
+        end
+    end
+    return v275
+end
+local function vu283(p277)
+    if p277 and p277.Character then
+        local v278 = p277.Character:FindFirstChild("HumanoidRootPart")
+        if v278 then
+            local v279 = vu276()
+            if v279 then
+                v279 = v279:FindFirstChild("GunScript_Local")
+            end
+            local v280
+            if v279 then
+                v280 = v279:FindFirstChild("MuzzleEffect")
+            else
+                v280 = v279
+            end
+            if v279 then
+                v279 = v279:FindFirstChild("HitEffect")
+            end
+            if v278 and (v280 and v279) then
+                local vu281 = {
+                    v278,
+                    v278,
+                    Vector3.new(100000000376832, 100000000376832, 100000000376832),
+                    v278.Position,
+                    v280,
+                    v279,
+                    0,
+                    0,
+                    {
+                        false
+                    },
+                    {
+                        25,
+                        Vector3.new(100, 100, 100),
+                        BrickColor.new(29),
+                        0.25,
+                        Enum.Material.SmoothPlastic,
+                        0.25
+                    },
+                    true,
+                    false
+                }
+                pcall(function()
+                    local v282 = vu8:FindFirstChild("RE")
+                    if v282 then
+                        v282 = vu8.RE:FindFirstChild("1Gu1n")
+                    end
+                    if v282 then
+                        v282:FireServer(unpack(vu281))
+                    end
+                end)
+            end
+        end
+    else
+        return
+    end
+end
+task.spawn(function()
+    while task.wait(0.1) do
+        if vu273 then
+            local v284 = vu6
+            local v285, v286, v287 = ipairs(v284:GetPlayers())
+            while true do
+                local v288
+                v287, v288 = v285(v286, v287)
+                if v287 == nil then
+                    break
+                end
+                if v288 ~= vu7 then
+                    vu283(v288)
+                    task.wait(0.05)
+                end
+            end
+        elseif vu274 and vu156 then
+            local v289 = vu6:FindFirstChild(vu156)
+            if v289 then
+                vu283(v289)
+            end
+            task.wait(0.05)
+        end
+    end
+end)
+v38:AddToggle({
+    Name = "Crash Jogador Selecionado",
+    Flag = "CrashIndividualToggle",
+    Callback = function(p290)
+        vu274 = p290
+    end
+})
+v38:AddToggle({
+    Name = "Crash All",
+    Flag = "CrashAllToggle",
+    Callback = function(p291)
+        vu273 = p291
+    end
+})
+local vu292 = false
+local vu293 = false
+v38:AddToggle({
+    Name = "Ativar Skybox FE",
+    Description = "Para trocar a Skybox, basta mudar a sua camisa no Roblox.",
+    Flag = "ToggleSkyboxFE",
+    Callback = function(p294)
+        local vu295 = game:GetService("ReplicatedStorage")
+        local v296 = game:GetService("Players").LocalPlayer
+        if vu292 then
+            if p294 then
+                vu293 = true
+                local vu297 = {
+                    {
+                        100839513065432
+                    }
+                }
+                pcall(function()
+                    vu295:WaitForChild("Remotes"):WaitForChild("ChangeCharacterBody"):InvokeServer(unpack(vu297))
+                end)
+                task.wait(0.5)
+                local vu298 = (v296.Character or v296.CharacterAdded:Wait()):FindFirstChildOfClass("Humanoid")
+                if vu298 then
+                    (function(p299)
+                        local v300 = Instance.new("Animation")
+                        v300.AnimationId = "rbxassetid://" .. p299
+                        local v301 = vu298:LoadAnimation(v300)
+                        v301.Priority = Enum.AnimationPriority.Action4
+                        v301:Play(0.1, 1, 1)
+                        return v301
+                    end)(101852027997337)
+                    task.wait(0.5)
+                    local v302 = Instance.new("Animation")
+                    v302.AnimationId = "rbxassetid://3695333486"
+                    local v303 = vu298:LoadAnimation(v302)
+                    v303.Priority = Enum.AnimationPriority.Movement
+                    v303:Play(0.1, 1, 0)
+                end
+                vu1:Notify("Skybox FE", "Ativado com sucesso!")
+            else
+                if not vu293 then
+                    vu1:Notify("Skybox FE", "Ignorado: n\195\163o foi ativado por voc\195\170.")
+                    return
+                end
+                pcall(function()
+                    vu295.Remotes.ResetCharacterAppearance:FireServer()
+                end)
+                task.wait(0.3)
+                local v304 = v296.Character
+                local v305 = v304 and v304:FindFirstChildOfClass("Humanoid")
+                if v305 then
+                    v305.Health = 0
+                end
+                vu1:Notify("Skybox FE", "Desativado e apar\195\170ncia restaurada!")
+                vu293 = false
+            end
+        else
+            vu292 = true
+            if p294 then
+                vu293 = true
+            end
+        end
+    end
+})
+v36:AddSection({
+    "Copiar avatar dos jogadores"
+})
+local vu306 = vu8:WaitForChild("Remotes")
+local function vu313()
+    local v307 = vu6
+    local v308, v309, v310 = ipairs(v307:GetPlayers())
+    local v311 = {}
+    while true do
+        local v312
+        v310, v312 = v308(v309, v310)
+        if v310 == nil then
+            break
+        end
+        if v312.Name ~= vu7.Name then
+            table.insert(v311, v312.Name)
+        end
+    end
+    return v311
+end
+local vu314 = nil
+local vu316 = v36:AddDropdown({
+    Name = "Lista de Jogadores",
+    Description = "",
+    Options = vu313(),
+    Default = "",
+    Flag = "player_list",
+    Callback = function(p315)
+        vu314 = p315
+    end
+})
+local function vu317()
+    vu316:Set(vu313())
+end
+vu317()
+v36:AddButton({
+    "Atualizar lista",
+    function()
+        vu317()
+    end
+})
+vu6.PlayerAdded:Connect(vu317)
+vu6.PlayerRemoving:Connect(vu317)
+v36:AddButton({
+    Name = "Copiar Avatar",
+    Callback = function()
+        if vu314 then
+            local v318 = vu6.LocalPlayer.Character
+            local v319 = vu6:FindFirstChild(vu314)
+            if v319 and v319.Character then
+                if v318 then
+                    v318 = v318:FindFirstChildOfClass("Humanoid")
+                end
+                local v320 = v319.Character:FindFirstChildOfClass("Humanoid")
+                if v318 and v320 then
+                    local v321 = v318:GetAppliedDescription()
+                    local v322, v323, v324 = ipairs(v321:GetAccessories(true))
+                    while true do
+                        local v325
+                        v324, v325 = v322(v323, v324)
+                        if v324 == nil then
+                            break
+                        end
+                        if v325.AssetId and tonumber(v325.AssetId) then
+                            vu306.Wear:InvokeServer(tonumber(v325.AssetId))
+                            task.wait(0.2)
+                        end
+                    end
+                    if tonumber(v321.Shirt) then
+                        vu306.Wear:InvokeServer(tonumber(v321.Shirt))
+                        task.wait(0.2)
+                    end
+                    if tonumber(v321.Pants) then
+                        vu306.Wear:InvokeServer(tonumber(v321.Pants))
+                        task.wait(0.2)
+                    end
+                    if tonumber(v321.Face) then
+                        vu306.Wear:InvokeServer(tonumber(v321.Face))
+                        task.wait(0.2)
+                    end
+                    local v326 = v320:GetAppliedDescription()
+                    local v327 = {
+                        {
+                            v326.Torso,
+                            v326.RightArm,
+                            v326.LeftArm,
+                            v326.RightLeg,
+                            v326.LeftLeg,
+                            v326.Head
+                        }
+                    }
+                    vu306.ChangeCharacterBody:InvokeServer(unpack(v327))
+                    task.wait(0.5)
+                    if tonumber(v326.Shirt) then
+                        vu306.Wear:InvokeServer(tonumber(v326.Shirt))
+                        task.wait(0.3)
+                    end
+                    if tonumber(v326.Pants) then
+                        vu306.Wear:InvokeServer(tonumber(v326.Pants))
+                        task.wait(0.3)
+                    end
+                    if tonumber(v326.Face) then
+                        vu306.Wear:InvokeServer(tonumber(v326.Face))
+                        task.wait(0.3)
+                    end
+                    local v328, v329, v330 = ipairs(v326:GetAccessories(true))
+                    while true do
+                        local v331
+                        v330, v331 = v328(v329, v330)
+                        if v330 == nil then
+                            break
+                        end
+                        if v331.AssetId and tonumber(v331.AssetId) then
+                            vu306.Wear:InvokeServer(tonumber(v331.AssetId))
+                            task.wait(0.3)
+                        end
+                    end
+                    local v332 = v319.Character:FindFirstChild("Body Colors")
+                    if v332 then
+                        vu306.ChangeBodyColor:FireServer(tostring(v332.HeadColor))
+                        task.wait(0.3)
+                    end
+                    if tonumber(v326.IdleAnimation) then
+                        vu306.Wear:InvokeServer(tonumber(v326.IdleAnimation))
+                        task.wait(0.3)
+                    end
+                    local v333 = v319:FindFirstChild("PlayersBag")
+                    if v333 then
+                        if v333:FindFirstChild("RPName") and v333.RPName.Value ~= "" then
+                            vu306.RPNameText:FireServer("RolePlayName", v333.RPName.Value)
+                            task.wait(0.3)
+                        end
+                        if v333:FindFirstChild("RPBio") and v333.RPBio.Value ~= "" then
+                            vu306.RPNameText:FireServer("RolePlayBio", v333.RPBio.Value)
+                            task.wait(0.3)
+                        end
+                        if v333:FindFirstChild("RPNameColor") then
+                            vu306.RPNameColor:FireServer("PickingRPNameColor", v333.RPNameColor.Value)
+                            task.wait(0.3)
+                        end
+                        if v333:FindFirstChild("RPBioColor") then
+                            vu306.RPNameColor:FireServer("PickingRPBioColor", v333.RPBioColor.Value)
+                            task.wait(0.3)
+                        end
+                    end
+                    vu1:Notify("Sucesso", "Avatar copiado de " .. vu314)
+                end
+            end
+        else
+            vu1:Notify("Erro", "Nenhum jogador selecionado!", 3)
+        end
+    end
+})
+local vu334 = false
+local vu335 = nil
+local vu336 = {
+    Color3.new(1, 0.215, 0.223),
+    Color3.new(1, 0.419, 0.267),
+    Color3.new(1, 0.681, 0.129),
+    Color3.new(0.867, 1, 0.304),
+    Color3.new(0.612, 1, 0.273),
+    Color3.new(0.229, 1, 0.53),
+    Color3.new(0.116, 0.754, 1),
+    Color3.new(0, 0.078, 1),
+    Color3.new(0.424, 0, 1),
+    Color3.new(1, 0, 0.149)
+}
+local vu337 = game:GetService("ReplicatedStorage"):WaitForChild("RE"):WaitForChild("1RPNam1eColo1r")
+v36:AddToggle({
+    Name = "Nome RGB (Tag)",
+    Flag = "RGBNameToggle",
+    Callback = function(p338)
+        vu334 = p338
+        if p338 then
+            vu335 = task.spawn(function()
+                while vu334 do
+                    local v339, v340, v341 = ipairs(vu336)
+                    while true do
+                        local v342
+                        v341, v342 = v339(v340, v341)
+                        if v341 == nil or not vu334 then
+                            break
+                        end
+                        vu337:FireServer("PickingRPNameColor", v342)
+                        task.wait(0.2)
+                    end
+                end
+            end)
+        elseif vu335 then
+            task.cancel(vu335)
+        end
+    end
+})
+local vu343 = false
+local vu344 = nil
+local vu345 = {
+    Color3.new(1, 0.292, 0.129),
+    Color3.new(1, 0.498, 0.053),
+    Color3.new(1, 0.995, 0.249),
+    Color3.new(0.051, 1, 0.159),
+    Color3.new(0.111, 0.809, 1),
+    Color3.new(0.074, 0.044, 1),
+    Color3.new(0.556, 0.123, 1),
+    Color3.new(1, 0.002, 0.802),
+    Color3.new(1, 0.029, 0.027)
+}
+v36:AddToggle({
+    Name = "Bio RGB (Tag)",
+    Flag = "RGBBioToggle",
+    Callback = function(p346)
+        vu343 = p346
+        if p346 then
+            vu344 = task.spawn(function()
+                while vu343 do
+                    local v347, v348, v349 = ipairs(vu345)
+                    while true do
+                        local v350
+                        v349, v350 = v347(v348, v349)
+                        if v349 == nil or not vu343 then
+                            break
+                        end
+                        vu337:FireServer("PickingRPBioColor", v350)
+                        task.wait(0.2)
+                    end
+                end
+            end)
+        elseif vu344 then
+            task.cancel(vu344)
+        end
+    end
+})
+v48:AddSection({
+    "Informa\195\167\195\181es do FURIA HUB"
+})
+v48:AddParagraph({
+    "Owner / Developer:",
+    "BSX"
+})
+v48:AddParagraph({
+    "Colabora\195\167\195\181es:",
+    "RH XABLAU, RAEL, BRUTUS, LOLYTA & DAVI999"
+})
+v48:AddParagraph({
+    "Voc\195\170 est\195\161 usando:",
+    "FURIA HUB Brookhaven"
+})
+local vu351 = "Desconhecido"
+pcall(function()
+    if identifyexecutor then
+        vu351 = identifyexecutor()
+    elseif syn and syn.get_executor_name then
+        vu351 = syn.get_executor_name()
+    elseif getexecutorname then
+        vu351 = getexecutorname()
+    end
+end)
+v48:AddParagraph({
+    "Executor:",
+    vu351
+})
+v48:AddSection({
+    "Rejoin"
+})
+v48:AddButton({
+    Name = "Reentrar no mesmo servidor",
+    Callback = function()
+        game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, game.JobId, vu7)
+    end
+})
+v48:AddButton({
+    Name = "Reentrar em outro servidor",
+    Callback = function()
+        game:GetService("TeleportService"):Teleport(game.PlaceId)
+    end
+})
+v48:AddSection({
+    "Script do Rael"
+})
+v48:AddButton({
+    Name = "Abrir Rael Hub",
+    Callback = function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/Laelmano24/Rael-Hub/main/main.txt"))()
+    end
+})
+v48:AddSection({
+    "Script do Brutus"
+})
+v48:AddButton({
+    Name = "Abrir BRUTUS HUB",
+    Callback = function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/codenixstudios/brutus-hub/script/Games/brookhaven.lua"))()
+    end
+})
+v48:AddSection({
+    "Script do Coquette Hub"
+})
+v48:AddButton({
+    Name = "Abrir Coquette Hub",
+    Callback = function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/Daivd977/Deivd999/refs/heads/main/pessal"))()
+    end
+})
+v48:AddSection({
+    "Script do Cartola Hub"
+})
+v48:AddButton({
+    Name = "Abrir Cartola Hub",
+    Callback = function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/Davi999z/Cartola-Hub/refs/heads/main/Brookhaven", true))()()
+    end
+})
+v48:AddSection({
+    "Script do Pacote Fantasma"
+})
+v48:AddButton({
+    Name = "Abrir Pacote Fanstama",
+    Callback = function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/RHOFICIAL01/Projetos./refs/heads/main/Pacote.lua"))()
+    end
+})
+v49:AddSection({
+    "Scripts variados para executar rapidamente"
+})
+v49:AddButton({
+    "Infinite Yield",
+    function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source", true))()
+    end
+})
+vu8:WaitForChild("Remotes"):WaitForChild("Wear")
+vu8:WaitForChild("Remotes"):WaitForChild("ChangeCharacterBody")
+vu8:WaitForChild("Remotes"):WaitForChild("WearShirt")
+vu8:WaitForChild("Remotes"):WaitForChild("WearPants")
+vu8:WaitForChild("Remotes"):WaitForChild("ChangeBodyColor")
+local function vu367()
+    local v352, v353, v354 = pairs(vu9:WaitForChild("Vehicles"):GetChildren())
+    local v355 = {
+        "Shark",
+        "WaveRunner",
+        "SailBoatFree",
+        "SpeedBoatFree",
+        "PoliceBoatChangeable",
+        "MilitaryBoatFree",
+        "PirateFree",
+        "Jet",
+        "Helicopter"
+    }
+    while true do
+        local v356
+        v354, v356 = v352(v353, v354)
+        if v354 == nil then
+            return
+        end
+        local v357, v358, v359 = pairs(v356:GetDescendants())
+        while true do
+            local v360
+            v359, v360 = v357(v358, v359)
+            if v359 == nil then
+                break
+            end
+            if v360:IsA("BasePart") then
+                local v361 = v360.Name:lower()
+                local v362, v363, v364 = ipairs(v355)
+                local v365 = false
+                while true do
+                    local v366
+                    v364, v366 = v362(v363, v364)
+                    if v364 == nil then
+                        break
+                    end
+                    if v356.Name == v366 then
+                        v365 = true
+                        break
+                    end
+                end
+                v360.CanCollide = v365 and (v360:IsA("Seat") or (v360:IsA("VehicleSeat") or v361:find("wheel")) or (v361:find("tire") or v361:find("chassis") or (v361:find("base") or v361:find("frame")) or (v361:find("hull") or v361:find("propeller") or (v361:find("rotor") or v361:find("wing"))))) or v360:IsA("Seat") or (v360:IsA("VehicleSeat") or v361:find("wheel")) or (v361:find("tire") or v361:find("chassis") or (v361:find("base") or v361:find("frame")))
+            end
+        end
+    end
+end
+vu39:AddToggle({
+    Name = "Anti Fling Ball",
+    Flag = "AntiFlingBallToggle",
+    Callback = function(pu368)
+        (function()
+            local v369 = vu9:FindFirstChild("WorkspaceCom")
+            if v369 then
+                v369 = vu9.WorkspaceCom:FindFirstChild("001_SoccerBalls")
+            end
+            if v369 then
+                local v370, v371, v372 = pairs(v369:GetChildren())
+                while true do
+                    local v373
+                    v372, v373 = v370(v371, v372)
+                    if v372 == nil then
+                        break
+                    end
+                    if v373:IsA("BasePart") then
+                        v373.CanCollide = not pu368
+                    end
+                end
+            end
+        end)()
+        if shared.antiFlingBallConn then
+            shared.antiFlingBallConn:Disconnect()
+        end
+        shared.antiFlingBallConn = vu9:WaitForChild("WorkspaceCom"):WaitForChild("001_SoccerBalls").ChildAdded:Connect(function(p374)
+            task.wait(0.3)
+            if p374:IsA("BasePart") and pu368 then
+                p374.CanCollide = false
+            end
+        end)
+    end
+})
+vu39:AddToggle({
+    Name = "Anti Fling Carros, Motos, Barcos, Avi\195\181es e Helic\195\179pteros",
+    Flag = "AntiFlingVehiclesToggle",
+    Default = false,
+    Callback = function(pu375)
+        local function vu382(p376)
+            local v377 = vu7.Character or vu7.CharacterAdded:Wait()
+            local v378, v379, v380 = ipairs(v377:GetDescendants())
+            while true do
+                local v381
+                v380, v381 = v378(v379, v380)
+                if v380 == nil then
+                    break
+                end
+                if v381:IsA("BasePart") then
+                    v381.CanTouch = p376
+                end
+            end
+        end
+        if pu375 then
+            vu367()
+            vu382(false)
+        else
+            vu382(true)
+        end
+        if shared.antiFlingCarConn then
+            shared.antiFlingCarConn:Disconnect()
+        end
+        shared.antiFlingCarConn = vu7.CharacterAdded:Connect(function()
+            task.wait(1)
+            if pu375 then
+                vu382(false)
+            else
+                vu382(true)
+            end
+        end)
+    end
+})
+local vu383 = false
+local vu384 = nil
+vu39:AddToggle({
+    Name = "Anti Freeze",
+    Flag = "AntiFreezeToggle",
+    Callback = function(p385)
+        vu383 = p385
+        if vu384 then
+            vu384:Disconnect()
+            vu384 = nil
+        end
+        if vu383 then
+            local v386 = game:GetService("RunService")
+            local vu387 = vu9:FindFirstChild("Camera")
+            vu384 = v386.Stepped:Connect(function()
+                if vu383 and vu387 then
+                    local v388 = vu387
+                    local v389, v390, v391 = ipairs(v388:GetChildren())
+                    while true do
+                        local vu392
+                        v391, vu392 = v389(v390, v391)
+                        if v391 == nil then
+                            break
+                        end
+                        if vu392.Name == "water" then
+                            pcall(function()
+                                vu392:Destroy()
+                            end)
+                        end
+                    end
+                end
+            end)
+        end
+    end
+})
+if shared.carVisualSafeConn then
+    shared.carVisualSafeConn:Disconnect()
+end
+shared.carVisualSafeConn = vu9.Vehicles.ChildAdded:Connect(function(p393)
+    task.wait(0.5)
+    local v394 = vu39.Flags
+    if v394 then
+        v394 = vu39.Flags.AntiFlingVehiclesToggle
+    end
+    if v394 then
+        local v395, v396, v397 = pairs(p393:GetDescendants())
+        local v398 = {
+            "Shark",
+            "WaveRunner",
+            "SailBoatFree",
+            "SpeedBoatFree",
+            "PoliceBoatChangeable",
+            "MilitaryBoatFree",
+            "PirateFree",
+            "Jet",
+            "Helicopter"
+        }
+        while true do
+            local v399
+            v397, v399 = v395(v396, v397)
+            if v397 == nil then
+                break
+            end
+            if v399:IsA("BasePart") then
+                local v400 = v399.Name:lower()
+                local v401, v402, v403 = ipairs(v398)
+                local v404 = false
+                while true do
+                    local v405
+                    v403, v405 = v401(v402, v403)
+                    if v403 == nil then
+                        break
+                    end
+                    if p393.Name == v405 then
+                        v404 = true
+                        break
+                    end
+                end
+                v399.CanCollide = v404 and (v399:IsA("Seat") or (v399:IsA("VehicleSeat") or v400:find("wheel")) or (v400:find("tire") or v400:find("chassis") or (v400:find("base") or v400:find("frame")) or (v400:find("hull") or v400:find("propeller") or (v400:find("rotor") or v400:find("wing"))))) or v399:IsA("Seat") or (v399:IsA("VehicleSeat") or v400:find("wheel")) or (v400:find("tire") or v400:find("chassis") or (v400:find("base") or v400:find("frame")))
+            end
+        end
+    end
+end)
+local v406 = v29:MakeTab({
+    "Lag Server",
+    "alert"
+})
+v406:AddSection({
+    "Funcionalidades para causar lag no servidor"
+})
+v406:AddParagraph({
+    "Aviso:",
+    "Use com cuidado, pois essas a\195\167\195\181es podem violar os Termos de Servi\195\167o do Roblox e resultar em banimento."
+})
+local vu407 = game:GetService("Players")
+local vu408 = game:GetService("RunService")
+local vu409 = vu407.LocalPlayer
+local vu410 = Vector3.new(- 117.5, 32.4, 29.45)
+local vu411 = false
+local vu412 = nil
+local function vu416()
+    local v413 = vu9:FindFirstChild("WorkspaceCom")
+    local v414 = v413 and v413:FindFirstChild("001_GiveTools")
+    if v414 then
+        local v415 = v414:FindFirstChild("Laptop")
+        if v415 and v415:FindFirstChild("ClickDetector") then
+            return v415
+        end
+    end
+    return nil
+end
+local vu417 = v406:AddToggle({
+    Name = "\239\191\189\239\191\189\239\191\189\239\191\189\239\191\189\239\191\189 Lag Server Laptop",
+    Description = "Faz spam de laptops para travar o servidor",
+    Default = false
+})
+local v418 = vu417
+vu417.Callback(v418, function(p419)
+    vu411 = p419
+    if vu411 then
+        local vu420 = vu416()
+        if not vu420 then
+            vu411 = false
+            vu417:Set(false)
+            vu1:Notify("Erro", "Laptop n\195\163o encontrado!", 3)
+            return
+        end
+        vu412 = vu408.Heartbeat:Connect(function()
+            local v421 = vu409.Character
+            if not (v421 and v421:FindFirstChild("HumanoidRootPart")) then
+                v421 = vu409.CharacterAdded:Wait()
+            end
+            if v421 and v421:FindFirstChild("HumanoidRootPart") then
+                v421.HumanoidRootPart.CFrame = CFrame.new(vu410)
+            end
+            vu420 = vu416()
+            if vu420 and vu420:FindFirstChild("ClickDetector") then
+                pcall(function()
+                    fireclickdetector(vu420.ClickDetector)
+                end)
+            end
+            wait(0.3)
+        end)
+    elseif vu412 then
+        vu412:Disconnect()
+        vu412 = nil
+    end
+end)
+local vu422 = Vector3.new(- 471.24, 3.8, - 152.46)
+local vu423 = false
+local vu424 = nil
+local function vu428()
+    local v425 = vu9:FindFirstChild("WorkspaceCom")
+    local v426 = v425 and v425:FindFirstChild("001_GiveTools")
+    if v426 then
+        local v427 = v426:FindFirstChild("FireX")
+        if v427 and v427:FindFirstChild("ClickDetector") then
+            return v427
+        end
+    end
+    return nil
+end
+local vu429 = v406:AddToggle({
+    Name = "\239\191\189\239\191\189\239\191\189\239\191\189\239\191\189\239\191\189 Lag Server Extintor",
+    Description = "Faz spam de extintores para travar o servidor",
+    Default = false
+})
+local v430 = vu429
+vu429.Callback(v430, function(p431)
+    vu423 = p431
+    if vu423 then
+        local vu432 = vu428()
+        if not vu432 then
+            vu423 = false
+            vu429:Set(false)
+            vu1:Notify("Erro", "Extintor n\195\163o encontrado!", 3)
+            return
+        end
+        vu424 = vu408.Heartbeat:Connect(function()
+            local v433 = vu409.Character
+            if not (v433 and v433:FindFirstChild("HumanoidRootPart")) then
+                v433 = vu409.CharacterAdded:Wait()
+            end
+            if v433 and v433:FindFirstChild("HumanoidRootPart") then
+                v433.HumanoidRootPart.CFrame = CFrame.new(vu422)
+            end
+            vu432 = vu428()
+            if vu432 and vu432:FindFirstChild("ClickDetector") then
+                pcall(function()
+                    fireclickdetector(vu432.ClickDetector)
+                end)
+            end
+            wait(0.3)
+        end)
+    elseif vu424 then
+        vu424:Disconnect()
+        vu424 = nil
+    end
+end)
+local vu434 = Vector3.new(- 141.42, - 29.97, 243.2)
+local vu435 = false
+local vu436 = nil
+local function vu441()
+    local v437 = vu9:FindFirstChild("WorkspaceCom")
+    if v437 then
+        local v438 = v437:FindFirstChild("001_CriminalWeapons")
+        local v439 = v438 and v438:FindFirstChild("GiveTools")
+        if v439 then
+            local v440 = v439:FindFirstChild("Bomb")
+            if v440 and v440:FindFirstChild("ClickDetector") then
+                return v440
+            end
+        end
+    end
+    return nil
+end
+local vu442 = v406:AddToggle({
+    Name = "\239\191\189\239\191\189\239\191\189\239\191\189\239\191\189\239\191\189 Lag Server Bomba",
+    Description = "Faz spam de bombas para travar o servidor",
+    Default = false
+})
+local v443 = vu442
+vu442.Callback(v443, function(p444)
+    vu435 = p444
+    if vu435 then
+        local vu445 = vu441()
+        if not vu445 then
+            vu435 = false
+            vu442:Set(false)
+            vu1:Notify("Erro", "Bomba n\195\163o encontrada!", 3)
+            return
+        end
+        vu436 = vu408.Heartbeat:Connect(function()
+            local v446 = vu409.Character
+            if not (v446 and v446:FindFirstChild("HumanoidRootPart")) then
+                v446 = vu409.CharacterAdded:Wait()
+            end
+            if v446 and v446:FindFirstChild("HumanoidRootPart") then
+                v446.HumanoidRootPart.CFrame = CFrame.new(vu434)
+            end
+            vu445 = vu441()
+            if vu445 and vu445:FindFirstChild("ClickDetector") then
+                pcall(function()
+                    fireclickdetector(vu445.ClickDetector)
+                end)
+            end
+            wait(0.3)
+        end)
+    elseif vu436 then
+        vu436:Disconnect()
+        vu436 = nil
+    end
+end)
+local vu447 = Vector3.new(- 340.68, 3.04, 28.59)
+local vu448 = false
+local vu449 = nil
+local function vu453()
+    local v450 = vu9:FindFirstChild("WorkspaceCom")
+    local v451 = v450 and v450:FindFirstChild("001_GiveTools")
+    if v451 then
+        local v452 = v451:FindFirstChild("Stretcher")
+        if v452 and v452:FindFirstChild("ClickDetector") then
+            return v452
+        end
+    end
+    return nil
+end
+local vu454 = v406:AddToggle({
+    Name = "\239\191\189\239\191\189\239\191\189\239\191\189\239\191\189\239\191\189 Lag Server Maca",
+    Description = "Faz spam de macas para travar o servidor",
+    Default = false
+})
+local v455 = vu454
+vu454.Callback(v455, function(p456)
+    vu448 = p456
+    if vu448 then
+        local vu457 = vu453()
+        if not vu457 then
+            vu448 = false
+            vu454:Set(false)
+            vu1:Notify("Erro", "Maca n\195\163o encontrada!", 3)
+            return
+        end
+        vu449 = vu408.Heartbeat:Connect(function()
+            local v458 = vu409.Character
+            if not (v458 and v458:FindFirstChild("HumanoidRootPart")) then
+                v458 = vu409.CharacterAdded:Wait()
+            end
+            if v458 and v458:FindFirstChild("HumanoidRootPart") then
+                v458.HumanoidRootPart.CFrame = CFrame.new(vu447)
+            end
+            vu457 = vu453()
+            if vu457 and vu457:FindFirstChild("ClickDetector") then
+                pcall(function()
+                    fireclickdetector(vu457.ClickDetector)
+                end)
+            end
+            wait(0.3)
+        end)
+    elseif vu449 then
+        vu449:Disconnect()
+        vu449 = nil
+    end
+end)
+local vu459 = v29:MakeTab({
+    "Anti Lag Server",
+    "alert"
+})
+local v460 = vu459
+vu459.AddSection(v460, {
+    "Prote\195\167\195\163o contra lag server de outros scripts"
+})
+local vu461 = {
+    Laptop = false,
+    FireX = false,
+    Bomb = false,
+    Stretcher = false
+}
+local vu462 = {}
+local function vu476(p463, pu464)
+    local function vu473(pu465)
+        pu465.ChildAdded:Connect(function(p466)
+            if vu461[pu464] and p466.Name == pu464 then
+                local v467 = pu465
+                local v468, v469, v470 = ipairs(v467:GetChildren())
+                local v471 = 0
+                while true do
+                    local v472
+                    v470, v472 = v468(v469, v470)
+                    if v470 == nil then
+                        break
+                    end
+                    if v472.Name == pu464 then
+                        v471 = v471 + 1
+                        if v471 > 10 then
+                            v472.Parent = nil
+                        end
+                    end
+                end
+            end
+        end)
+    end
+    local v474 = p463:FindFirstChild("Backpack")
+    if v474 then
+        vu473(v474)
+    end
+    if p463.Character then
+        vu473(p463.Character)
+    end
+    p463.CharacterAdded:Connect(function(p475)
+        vu473(p475)
+    end)
+end
+local function vu484(pu477)
+    local v478 = vu407
+    local v479, v480, v481 = ipairs(v478:GetPlayers())
+    while true do
+        local v482
+        v481, v482 = v479(v480, v481)
+        if v481 == nil then
+            break
+        end
+        vu476(v482, pu477)
+    end
+    vu462[pu477] = vu407.PlayerAdded:Connect(function(p483)
+        vu476(p483, pu477)
+    end)
+end
+local function vu486(p485)
+    if vu462[p485] then
+        vu462[p485]:Disconnect()
+        vu462[p485] = nil
+    end
+end
+local function v490(pu487, pu488)
+    vu459:AddToggle({
+        Name = pu487,
+        Flag = "AntiLag_" .. pu488,
+        Default = false,
+        Callback = function(p489)
+            vu461[pu488] = p489
+            if p489 then
+                vu484(pu488)
+                vu1:Notify("Anti Lag Server", pu487 .. " limitado a 10 vis\195\173veis!")
+            else
+                vu486(pu488)
+                vu1:Notify("Anti Lag Server", pu487 .. " sem limite!")
+            end
+        end
+    })
+end
+v490("Anti Lag Laptop", "Laptop")
+v490("Anti Lag Extintor", "FireX")
+v490("Anti Lag Bomba", "Bomb")
+v490("Anti Lag Maca", "Stretcher")
+local vu491 = game:GetService("ReplicatedStorage")
+local vu492 = game:GetService("Players").LocalPlayer
+local vu493 = {
+    Speed = 3,
+    States = {}
+}
+local function vu495()
+    local v494 = tick() * vu493.Speed % 5 / 5
+    return Color3.fromHSV(v494, 1, 1)
+end
+local function vu498(pu496)
+    local vu497 = pu496.StateKey
+    vu493.States[vu497] = true
+    task.spawn(function()
+        while vu493.States[vu497] do
+            if not (vu492 and vu492.Parent) then
+                vu493.States[vu497] = false
+                break
+            end
+            pu496.Action()
+            task.wait(pu496.Delay)
+        end
+    end)
+end
+local function v502(p499, pu500)
+    p499:AddToggle({
+        Name = pu500.Name,
+        Description = pu500.Description,
+        Default = false,
+        Callback = function(p501)
+            if p501 then
+                vu498(pu500)
+            else
+                vu493.States[pu500.StateKey] = false
+            end
+        end
+    })
+end
+if TabInfo then
+    TabInfo:AddSection({
+        "Configura\195\167\195\181es RGB"
+    })
+    TabInfo:AddSlider({
+        Name = "Velocidade RGB",
+        Description = "Ajusta a velocidade do efeito RGB",
+        Min = 1,
+        Max = 30,
+        Increase = 1,
+        Default = vu493.Speed,
+        Callback = function(p503)
+            vu493.Speed = p503
+        end
+    })
+end
+if v36 then
+    v36:AddSection({
+        "RGB Avatar"
+    })
+    v502(v36, {
+        Name = "RGB Corpo",
+        Description = "Aplica efeito RGB no corpo do personagem.",
+        StateKey = "body",
+        Delay = 0.6,
+        Action = function()
+            pcall(function()
+                local v504 = vu495()
+                local v505 = BrickColor.new(v504)
+                vu491.Remotes.ChangeBodyColor:FireServer(v505.Name)
+            end)
+        end
+    })
+    v502(v36, {
+        Name = "RGB Cabelo",
+        Description = "Aplica efeito RGB no cabelo.",
+        StateKey = "hair",
+        Delay = 0.5,
+        Action = function()
+            pcall(function()
+                vu491.RE["1Max1y"]:FireServer("ChangeHairColor2", vu495())
+            end)
+        end
+    })
+end
+if v35 then
+    v35:AddSection({
+        "RGB Casa"
+    })
+    v502(v35, {
+        Name = "RGB Casa",
+        Description = "Aplica efeito RGB na sua casa.",
+        StateKey = "house",
+        Delay = 0.1,
+        Action = function()
+            pcall(function()
+                vu491.RE["1Player1sHous1e"]:FireServer("ColorPickHouse", vu495())
+            end)
+        end
+    })
+end
+local v506 = v29:MakeTab({
+    "FE",
+    "user"
+})
+v506:AddSection({
+    "FE Personagens Hackers"
+})
+v506:AddButton({
+    Name = "Ativar personagem Goner",
+    Description = "Ativa o personagem Goner FE.",
+    Callback = function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/Dboas123432sx/personagem/refs/heads/main/goner"))()
+    end
+})
+v506:AddButton({
+    Name = "Ativar personagem 1x1x1x1",
+    Description = "Ativa o personagem 1x1x1x1 FE.",
+    Callback = function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/Dboas123432sx/personagem/refs/heads/main/1x1x1x1"))()
+    end
+})
+v506:AddSection({
+    "FE Personagens Flash"
+})
+v506:AddButton({
+    Name = "Ativar personagem Black Flash",
+    Description = "Ativa o personagem Black Flash FE.",
+    Callback = function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/Dboas123432sx/personagem/refs/heads/main/Black%20Flash"))()
+    end
+})
+v506:AddButton({
+    Name = "Ativar personagem Flash",
+    Description = "Ativa o personagem Flash FE.",
+    Callback = function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/Dboas123432sx/personagem/refs/heads/main/Flash%20original"))()
+    end
+})
+v506:AddButton({
+    Name = "Ativar personagem God Flash",
+    Description = "Ativa o personagem God Flash FE.",
+    Callback = function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/Dboas123432sx/personagem/refs/heads/main/GOD%20FLASH"))()
+    end
+})
+v506:AddButton({
+    Name = "Ativar personagem Zoom Flash",
+    Description = "Ativa o personagem Zoom Flash FE.",
+    Callback = function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/Dboas123432sx/personagem/refs/heads/main/Zoom%20Flash"))()
+    end
+})
+v506:AddButton({
+    Name = "Ativar personagem Flash Reverso",
+    Description = "Ativa o personagem Flash Reverso FE.",
+    Callback = function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/Dboas123432sx/personagem/refs/heads/main/flash%20reverso%20slk%20compen"))()
+    end
+})

@@ -1,0 +1,640 @@
+--- https://discord.gg/QzrEb6rMKw
+
+
+if game:GetService("CoreGui"):FindFirstChild("ToraScript") then
+    game:GetService("CoreGui").ToraScript:Destroy()
+end
+local v1 = loadstring(game:HttpGet("https://raw.githubusercontent.com/liebertsx/Tora-Library/main/src/librarynew", true))()
+local v2 = v1:CreateWindow("Grow a Garden")
+local v3 = v2:AddFolder("Main")
+v3:AddButton({
+    text = "Shop UI",
+    flag = "button",
+    callback = function()
+        local v4 = game:GetService("Players").LocalPlayer.PlayerGui.Seed_Shop
+        v4.Enabled = not v4.Enabled
+    end
+})
+v3:AddButton({
+    text = "Gear UI",
+    flag = "button",
+    callback = function()
+        local v5 = game:GetService("Players").LocalPlayer.PlayerGui.Gear_Shop
+        v5.Enabled = not v5.Enabled
+    end
+})
+getgenv().yourTycoon = nil
+local function vu10()
+    local v6, v7, v8 = pairs(workspace.Farm:GetDescendants())
+    while true do
+        local v9
+        v8, v9 = v6(v7, v8)
+        if v8 == nil then
+            break
+        end
+        if v9.Name == "Owner" and v9.Value == game.Players.LocalPlayer.Name then
+            getgenv().yourTycoon = v9.Parent.Parent
+            break
+        end
+    end
+end
+local function vu17(p11)
+    if getgenv().yourTycoon then
+        local v12 = getgenv().yourTycoon.Plants_Physical
+        local v13, v14, v15 = pairs(v12:GetDescendants())
+        while true do
+            local v16
+            v15, v16 = v13(v14, v15)
+            if v15 == nil then
+                break
+            end
+            if v16:IsA("Part") and v16.Parent.Parent.Name == "Plants_Physical" then
+                v16.CanCollide = not p11
+                v16.Transparency = p11 and 1 or 0
+            end
+        end
+    end
+end
+v3:AddToggle({
+    text = "Hide Tree",
+    flag = "toggle",
+    state = false,
+    callback = function(p18)
+        _G.Hide = p18
+        print("Hide: ", p18)
+        vu10()
+        vu17(_G.Hide)
+    end
+})
+v3:AddToggle({
+    text = "Collect Seeds",
+    flag = "toggle",
+    state = false,
+    callback = function(p19)
+        _G.Collect = p19
+        print("Collect: ", p19)
+        if p19 then
+            Collect()
+        end
+    end
+})
+function Collect()
+    _G.Collect = true
+    task.spawn(function()
+        while _G.Collect do
+            pcall(function()
+                getgenv().yourTycoon = nil
+                local v20 = workspace.Farm:GetDescendants()
+                local v21, v22, v23 = pairs(v20)
+                while true do
+                    local v24
+                    v23, v24 = v21(v22, v23)
+                    if v23 == nil then
+                        break
+                    end
+                    if v24.Name == "Owner" and v24.Value == game.Players.LocalPlayer.Name then
+                        getgenv().yourTycoon = v24.Parent.Parent
+                    end
+                end
+                task.spawn(function()
+                    if getgenv().yourTycoon ~= nil then
+                        local v25 = getgenv().yourTycoon.Plants_Physical
+                        local v26, v27, v28 = pairs(v25:GetDescendants())
+                        while true do
+                            local v29
+                            v28, v29 = v26(v27, v28)
+                            if v28 == nil then
+                                break
+                            end
+                            if v29.Name == "ProximityPrompt" and (v29.Enabled == true and v29.Parent.ClassName == "Part") and (v29.Parent.Parent:GetAttribute("Moonlit") ~= true and v29.Parent.Parent:GetAttribute("Bloodlit") ~= true) then
+                                game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(v29.Parent.Position) * CFrame.new(0, 5, 0)
+                                break
+                            end
+                        end
+                    end
+                end)
+                wait(0.5)
+                task.spawn(function()
+                    if getgenv().yourTycoon ~= nil then
+                        local v30 = getgenv().yourTycoon.Plants_Physical
+                        local v31, v32, v33 = pairs(v30:GetDescendants())
+                        while true do
+                            local v34
+                            v33, v34 = v31(v32, v33)
+                            if v33 == nil then
+                                break
+                            end
+                            if v34.Name == "ProximityPrompt" and (v34.Enabled == true and v34.Parent.ClassName == "Part") and (v34.Parent.Parent:GetAttribute("Moonlit") ~= true and v34.Parent.Parent:GetAttribute("Bloodlit") ~= true) then
+                                fireproximityprompt(v34, 1, true)
+                                task.wait()
+                            end
+                        end
+                    end
+                end)
+            end)
+            task.wait(1)
+        end
+    end)
+end
+v3:AddToggle({
+    text = "Sell All",
+    flag = "toggle",
+    state = false,
+    callback = function(p35)
+        _G.Sell = p35
+        print("Sell: ", p35)
+        if p35 then
+            Sell()
+        end
+    end
+})
+function Sell()
+    spawn(function()
+        _G.Sell = true
+        while _G.Sell do
+            wait()
+            pcall(function()
+                local v36 = game.Players.LocalPlayer.Character.HumanoidRootPart
+                local v37 = v36.CFrame
+                local v38 = CFrame.new(workspace.NPCS.Sam.HumanoidRootPart.Position)
+                local v39 = tick()
+                while tick() - v39 < 0.4 do
+                    v36.CFrame = v38
+                    task.wait()
+                    game:GetService("ReplicatedStorage").GameEvents.Sell_Inventory:FireServer()
+                end
+                v36.CFrame = v37
+                wait(4)
+            end)
+        end
+    end)
+end
+v3:AddButton({
+    text = "Sell Plants (Holding)",
+    flag = "button",
+    callback = function()
+        local v40 = game.Players.LocalPlayer.Character.HumanoidRootPart
+        local v41 = v40.CFrame
+        v40.CFrame = CFrame.new(workspace.NPCS.Sam.HumanoidRootPart.Position)
+        task.wait(0.2)
+        game:GetService("ReplicatedStorage").GameEvents.Sell_Item:FireServer()
+        task.wait(0.2)
+        v40.CFrame = v41
+    end
+})
+v3:AddToggle({
+    text = "Hatch Eggs",
+    flag = "toggle",
+    state = false,
+    callback = function(p42)
+        _G.Hatch = p42
+        print("Hatch: ", p42)
+        if p42 then
+            Hatch()
+        end
+    end
+})
+function Hatch()
+    spawn(function()
+        _G.Hatch = true
+        while _G.Hatch do
+            wait()
+            pcall(function()
+                getgenv().yourTycoon = nil
+                local v43 = workspace.Farm:GetDescendants()
+                local v44, v45, v46 = pairs(v43)
+                while true do
+                    local v47
+                    v46, v47 = v44(v45, v46)
+                    if v46 == nil then
+                        break
+                    end
+                    if v47.Name == "Owner" and v47.Value == game.Players.LocalPlayer.Name then
+                        getgenv().yourTycoon = v47.Parent.Parent
+                    end
+                end
+                task.spawn(function()
+                    if getgenv().yourTycoon ~= nil then
+                        local v48 = getgenv().yourTycoon.Objects_Physical
+                        local v49, v50, v51 = pairs(v48:GetChildren())
+                        while true do
+                            local v52
+                            v51, v52 = v49(v50, v51)
+                            if v51 == nil then
+                                break
+                            end
+                            game:GetService("ReplicatedStorage").GameEvents.PetEggService:FireServer(unpack({
+                                "HatchPet",
+                                v52
+                            }))
+                        end
+                    end
+                end)
+                wait(5)
+            end)
+        end
+    end)
+end
+v3:AddToggle({
+    text = "Auto Feed Pets",
+    flag = "toggle",
+    state = false,
+    callback = function(p53)
+        _G.Feed = p53
+        print("Feed: ", p53)
+        if p53 then
+            Feed()
+        end
+    end
+})
+function Feed()
+    spawn(function()
+        _G.Feed = true
+        while _G.Feed do
+            wait()
+            pcall(function()
+                function eat()
+                    local v54 = game:GetService("Players").LocalPlayer
+                    local v55 = v54:WaitForChild("Backpack")
+                    local v56, v57, v58 = ipairs(v55:GetChildren())
+                    while true do
+                        local v59
+                        v58, v59 = v56(v57, v58)
+                        if v58 == nil then
+                            break
+                        end
+                        if v59:IsA("Tool") and v59:GetAttribute("ItemType") == "Holdable" then
+                            v59.Parent = v54.Character
+                            break
+                        end
+                    end
+                end
+                local v60, v61, v62 = pairs(workspace.PetsPhysical:GetChildren())
+                while true do
+                    local v63
+                    v62, v63 = v60(v61, v62)
+                    if v62 == nil then
+                        break
+                    end
+                    if v63:GetAttribute("OWNER") == game:GetService("Players").LocalPlayer.Name then
+                        eat()
+                        local v64 = {
+                            "Feed",
+                            v63:GetAttribute("UUID")
+                        }
+                        game:GetService("ReplicatedStorage").GameEvents.ActivePetService:FireServer(unpack(v64))
+                        wait(1)
+                    end
+                end
+                wait(5)
+            end)
+        end
+    end)
+end
+v3:AddButton({
+    text = "Sell Pets (Holding)",
+    flag = "button",
+    callback = function()
+        local v65 = {
+            game.Players.LocalPlayer.Character:FindFirstChildOfClass("Tool")
+        }
+        game:GetService("ReplicatedStorage").GameEvents.SellPet_RE:FireServer(unpack(v65))
+    end
+})
+local v66 = v2:AddFolder("Auto Buy")
+v66:AddToggle({
+    text = "Auto Eggs",
+    flag = "toggle",
+    state = false,
+    callback = function(p67)
+        _G.Eggs = p67
+        print("Eggs: ", p67)
+        if p67 then
+            Eggs()
+        end
+    end
+})
+function Eggs()
+    spawn(function()
+        _G.Eggs = true
+        while _G.Eggs do
+            wait()
+            pcall(function()
+                for v68 = 1, 5 do
+                    game:GetService("ReplicatedStorage").GameEvents.BuyPetEgg:FireServer(unpack({
+                        v68
+                    }))
+                end
+                wait(10)
+            end)
+        end
+    end)
+end
+local v69, v70, v71 = ipairs({
+    "Prismatic",
+    "Divine",
+    "Mythical",
+    "Legendary"
+})
+while true do
+    local vu72
+    v71, vu72 = v69(v70, v71)
+    if v71 == nil then
+        break
+    end
+    v66:AddToggle({
+        text = "Auto Seed (" .. vu72 .. ")",
+        flag = "toggle_seed_" .. vu72,
+        state = false,
+        callback = function(p73)
+            _G[vu72] = p73
+            print(vu72 .. ": ", p73)
+            if p73 then
+                spawn(function()
+                    while _G[vu72] do
+                        task.wait()
+                        pcall(function()
+                            local v74, v75, v76 = pairs(game:GetService("Players").LocalPlayer.PlayerGui.Seed_Shop.Frame.ScrollingFrame:GetDescendants())
+                            while true do
+                                local v77
+                                v76, v77 = v74(v75, v76)
+                                if v76 == nil then
+                                    break
+                                end
+                                if v77.Name == "Rarity_Text" and v77.Text == vu72 then
+                                    game:GetService("ReplicatedStorage").GameEvents.BuySeedStock:FireServer(v77.Parent.Parent.Name)
+                                end
+                            end
+                        end)
+                        wait(1)
+                    end
+                end)
+            end
+        end
+    })
+end
+v66:AddToggle({
+    text = "Auto Gear (Divine)",
+    flag = "toggle",
+    state = false,
+    callback = function(p78)
+        _G.Gear1 = p78
+        print("Gear1: ", p78)
+        if p78 then
+            Gear1()
+        end
+    end
+})
+function Gear1()
+    spawn(function()
+        _G.Gear1 = true
+        while _G.Gear1 do
+            wait()
+            pcall(function()
+                game:GetService("ReplicatedStorage").GameEvents.BuyGearStock:FireServer("Master Sprinkler")
+                wait(1)
+            end)
+        end
+    end)
+end
+local v79, v80, v81 = ipairs({
+    "Mythical",
+    "Legendary"
+})
+while true do
+    local vu82
+    v81, vu82 = v79(v80, v81)
+    if v81 == nil then
+        break
+    end
+    v66:AddToggle({
+        text = "Auto Gear (" .. vu82 .. ")",
+        flag = "toggle_gear_" .. vu82,
+        state = false,
+        callback = function(p83)
+            _G["Gear_" .. vu82] = p83
+            print("Gear (" .. vu82 .. "):", p83)
+            if p83 then
+                spawn(function()
+                    while _G["Gear_" .. vu82] do
+                        task.wait()
+                        pcall(function()
+                            local v84, v85, v86 = pairs(game:GetService("Players").LocalPlayer.PlayerGui.Gear_Shop.Frame.ScrollingFrame:GetDescendants())
+                            while true do
+                                local v87
+                                v86, v87 = v84(v85, v86)
+                                if v86 == nil then
+                                    break
+                                end
+                                if v87.Name == "Rarity_Text" and v87.Text == vu82 then
+                                    game:GetService("ReplicatedStorage").GameEvents.BuyGearStock:FireServer(v87.Parent.Parent.Name)
+                                end
+                            end
+                        end)
+                        wait(1)
+                    end
+                end)
+            end
+        end
+    })
+end
+v66:AddLabel({
+    text = "YouTube: Tora IsMe"
+})
+local v88 = v1:CreateWindow("Event (Lunar Glow)")
+local v89 = v88:AddFolder("Main")
+v89:AddToggle({
+    text = "Collect Moonlit",
+    flag = "toggle",
+    state = false,
+    callback = function(p90)
+        _G.Moonlit = p90
+        print("Moonlit: ", p90)
+        if p90 then
+            Moonlit()
+        end
+    end
+})
+function Moonlit()
+    _G.Moonlit = true
+    task.spawn(function()
+        while _G.Moonlit do
+            pcall(function()
+                getgenv().yourTycoon = nil
+                local v91 = workspace.Farm:GetDescendants()
+                local v92, v93, v94 = pairs(v91)
+                while true do
+                    local v95
+                    v94, v95 = v92(v93, v94)
+                    if v94 == nil then
+                        break
+                    end
+                    if v95.Name == "Owner" and v95.Value == game.Players.LocalPlayer.Name then
+                        getgenv().yourTycoon = v95.Parent.Parent
+                    end
+                end
+                task.spawn(function()
+                    if getgenv().yourTycoon ~= nil then
+                        local v96 = getgenv().yourTycoon.Plants_Physical
+                        local v97, v98, v99 = pairs(v96:GetDescendants())
+                        while true do
+                            local v100
+                            v99, v100 = v97(v98, v99)
+                            if v99 == nil then
+                                break
+                            end
+                            if v100.Name == "ProximityPrompt" and (v100.Enabled == true and v100.Parent.ClassName == "Part") and v100.Parent.Parent:GetAttribute("Moonlit") == true then
+                                game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(v100.Parent.Position) * CFrame.new(0, 5, 0)
+                                wait(0.2)
+                                fireproximityprompt(v100, 1, true)
+                                break
+                            end
+                        end
+                    end
+                end)
+                wait(1)
+            end)
+            task.wait()
+        end
+    end)
+end
+v89:AddToggle({
+    text = "Collect Bloodlit",
+    flag = "toggle",
+    state = false,
+    callback = function(p101)
+        _G.Bloodlit = p101
+        print("Bloodlit: ", p101)
+        if p101 then
+            Bloodlit()
+        end
+    end
+})
+function Bloodlit()
+    _G.Bloodlit = true
+    task.spawn(function()
+        while _G.Bloodlit do
+            pcall(function()
+                getgenv().yourTycoon = nil
+                local v102 = workspace.Farm:GetDescendants()
+                local v103, v104, v105 = pairs(v102)
+                while true do
+                    local v106
+                    v105, v106 = v103(v104, v105)
+                    if v105 == nil then
+                        break
+                    end
+                    if v106.Name == "Owner" and v106.Value == game.Players.LocalPlayer.Name then
+                        getgenv().yourTycoon = v106.Parent.Parent
+                    end
+                end
+                task.spawn(function()
+                    if getgenv().yourTycoon ~= nil then
+                        local v107 = getgenv().yourTycoon.Plants_Physical
+                        local v108, v109, v110 = pairs(v107:GetDescendants())
+                        while true do
+                            local v111
+                            v110, v111 = v108(v109, v110)
+                            if v110 == nil then
+                                break
+                            end
+                            if v111.Name == "ProximityPrompt" and (v111.Enabled == true and v111.Parent.ClassName == "Part") and v111.Parent.Parent:GetAttribute("Bloodlit") == true then
+                                game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(v111.Parent.Position) * CFrame.new(0, 5, 0)
+                                wait(0.2)
+                                fireproximityprompt(v111, 1, true)
+                                break
+                            end
+                        end
+                    end
+                end)
+                wait(1)
+            end)
+            task.wait()
+        end
+    end)
+end
+v89:AddToggle({
+    text = "Submit All",
+    flag = "toggle",
+    state = false,
+    callback = function(p112)
+        _G.Submit = p112
+        print("Submit: ", p112)
+        if p112 then
+            Submit()
+        end
+    end
+})
+function Submit()
+    spawn(function()
+        _G.Submit = true
+        while _G.Submit do
+            wait()
+            pcall(function()
+                game:GetService("ReplicatedStorage").GameEvents.NightQuestRemoteEvent:FireServer("SubmitAllPlants")
+                wait(4)
+            end)
+        end
+    end)
+end
+v89:AddButton({
+    text = "Submit Holding",
+    flag = "button",
+    callback = function()
+        game:GetService("ReplicatedStorage").GameEvents.NightQuestRemoteEvent:FireServer("SubmitHeldPlant")
+    end
+})
+v89:AddButton({
+    text = "EventShop UI",
+    flag = "button",
+    callback = function()
+        local v113 = game:GetService("Players").LocalPlayer.PlayerGui.EventShop_UI
+        v113.Enabled = not v113.Enabled
+    end
+})
+local v114 = v88:AddFolder("Auto Buy")
+local v115, v116, v117 = ipairs({
+    "Divine",
+    "Mythical",
+    "Legendary",
+    "Rare"
+})
+while true do
+    local vu118
+    v117, vu118 = v115(v116, v117)
+    if v117 == nil then
+        break
+    end
+    v114:AddToggle({
+        text = "Auto Buy (" .. vu118 .. ")",
+        flag = "toggle_seed_" .. vu118,
+        state = false,
+        callback = function(p119)
+            _G[vu118] = p119
+            print(vu118 .. ": ", p119)
+            if p119 then
+                spawn(function()
+                    while _G[vu118] do
+                        task.wait()
+                        pcall(function()
+                            local v120, v121, v122 = pairs(game:GetService("Players").LocalPlayer.PlayerGui.EventShop_UI.Frame.ScrollingFrame:GetDescendants())
+                            while true do
+                                local v123
+                                v122, v123 = v120(v121, v122)
+                                if v122 == nil then
+                                    break
+                                end
+                                if v123.Name == "Rarity_Text" and v123.Text == vu118 then
+                                    game:GetService("ReplicatedStorage").GameEvents.BuyEventShopStock:FireServer(v123.Parent.Parent.Name)
+                                end
+                            end
+                        end)
+                        wait(1)
+                    end
+                end)
+            end
+        end
+    })
+end
+v1:Init()
+game:GetService("SoundService").Error:Destroy()

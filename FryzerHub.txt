@@ -1,0 +1,1232 @@
+-- by SRB LEAKERS https://discord.gg/QzrEb6rMKw
+
+
+local function vu110()
+    local vu1 = loadstring(game:HttpGet("https://github.com/Footagesus/WindUI/releases/latest/download/main.lua"))()
+    vu1:SetNotificationLower(true)
+    vu1:AddTheme({
+        Name = "Blue Theme",
+        Accent = Color3.fromRGB(37, 99, 235),
+        Dialog = Color3.fromRGB(15, 23, 42),
+        Outline = Color3.fromRGB(59, 130, 246),
+        Text = Color3.fromRGB(248, 250, 252),
+        Placeholder = Color3.fromRGB(100, 116, 139),
+        Background = Color3.fromRGB(15, 23, 42),
+        Button = Color3.fromRGB(30, 58, 138),
+        Icon = Color3.fromRGB(147, 197, 253)
+    })
+    local vu2 = vu1:CreateWindow({
+        Title = "Fryzer Hub",
+        Icon = "",
+        Author = "Join Discord",
+        Folder = "MySuperHub",
+        Size = UDim2.fromOffset(580, 460),
+        MinSize = Vector2.new(560, 350),
+        MaxSize = Vector2.new(850, 560),
+        Transparent = true,
+        Theme = "Blue Theme",
+        Resizable = true,
+        SideBarWidth = 200,
+        BackgroundImageTransparency = 0.42,
+        HideSearchBar = false,
+        ScrollBarEnabled = true,
+        User = {
+            Enabled = true,
+            Anonymous = false,
+            Callback = function()
+                print("clicked")
+            end
+        }
+    })
+    vu2:EditOpenButton({
+        Title = "Open",
+        Icon = "monitor",
+        CornerRadius = UDim.new(0, 16),
+        StrokeThickness = 2,
+        Color = ColorSequence.new(Color3.fromHex("#1e3a8a"), Color3.fromHex("F89B29")),
+        OnlyMobile = false,
+        Enabled = true,
+        Draggable = true
+    })
+    vu2:Tag({
+        Title = "v1.0",
+        Color = Color3.fromHex("#30ff6a"),
+        Radius = 8
+    })
+    local v3 = vu2:Tab({
+        Title = "Info",
+        Icon = "info",
+        Locked = false
+    })
+    v3:Select()
+    v3:Section({
+        Title = "Player Information Dashboard",
+        Icon = "user-check"
+    })
+    v3:Paragraph({
+        Title = "Player Information Dashboard",
+        Desc = "Complete player details, game information, and community access",
+        Color = "Blue",
+        Image = "",
+        ImageSize = 30,
+        Thumbnail = "",
+        ThumbnailSize = 80,
+        Locked = false,
+        Buttons = {}
+    })
+    local vu4 = game:GetService("Players")
+    game:GetService("HttpService")
+    local vu5 = vu4.LocalPlayer
+    local v6 = vu5.DisplayName ~= "" and vu5.DisplayName or vu5.Name
+    local v7 = vu5.AccountAge
+    local vu8 = "Unknown Game"
+    pcall(function()
+        vu8 = game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name
+    end)
+    v3:Paragraph({
+        Title = "\239\191\189\239\191\189\239\191\189\239\191\189\239\191\189\239\191\189 " .. v6,
+        Desc = string.format("\239\191\189\239\191\189\239\191\189\239\191\189\239\191\189\239\191\189\239\184\143 Username: @%s\n\239\191\189\239\191\189\239\191\189\239\191\189\239\191\189\239\191\189 Account Age: %d days\n\239\191\189\239\191\189\239\191\189\239\191\189\239\191\189\239\191\189 User ID: %d\n\239\191\189\239\191\189\239\191\189\239\191\189\239\191\189\239\191\189 Current Game: %s\n\239\191\189\239\191\189\239\191\189\239\191\189\239\191\189\239\191\189 Server: %d/%d players\n\239\191\189\239\191\189\239\191\189\239\191\189\239\191\189\239\191\189 Region: %s", vu5.Name, v7, vu5.UserId, vu8, # vu4:GetPlayers(), vu4.MaxPlayers, game:GetService("LocalizationService").RobloxLocaleId),
+        Color = "Blue",
+        Image = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. vu5.UserId .. "&width=150&height=150&format=png",
+        ImageSize = 52,
+        Thumbnail = "",
+        ThumbnailSize = 80,
+        Locked = false,
+        Buttons = {}
+    })
+    v3:Divider()
+    v3:Section({
+        Title = "Join Our Discord Community",
+        Icon = "users"
+    })
+    v3:Paragraph({
+        Title = "Join Our Discord Community",
+        Desc = "Connect with other users, get support, and stay updated!",
+        Color = "Blue",
+        Image = "",
+        ImageSize = 30,
+        Thumbnail = "",
+        ThumbnailSize = 80,
+        Locked = false,
+        Buttons = {}
+    })
+    v3:Button({
+        Title = "Copy Discord Link",
+        Desc = "Copy invite link to clipboard",
+        Locked = false,
+        Callback = function()
+            setclipboard("https://discord.gg/UKYHGddQD3")
+            vu1:Notify({
+                Title = "Link Copied!",
+                Content = "Discord link copied to clipboard",
+                Duration = 3,
+                Icon = "copy"
+            })
+        end
+    })
+    v3:Space()
+    local v9 = vu2:Tab({
+        Title = "Player",
+        Icon = "user-check",
+        Locked = false
+    })
+    v9:Section({
+        Title = "Player Controls",
+        Icon = "user-check"
+    })
+    v9:Paragraph({
+        Title = "Player Controls",
+        Desc = "Use the buttons below to control your player character",
+        Color = "Blue",
+        Image = "",
+        ImageSize = 30,
+        Thumbnail = "",
+        ThumbnailSize = 80,
+        Locked = false,
+        Buttons = {}
+    })
+    v9:Divider()
+    v9:Section({
+        Title = "Movement System",
+        Icon = "zap",
+        Opened = true
+    })
+    local vu10 = false
+    local vu11 = game:GetService("UserInputService")
+    v9:Toggle({
+        Title = "Infinite Jump",
+        Desc = "Press Space to jump infinitely",
+        Icon = "arrow-up",
+        Type = "Checkbox",
+        Default = false,
+        Callback = function(p12)
+            vu10 = p12
+            vu1:Notify({
+                Title = p12 and "Infinite Jump Enabled! \239\191\189\239\191\189\239\191\189\239\191\189\239\191\189\239\191\189" or "Infinite Jump Disabled!",
+                Content = p12 and "Press Space to jump infinitely" or "Jump mechanics restored to normal",
+                Duration = 3
+            })
+        end
+    })
+    vu11.JumpRequest:Connect(function()
+        if vu10 and vu5.Character and vu5.Character:FindFirstChild("Humanoid") then
+            local v13 = vu5.Character.Humanoid
+            if v13:GetState() ~= Enum.HumanoidStateType.Dead then
+                v13:ChangeState(Enum.HumanoidStateType.Jumping)
+            end
+        end
+    end)
+    local vu14 = game:GetService("RunService")
+    local vu15 = vu4.LocalPlayer
+    local vu16 = false
+    local vu17 = false
+    local vu18 = 16
+    local vu19 = 7.2
+    local vu20 = 16
+    local vu21 = 7.2
+    local function _()
+        return vu15.Character
+    end
+    local function v22()
+        if vu15.Character and vu15.Character:FindFirstChild("Humanoid") then
+            vu20 = vu15.Character.Humanoid.WalkSpeed
+            vu21 = vu15.Character.Humanoid.JumpHeight or 7.2
+        end
+    end
+    v22()
+    vu15.CharacterAdded:Connect(v22)
+    v9:Divider()
+    v9:Slider({
+        Title = "Walk Speed Setting",
+        Step = 1,
+        Value = {
+            Min = 16,
+            Max = 500,
+            Default = 16
+        },
+        Callback = function(p23)
+            vu18 = p23
+            print("\239\191\189\239\191\189\239\191\189\239\191\189\239\191\189\239\191\189 Walk speed set to: " .. p23)
+        end
+    })
+    v9:Toggle({
+        Title = "Enable Speed Boost",
+        Desc = "Boost your walking speed",
+        Icon = "zap",
+        Type = "Checkbox",
+        Default = false,
+        Callback = function(p24)
+            vu16 = p24
+            task.spawn(function()
+                while vu16 do
+                    if vu15.Character and vu15.Character:FindFirstChild("Humanoid") then
+                        vu15.Character.Humanoid.WalkSpeed = vu18
+                    end
+                    task.wait(0.1)
+                end
+                if vu15.Character and vu15.Character:FindFirstChild("Humanoid") then
+                    vu15.Character.Humanoid.WalkSpeed = vu20
+                end
+            end)
+            print("\239\191\189\239\191\189\239\191\189\239\191\189\239\191\189\239\191\189 Speed Boost: " .. (p24 and "ON" or "OFF"))
+        end
+    })
+    v9:Divider()
+    v9:Slider({
+        Title = "Jump Height Setting",
+        Step = 1,
+        Value = {
+            Min = 7,
+            Max = 200,
+            Default = 50
+        },
+        Callback = function(p25)
+            vu19 = p25
+            print("\239\191\189\239\191\189\239\191\189\239\191\189\239\191\189\239\191\189 Jump height set to: " .. p25)
+        end
+    })
+    v9:Toggle({
+        Title = "Enable Jump Boost",
+        Desc = "Increase your jump height",
+        Icon = "move-up",
+        Type = "Checkbox",
+        Default = false,
+        Callback = function(p26)
+            vu17 = p26
+            task.spawn(function()
+                while vu17 do
+                    if vu15.Character and vu15.Character:FindFirstChild("Humanoid") then
+                        local v27 = vu15.Character.Humanoid
+                        v27.UseJumpPower = false
+                        v27.JumpHeight = vu19
+                    end
+                    task.wait(0.1)
+                end
+                if vu15.Character and vu15.Character:FindFirstChild("Humanoid") then
+                    vu15.Character.Humanoid.JumpHeight = 7.2
+                end
+            end)
+            print("\239\191\189\239\191\189\239\191\189\239\191\189\239\191\189\239\191\189 Jump Boost: " .. (p26 and "ON" or "OFF"))
+        end
+    })
+    v9:Divider()
+    v9:Space()
+    local vu28 = vu4.LocalPlayer:GetMouse()
+    local vu29 = false
+    local vu30 = true
+    local vu31 = 1
+    local vu32 = 1
+    local vu33 = false
+    local function vu44(pu34)
+        repeat
+            task.wait()
+        until vu4.LocalPlayer and vu4.LocalPlayer.Character and (vu4.LocalPlayer.Character:WaitForChild("HumanoidRootPart") and vu4.LocalPlayer.Character:FindFirstChildOfClass("Humanoid"))
+        repeat
+            task.wait()
+        until vu28
+        if flyKeyDown or flyKeyUp then
+            flyKeyDown:Disconnect()
+            flyKeyUp:Disconnect()
+        end
+        local vu35 = vu4.LocalPlayer.Character:WaitForChild("HumanoidRootPart")
+        local vu36 = {
+            F = 0,
+            B = 0,
+            L = 0,
+            R = 0,
+            Q = 0,
+            E = 0
+        }
+        local vu37 = {
+            F = 0,
+            B = 0,
+            L = 0,
+            R = 0,
+            Q = 0,
+            E = 0
+        }
+        local vu38 = 0
+        local function v41()
+            vu29 = true
+            local vu39 = Instance.new("BodyGyro")
+            local vu40 = Instance.new("BodyVelocity")
+            vu39.P = 90000
+            vu39.Parent = vu35
+            vu40.Parent = vu35
+            vu39.MaxTorque = Vector3.new(9000000000, 9000000000, 9000000000)
+            vu39.CFrame = vu35.CFrame
+            vu40.Velocity = Vector3.new(0, 0, 0)
+            vu40.MaxForce = Vector3.new(9000000000, 9000000000, 9000000000)
+            task.spawn(function()
+                while true do
+                    task.wait()
+                    if not pu34 and vu4.LocalPlayer.Character:FindFirstChildOfClass("Humanoid") then
+                        vu4.LocalPlayer.Character:FindFirstChildOfClass("Humanoid").PlatformStand = true
+                    end
+                    if vu36.L + vu36.R ~= 0 or (vu36.F + vu36.B ~= 0 or vu36.Q + vu36.E ~= 0) then
+                        vu38 = 50
+                    elseif vu36.L + vu36.R == 0 and (vu36.F + vu36.B == 0 and (vu36.Q + vu36.E == 0 and vu38 ~= 0)) then
+                        vu38 = 0
+                    end
+                    if vu36.L + vu36.R ~= 0 or (vu36.F + vu36.B ~= 0 or vu36.Q + vu36.E ~= 0) then
+                        vu40.Velocity = (workspace.CurrentCamera.CoordinateFrame.lookVector * (vu36.F + vu36.B) + (workspace.CurrentCamera.CoordinateFrame * CFrame.new(vu36.L + vu36.R, (vu36.F + vu36.B + vu36.Q + vu36.E) * 0.2, 0).p - workspace.CurrentCamera.CoordinateFrame.p)) * vu38
+                        vu37 = {
+                            F = vu36.F,
+                            B = vu36.B,
+                            L = vu36.L,
+                            R = vu36.R
+                        }
+                    elseif vu36.L + vu36.R ~= 0 or (vu36.F + vu36.B ~= 0 or (vu36.Q + vu36.E ~= 0 or vu38 == 0)) then
+                        vu40.Velocity = Vector3.new(0, 0, 0)
+                    else
+                        vu40.Velocity = (workspace.CurrentCamera.CoordinateFrame.lookVector * (vu37.F + vu37.B) + (workspace.CurrentCamera.CoordinateFrame * CFrame.new(vu37.L + vu37.R, (vu37.F + vu37.B + vu36.Q + vu36.E) * 0.2, 0).p - workspace.CurrentCamera.CoordinateFrame.p)) * vu38
+                    end
+                    vu39.CFrame = workspace.CurrentCamera.CoordinateFrame
+                    if not vu29 then
+                        vu36 = {
+                            F = 0,
+                            B = 0,
+                            L = 0,
+                            R = 0,
+                            Q = 0,
+                            E = 0
+                        }
+                        vu37 = {
+                            F = 0,
+                            B = 0,
+                            L = 0,
+                            R = 0,
+                            Q = 0,
+                            E = 0
+                        }
+                        vu38 = 0
+                        vu39:Destroy()
+                        vu40:Destroy()
+                        if vu4.LocalPlayer.Character:FindFirstChildOfClass("Humanoid") then
+                            vu4.LocalPlayer.Character:FindFirstChildOfClass("Humanoid").PlatformStand = false
+                        end
+                        return
+                    end
+                end
+            end)
+        end
+        flyKeyDown = vu28.KeyDown:Connect(function(p42)
+            if p42:lower() ~= "w" then
+                if p42:lower() ~= "s" then
+                    if p42:lower() ~= "a" then
+                        if p42:lower() ~= "d" then
+                            if vu30 and p42:lower() == "e" then
+                                vu36.Q = (pu34 and vu32 or vu31) * 2
+                            elseif vu30 and p42:lower() == "q" then
+                                vu36.E = - (pu34 and vu32 or vu31) * 2
+                            end
+                        else
+                            vu36.R = pu34 and vu32 or vu31
+                        end
+                    else
+                        vu36.L = - (pu34 and vu32 or vu31)
+                    end
+                else
+                    vu36.B = - (pu34 and vu32 or vu31)
+                end
+            else
+                vu36.F = pu34 and vu32 or vu31
+            end
+            pcall(function()
+                workspace.CurrentCamera.CameraType = Enum.CameraType.Track
+            end)
+        end)
+        flyKeyUp = vu28.KeyUp:Connect(function(p43)
+            if p43:lower() ~= "w" then
+                if p43:lower() ~= "s" then
+                    if p43:lower() ~= "a" then
+                        if p43:lower() ~= "d" then
+                            if p43:lower() ~= "e" then
+                                if p43:lower() == "q" then
+                                    vu36.E = 0
+                                end
+                            else
+                                vu36.Q = 0
+                            end
+                        else
+                            vu36.R = 0
+                        end
+                    else
+                        vu36.L = 0
+                    end
+                else
+                    vu36.B = 0
+                end
+            else
+                vu36.F = 0
+            end
+        end)
+        v41()
+    end
+    local function vu45()
+        vu29 = false
+        if flyKeyDown or flyKeyUp then
+            flyKeyDown:Disconnect()
+            flyKeyUp:Disconnect()
+        end
+        if vu4.LocalPlayer.Character:FindFirstChildOfClass("Humanoid") then
+            vu4.LocalPlayer.Character:FindFirstChildOfClass("Humanoid").PlatformStand = false
+        end
+        pcall(function()
+            workspace.CurrentCamera.CameraType = Enum.CameraType.Custom
+        end)
+    end
+    local vu46 = "BodyVelocity"
+    local vu47 = "BodyGyro"
+    local vu48 = nil
+    local vu49 = nil
+    local function vu51()
+        pcall(function()
+            vu29 = false
+            local v50 = vu4.LocalPlayer.Character:WaitForChild("HumanoidRootPart")
+            v50:FindFirstChild(vu46):Destroy()
+            v50:FindFirstChild(vu47):Destroy()
+            vu4.LocalPlayer.Character:FindFirstChildWhichIsA("Humanoid").PlatformStand = false
+            vu48:Disconnect()
+            vu49:Disconnect()
+        end)
+    end
+    local function vu66()
+        vu51()
+        vu29 = true
+        local vu52 = vu4.LocalPlayer.Character:WaitForChild("HumanoidRootPart")
+        local vu53 = workspace.CurrentCamera
+        local vu54 = Vector3.new()
+        local vu55 = Vector3.new(0, 0, 0)
+        local vu56 = Vector3.new(9000000000, 9000000000, 9000000000)
+        local vu57 = require(vu4.LocalPlayer.PlayerScripts:WaitForChild("PlayerModule"):WaitForChild("ControlModule"))
+        local v58 = Instance.new("BodyVelocity")
+        v58.Name = vu46
+        v58.Parent = vu52
+        v58.MaxForce = vu55
+        v58.Velocity = vu55
+        local v59 = Instance.new("BodyGyro")
+        v59.Name = vu47
+        v59.Parent = vu52
+        v59.MaxTorque = vu56
+        v59.P = 1000
+        v59.D = 50
+        vu48 = vu4.LocalPlayer.CharacterAdded:Connect(function()
+            local v60 = Instance.new("BodyVelocity")
+            v60.Name = vu46
+            v60.Parent = vu52
+            v60.MaxForce = vu55
+            v60.Velocity = vu55
+            local v61 = Instance.new("BodyGyro")
+            v61.Name = vu47
+            v61.Parent = vu52
+            v61.MaxTorque = vu56
+            v61.P = 1000
+            v61.D = 50
+        end)
+        vu49 = vu14.RenderStepped:Connect(function()
+            vu52 = vu4.LocalPlayer.Character:WaitForChild("HumanoidRootPart")
+            vu53 = workspace.CurrentCamera
+            if vu4.LocalPlayer.Character:FindFirstChildWhichIsA("Humanoid") and vu52 and (vu52:FindFirstChild(vu46) and vu52:FindFirstChild(vu47)) then
+                local v62 = vu4.LocalPlayer.Character:FindFirstChildWhichIsA("Humanoid")
+                local v63 = vu52:FindFirstChild(vu46)
+                local v64 = vu52:FindFirstChild(vu47)
+                v63.MaxForce = vu56
+                v64.MaxTorque = vu56
+                v62.PlatformStand = true
+                v64.CFrame = vu53.CoordinateFrame
+                v63.Velocity = vu54
+                local v65 = vu57:GetMoveVector()
+                if v65.X > 0 then
+                    v63.Velocity = v63.Velocity + vu53.CFrame.RightVector * (v65.X * (vu31 * 50))
+                end
+                if v65.X < 0 then
+                    v63.Velocity = v63.Velocity + vu53.CFrame.RightVector * (v65.X * (vu31 * 50))
+                end
+                if v65.Z > 0 then
+                    v63.Velocity = v63.Velocity - vu53.CFrame.LookVector * (v65.Z * (vu31 * 50))
+                end
+                if v65.Z < 0 then
+                    v63.Velocity = v63.Velocity - vu53.CFrame.LookVector * (v65.Z * (vu31 * 50))
+                end
+            end
+        end)
+    end
+    v9:Slider({
+        Title = "Fly Speed",
+        Step = 0.1,
+        Value = {
+            Min = 0.1,
+            Max = 10,
+            Default = 1
+        },
+        Callback = function(p67)
+            vu31 = p67
+        end
+    })
+    v9:Toggle({
+        Title = "Fly",
+        Desc = "Enable flying with WASD controls",
+        Icon = "plane",
+        Type = "Checkbox",
+        Default = false,
+        Callback = function(p68)
+            vu33 = p68
+            task.spawn(function()
+                if vu29 or not vu33 then
+                    if vu29 and not vu33 then
+                        if vu11.TouchEnabled then
+                            vu51()
+                        else
+                            vu45()
+                        end
+                    end
+                elseif vu11.TouchEnabled then
+                    vu66()
+                else
+                    vu45()
+                    task.wait()
+                    vu44()
+                end
+            end)
+        end
+    })
+    v9:Space()
+    local v69 = vu2:Tab({
+        Title = "Main",
+        Icon = "box-open",
+        Locked = false
+    })
+    local v70 = game:GetService("Players")
+    local vu71 = game:GetService("ReplicatedStorage")
+    game:GetService("RunService")
+    local vu72 = v70.LocalPlayer
+    local v73 = vu72
+    local vu74 = vu72.WaitForChild(v73, "PlayerGui")
+    local vu75 = false
+    local vu76 = nil
+    local function vu97()
+        while vu75 do
+            local v95, v96 = pcall(function()
+                print("\239\191\189\239\191\189\239\191\189\239\191\189\239\191\189\239\191\189 Finding rod...")
+                local v77 = nil
+                local v78 = vu72.Character
+                local v79
+                if v78 then
+                    local v80, v81, v82 = pairs(v78:GetChildren())
+                    while true do
+                        local v83
+                        v83, v79 = v80(v81, v82)
+                        if v83 == nil then
+                            v79 = v77
+                            break
+                        end
+                        v82 = v83
+                        if v79:IsA("Tool") then
+                            local v84 = v79:FindFirstChild("events")
+                            if v84 and v84:FindFirstChild("castAsync") then
+                                break
+                            end
+                        end
+                    end
+                else
+                    v79 = v77
+                end
+                if v79 then
+                    print("\239\191\189\239\191\189\239\191\189\239\191\189\239\191\189\239\191\189 Casting " .. v79.Name .. "...")
+                    local vu85 = v79.events.castAsync
+                    if vu85 and pcall(function()
+                        vu85:InvokeServer(90.79999999999997, 1)
+                    end) then
+                        print("\226\156\133 " .. v79.Name .. " casted")
+                    end
+                    wait(1)
+                    print("\226\143\179 Waiting for bite...")
+                    local v86 = true
+                    local v87 = 0
+                    while v86 and vu75 do
+                        v87 = v87 + 1
+                        local vu88 = vu74:FindFirstChild("shakeui")
+                        if vu88 then
+                            local v89 = vu88:FindFirstChild("safezone")
+                            vu88 = v89 and v89:FindFirstChild("button")
+                            if vu88 then
+                                vu88 = vu88:FindFirstChild("shake")
+                            end
+                        end
+                        if vu88 then
+                            print("\239\191\189\239\191\189\239\191\189\239\191\189\239\191\189\239\191\189 Shake button found! (" .. v87 .. ")")
+                            pcall(function()
+                                vu88:FireServer()
+                            end)
+                            wait(1)
+                        else
+                            print("\226\143\179 Shake done, waiting 3 seconds...")
+                            v86 = false
+                            for v90 = 3, 1, - 1 do
+                                print("\226\143\179 Waiting " .. v90 .. " seconds...")
+                                wait(1)
+                            end
+                            print("\239\191\189\239\191\189\239\191\189\239\191\189\239\191\189\239\191\189 Firing reel for 2 seconds...")
+                            local v91 = vu71:FindFirstChild("events")
+                            if v91 then
+                                local vu92 = v91:FindFirstChild("reelfinished")
+                                if vu92 then
+                                    local v93 = tick()
+                                    local v94 = 0
+                                    while tick() - v93 < 2 do
+                                        pcall(function()
+                                            vu92:FireServer(100, false)
+                                        end)
+                                        v94 = v94 + 1
+                                        wait(0.1)
+                                    end
+                                    print("\226\156\133 Done! Fired " .. v94 .. " times")
+                                end
+                            end
+                            wait(2)
+                        end
+                    end
+                else
+                    warn("\226\157\140 No rod equipped!")
+                    wait(2)
+                end
+            end)
+            if not v95 then
+                warn("\226\157\140 Auto Fish Error:", v96)
+                wait(3)
+            end
+        end
+    end
+    v69:Section({
+        Title = "Auto Fish System",
+        Icon = "layout"
+    })
+    v69:Toggle({
+        Title = "Auto Fish",
+        Desc = "Automatically fish with any rod",
+        Icon = "fish",
+        Type = "Checkbox",
+        Default = false,
+        Callback = function(p98)
+            vu75 = p98
+            if vu75 then
+                print("\239\191\189\239\191\189\239\191\189\239\191\189\239\191\189\239\191\189 Auto Fish: ENABLED")
+                vu76 = task.spawn(vu97)
+            else
+                print("\239\191\189\239\191\189\239\191\189\239\191\189\239\191\189\239\191\189 Auto Fish: DISABLED")
+                if vu76 then
+                    task.cancel(vu76)
+                end
+            end
+        end
+    })
+    local v99 = vu2:Tab({
+        Title = "Misc",
+        Icon = "folder",
+        Locked = false
+    })
+    v99:Toggle({
+        Title = "Anti AFK",
+        Desc = "Prevents automatic idle kick",
+        Icon = "shield-check",
+        Type = "Checkbox",
+        Default = false,
+        Callback = function(p100)
+            if p100 then
+                local v101 = game.Players.LocalPlayer
+                if getgenv().AntiAFKConnection then
+                    getgenv().AntiAFKConnection:Disconnect()
+                end
+                getgenv().AntiAFKConnection = v101.Idled:Connect(function()
+                    game:GetService("VirtualUser"):CaptureController()
+                    game:GetService("VirtualUser"):ClickButton2(Vector2.new())
+                    print("\226\143\177 Anti-AFK triggered!")
+                end)
+                print("\226\156\133 Anti-AFK enabled")
+            else
+                if getgenv().AntiAFKConnection then
+                    getgenv().AntiAFKConnection:Disconnect()
+                    getgenv().AntiAFKConnection = nil
+                end
+                print("\226\155\148 Anti-AFK disabled")
+            end
+        end
+    })
+    v99:Button({
+        Title = "Power Save Mode",
+        Desc = "Open Power Save Script",
+        Locked = false,
+        Callback = function()
+            print("Opening Power Save Script...")
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/FryzerHub/SubScripts/refs/heads/main/screen%20saver"))()
+        end
+    })
+    local v102 = vu2:Tab({
+        Title = "Settings",
+        Icon = "settings",
+        Locked = false
+    })
+    v102:Section({
+        Title = "Window Settings",
+        Icon = "layout"
+    })
+    v102:Space()
+    v102:Toggle({
+        Title = "Window Transparency",
+        Desc = "Toggle window transparency on/off",
+        Icon = "eye",
+        Type = "Checkbox",
+        Default = false,
+        Callback = function(p103)
+            vu2:ToggleTransparency(p103)
+            print("Transparency: " .. tostring(p103))
+        end
+    })
+    v102:Divider()
+    v102:Section({
+        Title = "Keybind Settings",
+        Icon = "keyboard"
+    })
+    v102:Input({
+        Title = "Toggle UI Keybind",
+        Desc = "Type ONE letter or key (e.g., Q or RightControl)",
+        Value = "RightControl",
+        InputIcon = "keyboard",
+        Type = "Input",
+        Placeholder = "Enter key...",
+        Callback = function(p104)
+            local vu105 = p104:gsub("^%s*(.-)%s*$", "%1")
+            local v106 = nil
+            local v107
+            if # vu105 ~= 1 then
+                local v108
+                v108, v107 = pcall(function()
+                    return Enum.KeyCode[vu105]
+                end)
+                if not v108 then
+                    v107 = v106
+                end
+            else
+                local v109 = vu105:upper()
+                v107 = Enum.KeyCode[v109]
+            end
+            if v107 then
+                vu2:SetToggleKey(v107)
+                print("Keybind set to: " .. vu105)
+                vu1:Notify({
+                    Title = "Keybind Updated",
+                    Content = "Press \'" .. vu105 .. "\' to toggle UI",
+                    Duration = 3,
+                    Icon = "check"
+                })
+            else
+                print("Invalid key: " .. vu105)
+                vu1:Notify({
+                    Title = "Invalid Key",
+                    Content = "Enter a single letter (Q) or key name (RightControl)",
+                    Duration = 4,
+                    Icon = "x"
+                })
+            end
+        end
+    })
+    vu2:SetToggleKey(Enum.KeyCode.RightControl)
+    v102:Space()
+    vu2:Space()
+    vu1:Notify({
+        Title = "All Components Loaded",
+        Content = "Every component is now visible!",
+        Duration = 5,
+        Icon = "check-circle"
+    })
+    game:GetService("StarterGui"):SetCore("SendNotification", {
+        Title = "FRYZER HUB",
+        Text = "Successfully loaded!",
+        Duration = 5
+    })
+end
+local vu111 = "https://discord.com/invite/UKYHGddQD3"
+local vu112 = "https://raw.githubusercontent.com/FryzerHub/Key-system-gui/refs/heads/main/Universal%20key"
+local vu113 = "https://raw.githubusercontent.com/FryzerHub/Key-system-gui/refs/heads/main/expiry_keys.json"
+local vu114 = "https://website-flame-tau-62.vercel.app/"
+repeat
+    task.wait(1)
+until game:IsLoaded()
+local v115 = game:GetService("Players")
+local vu116 = game:GetService("TweenService")
+local vu117 = game:GetService("HttpService")
+local v118 = v115.LocalPlayer:WaitForChild("PlayerGui")
+local vu119 = setclipboard or toclipboard
+local vu120 = request or (http_request or syn_request)
+local function vu127(p121)
+    local v122, v123, v124, v125, v126 = p121:match("(%d+)-(%d+)-(%d+)%s+(%d+):(%d+)")
+    if v122 then
+        return os.time({
+            year = tonumber(v124),
+            month = tonumber(v123),
+            day = tonumber(v122),
+            hour = tonumber(v125),
+            min = tonumber(v126),
+            sec = 59
+        })
+    else
+        return nil
+    end
+end
+local function vu142(pu128)
+    local v140, v141 = pcall(function()
+        local v129 = vu120({
+            Url = vu112,
+            Method = "GET"
+        })
+        if v129.StatusCode ~= 200 then
+            return false, "Failed to connect to key server"
+        end
+        local v130, v131, v132 = string.gmatch(v129.Body, "[^\r\n]+")
+        local v133 = {}
+        while true do
+            v132 = v130(v131, v132)
+            if v132 == nil then
+                break
+            end
+            local v134 = string.gsub(v132, "%s+", "")
+            if v134 ~= "" then
+                table.insert(v133, v134)
+            end
+        end
+        local v135 = string.gsub(pu128, "%s+", "")
+        local v136, v137, v138 = ipairs(v133)
+        while true do
+            local v139
+            v138, v139 = v136(v137, v138)
+            if v138 == nil then
+                break
+            end
+            if v135 == v139 then
+                return true, "Key verified successfully!"
+            end
+        end
+        return false, "Invalid key"
+    end)
+    if v140 then
+        return v141
+    else
+        return false, "Error checking key: " .. tostring(v141)
+    end
+end
+local function vu158(pu143)
+    local v156, v157 = pcall(function()
+        local v144 = vu120({
+            Url = vu113,
+            Method = "GET"
+        })
+        if v144.StatusCode ~= 200 then
+            return false, "Failed to connect to expiry server"
+        end
+        local v145 = vu117:JSONDecode(v144.Body)
+        if not v145.keys then
+            return false, "Invalid expiry key data format"
+        end
+        local v146 = string.gsub(pu143, "%s+", "")
+        local v147 = os.time()
+        local v148, v149, v150 = ipairs(v145.keys)
+        while true do
+            local v151
+            v150, v151 = v148(v149, v150)
+            if v150 == nil then
+                break
+            end
+            if v146 == string.gsub(v151.key, "%s+", "") then
+                local v152 = vu127(v151.expiry)
+                if v152 then
+                    if v152 < v147 then
+                        return false, "Key has expired"
+                    else
+                        local v153 = v152 - v147
+                        local v154 = math.floor(v153 / 86400)
+                        local v155 = math.floor(v153 % 86400 / 3600)
+                        if v154 > 0 then
+                            return true, "Key verified! " .. v154 .. " days remaining"
+                        else
+                            return true, "Key verified! " .. v155 .. " hours remaining"
+                        end
+                    end
+                else
+                    return false, "Invalid date format (use DD-MM-YYYY HH:MM)"
+                end
+            end
+        end
+        return false, "Key not found in expiry database"
+    end)
+    if v156 then
+        return v157
+    else
+        return false, "Error checking expiry key: " .. tostring(v157)
+    end
+end
+local function vu164(p159)
+    local v160, v161 = vu142(p159)
+    if v160 then
+        return true, v161
+    else
+        local v162, v163 = vu158(p159)
+        if v162 then
+            return true, v163
+        else
+            return false, v163
+        end
+    end
+end
+local v165 = UDim2.new(0, 400, 0, 220)
+local vu166 = Color3.fromRGB(0, 0, 0)
+local vu167 = Color3.fromRGB(255, 255, 255)
+local vu168 = Color3.fromRGB(20, 20, 20)
+local vu169 = Color3.fromRGB(240, 240, 240)
+local v170 = Color3.fromRGB(128, 128, 128)
+if v118:FindFirstChild("MinimalKeyGUI") then
+    v118.MinimalKeyGUI:Destroy()
+end
+local vu171 = Instance.new("ScreenGui")
+vu171.Name = "MinimalKeyGUI"
+vu171.ResetOnSpawn = false
+vu171.Parent = v118
+local vu172 = Instance.new("Frame")
+vu172.Name = "MainFrame"
+vu172.Size = v165
+vu172.Position = UDim2.new(0.5, - 200, 0.5, - 110)
+vu172.BackgroundColor3 = vu166
+vu172.BorderSizePixel = 0
+vu172.Parent = vu171
+local vu173 = Instance.new("Frame")
+vu173.Name = "BorderFrame"
+vu173.Size = UDim2.new(1, 6, 1, 6)
+vu173.Position = UDim2.new(0, - 3, 0, - 3)
+vu173.BackgroundColor3 = vu167
+vu173.BorderSizePixel = 0
+vu173.ZIndex = - 1
+vu173.Parent = vu172
+local vu174 = Instance.new("Frame")
+vu174.Name = "TitleSection"
+vu174.Size = UDim2.new(1, 0, 0, 60)
+vu174.Position = UDim2.new(0, 0, 0, 0)
+vu174.BackgroundColor3 = vu167
+vu174.BorderSizePixel = 0
+vu174.Parent = vu172
+local vu175 = Instance.new("TextLabel")
+vu175.Name = "Title"
+vu175.Size = UDim2.new(1, - 40, 1, 0)
+vu175.Position = UDim2.new(0, 20, 0, 0)
+vu175.BackgroundTransparency = 1
+vu175.Text = "FRYZER HUB"
+vu175.TextColor3 = vu166
+vu175.TextSize = 24
+vu175.Font = Enum.Font.SourceSansBold
+vu175.TextXAlignment = Enum.TextXAlignment.Left
+vu175.Parent = vu174
+local v176 = Instance.new("Frame")
+v176.Name = "Separator"
+v176.Size = UDim2.new(1, - 40, 0, 1)
+v176.Position = UDim2.new(0, 20, 1, - 1)
+v176.BackgroundColor3 = vu166
+v176.BorderSizePixel = 0
+v176.Parent = vu174
+local v177 = Instance.new("Frame")
+v177.Name = "ContentFrame"
+v177.Size = UDim2.new(1, - 40, 1, - 80)
+v177.Position = UDim2.new(0, 20, 0, 70)
+v177.BackgroundTransparency = 1
+v177.Parent = vu172
+local vu178 = Instance.new("TextLabel")
+vu178.Name = "Status"
+vu178.Size = UDim2.new(1, 0, 0, 20)
+vu178.Position = UDim2.new(0, 0, 0, 0)
+vu178.BackgroundTransparency = 1
+vu178.Text = "Enter your access key"
+vu178.TextColor3 = vu167
+vu178.TextSize = 14
+vu178.Font = Enum.Font.SourceSans
+vu178.TextXAlignment = Enum.TextXAlignment.Left
+vu178.Parent = v177
+local v179 = Instance.new("Frame")
+v179.Name = "InputContainer"
+v179.Size = UDim2.new(1, 0, 0, 40)
+v179.Position = UDim2.new(0, 0, 0, 30)
+v179.BackgroundColor3 = vu166
+v179.BorderSizePixel = 0
+v179.Parent = v177
+local vu180 = Instance.new("Frame")
+vu180.Name = "InputBorder"
+vu180.Size = UDim2.new(1, 2, 1, 2)
+vu180.Position = UDim2.new(0, - 1, 0, - 1)
+vu180.BackgroundColor3 = vu167
+vu180.BorderSizePixel = 0
+vu180.ZIndex = - 1
+vu180.Parent = v179
+local vu181 = Instance.new("TextBox")
+vu181.Name = "KeyBox"
+vu181.Size = UDim2.new(1, - 20, 1, 0)
+vu181.Position = UDim2.new(0, 10, 0, 0)
+vu181.BackgroundTransparency = 1
+vu181.Text = ""
+vu181.PlaceholderText = "Paste key here..."
+vu181.TextColor3 = vu167
+vu181.PlaceholderColor3 = v170
+vu181.TextSize = 16
+vu181.Font = Enum.Font.SourceSans
+vu181.ClearTextOnFocus = false
+vu181.TextXAlignment = Enum.TextXAlignment.Left
+vu181.ClipsDescendants = true
+vu181.Parent = v179
+local vu182 = Instance.new("Frame")
+vu182.Name = "ButtonFrame"
+vu182.Size = UDim2.new(1, 0, 0, 40)
+vu182.Position = UDim2.new(0, 0, 0, 85)
+vu182.BackgroundTransparency = 1
+vu182.Parent = v177
+local function v189(p183, p184, p185, p186)
+    local v187 = Instance.new("TextButton")
+    v187.Name = p183
+    v187.Size = UDim2.new(0.3, - 5, 1, 0)
+    v187.Position = p185
+    v187.BackgroundColor3 = p186 and vu166 or vu167
+    v187.BorderSizePixel = 0
+    v187.Text = p184
+    v187.TextColor3 = p186 and vu167 or vu166
+    v187.TextSize = 14
+    v187.Font = Enum.Font.SourceSansBold
+    v187.Parent = vu182
+    local v188 = Instance.new("Frame")
+    v188.Name = "Border"
+    v188.Size = UDim2.new(1, 2, 1, 2)
+    v188.Position = UDim2.new(0, - 1, 0, - 1)
+    v188.BackgroundColor3 = p186 and vu167 or vu166
+    v188.BorderSizePixel = 0
+    v188.ZIndex = - 1
+    v188.Parent = v187
+    return v187
+end
+local v190 = v189("GetKeyButton", "GET KEY", UDim2.new(0, 0, 0, 0), true)
+local vu191 = v189("VerifyButton", "VERIFY", UDim2.new(0.35, 0, 0, 0), false)
+local v192 = v189("DiscordButton", "DISCORD", UDim2.new(0.7, 0, 0, 0), true)
+local vu193 = Instance.new("Frame")
+vu193.Name = "ProgressContainer"
+vu193.Size = UDim2.new(1, 0, 0, 3)
+vu193.Position = UDim2.new(0, 0, 1, - 10)
+vu193.BackgroundColor3 = vu168
+vu193.BorderSizePixel = 0
+vu193.Visible = false
+vu193.Parent = v177
+local vu194 = Instance.new("Frame")
+vu194.Name = "ProgressBar"
+vu194.Size = UDim2.new(0, 0, 1, 0)
+vu194.Position = UDim2.new(0, 0, 0, 0)
+vu194.BackgroundColor3 = vu167
+vu194.BorderSizePixel = 0
+vu194.Parent = vu193
+local function vu198(p195, p196, p197)
+    return vu116:Create(p195, TweenInfo.new(p197 or 0.3, Enum.EasingStyle.Quad), {
+        TextTransparency = p196
+    })
+end
+local function vu203(p199, p200, p201)
+    vu178.Text = p199
+    vu178.TextColor3 = p200 and vu169 or vu167
+    if p201 then
+        vu193.Visible = true
+        vu194.Size = UDim2.new(0, 0, 1, 0)
+        local v202 = vu116:Create(vu194, TweenInfo.new(2, Enum.EasingStyle.Linear), {
+            Size = UDim2.new(1, 0, 1, 0)
+        })
+        v202:Play()
+        v202.Completed:Connect(function()
+            task.wait(0.5)
+            vu193.Visible = false
+        end)
+    else
+        vu193.Visible = false
+    end
+end
+local function v211(pu204, pu205)
+    local vu206 = pu204.BackgroundColor3
+    local _ = pu204.TextColor3
+    local vu207 = pu205 and vu168 or vu169
+    pu204.MouseEnter:Connect(function()
+        local v208 = {
+            BackgroundColor3 = vu207
+        }
+        vu116:Create(pu204, TweenInfo.new(0.2), v208):Play()
+    end)
+    pu204.MouseLeave:Connect(function()
+        local v209 = {
+            BackgroundColor3 = vu206
+        }
+        vu116:Create(pu204, TweenInfo.new(0.2), v209):Play()
+    end)
+    pu204.MouseButton1Down:Connect(function()
+        local v210 = {
+            BackgroundColor3 = pu205 and vu167 or vu166,
+            TextColor3 = pu205 and vu166 or vu167
+        }
+        vu116:Create(pu204, TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut, 0, true), v210):Play()
+    end)
+end
+vu181.Focused:Connect(function()
+    local v212 = {
+        BackgroundColor3 = vu169
+    }
+    vu116:Create(vu180, TweenInfo.new(0.2), v212):Play()
+end)
+vu181.FocusLost:Connect(function(p213)
+    local v214 = {
+        BackgroundColor3 = vu167
+    }
+    vu116:Create(vu180, TweenInfo.new(0.2), v214):Play()
+    if p213 then
+        vu191.MouseButton1Click:Fire()
+    end
+end)
+v211(v190, true)
+v211(vu191, false)
+v211(v192, true)
+v190.MouseButton1Click:Connect(function()
+    vu203("Opening get key page...", false, true)
+    spawn(function()
+        if pcall(function()
+            vu119(vu114)
+        end) then
+            vu203("Get key link copied to clipboard!", false)
+        else
+            vu203("Get key link: " .. vu114, false)
+        end
+    end)
+end)
+vu191.MouseButton1Click:Connect(function()
+    local vu215 = vu181.Text:gsub("%s+", "")
+    if vu215 == "" then
+        vu203("Please enter a key", true)
+    else
+        vu203("Verifying access...", false, true)
+        spawn(function()
+            local v216, v217 = vu164(vu215)
+            if v216 then
+                vu203("Access granted!", false)
+                task.wait(1)
+                local v218 = vu116:Create(vu172, TweenInfo.new(0.5, Enum.EasingStyle.Quad), {
+                    BackgroundTransparency = 1
+                })
+                local v219 = vu116:Create(vu173, TweenInfo.new(0.5, Enum.EasingStyle.Quad), {
+                    BackgroundTransparency = 1
+                })
+                local v220 = vu116:Create(vu174, TweenInfo.new(0.5, Enum.EasingStyle.Quad), {
+                    BackgroundTransparency = 1
+                })
+                v218:Play()
+                v219:Play()
+                v220:Play()
+                vu198(vu175, 1, 0.5):Play()
+                vu198(vu178, 1, 0.5):Play()
+                v218.Completed:Connect(function()
+                    vu171:Destroy()
+                    vu110()
+                end)
+            else
+                vu203(v217 or "Invalid key", true)
+            end
+        end)
+    end
+end)
+v192.MouseButton1Click:Connect(function()
+    vu203("Opening Discord invite...", false, true)
+    spawn(function()
+        if pcall(function()
+            vu119(vu111)
+        end) then
+            vu203("Discord invite copied to clipboard!", false)
+        else
+            vu203("Discord: " .. vu111, false)
+        end
+    end)
+end)
+vu172.BackgroundTransparency = 1
+vu174.BackgroundTransparency = 1
+vu173.BackgroundTransparency = 1
+vu175.TextTransparency = 1
+vu178.TextTransparency = 1
+vu116:Create(vu172, TweenInfo.new(0.4), {
+    BackgroundTransparency = 0
+}):Play()
+vu116:Create(vu174, TweenInfo.new(0.4), {
+    BackgroundTransparency = 0
+}):Play()
+vu116:Create(vu173, TweenInfo.new(0.4), {
+    BackgroundTransparency = 0
+}):Play()
+task.wait(0.1)
+vu198(vu175, 0, 0.3):Play()
+task.wait(0.1)
+vu198(vu178, 0, 0.3):Play()
+vu203("Enter your access key", false)
+print("[FRYZER HUB] Key system loaded successfully!")
+print("[FRYZER HUB] Dual verification system active!")
+print("[FRYZER HUB] Simple keys + Expiry keys supported!")

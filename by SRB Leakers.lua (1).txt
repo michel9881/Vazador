@@ -1,0 +1,553 @@
+--- https://discord.gg/QzrEb6rMKw
+
+
+local vu1 = loadstring(game:HttpGet("https://raw.githubusercontent.com/linemaster2/esp-library/main/library.lua"))()
+vu1.Enabled = false
+vu1.ShowBox = false
+vu1.ShowName = false
+vu1.ShowHealth = false
+vu1.ShowTracer = false
+vu1.ShowDistance = false
+vu1.ShowSkeletons = false
+local _ = {
+    BoxOutlineColor = Color3.new(1, 1, 1),
+    BoxColor = Color3.new(1, 1, 1),
+    NameColor = Color3.new(1, 1, 1),
+    HealthOutlineColor = Color3.new(0, 0, 0),
+    HealthHighColor = Color3.new(0, 1, 0),
+    HealthLowColor = Color3.new(1, 0, 0),
+    CharSize = Vector2.new(4, 6),
+    Teamcheck = false,
+    WallCheck = false,
+    Enabled = false,
+    ShowBox = false,
+    BoxType = "2D",
+    ShowName = false,
+    ShowHealth = false,
+    ShowDistance = false,
+    ShowSkeletons = false,
+    ShowTracer = false,
+    TracerColor = Color3.new(1, 1, 1),
+    TracerThickness = 2,
+    SkeletonsColor = Color3.new(1, 1, 1),
+    TracerPosition = "Bottom"
+}
+local _ = game:GetService("RunService")
+game:GetService("UserInputService")
+game:GetService("Players")
+local v2 = game.Workspace.CurrentCamera
+local vu3 = Drawing.new("Circle")
+vu3.Visible = false
+vu3.Thickness = 2
+vu3.Color = Color3.fromRGB(255, 0, 0)
+vu3.Filled = false
+vu3.Radius = 100
+vu3.Position = v2.ViewportSize / 2
+local vu4 = loadstring(game:HttpGet("https://raw.githubusercontent.com/tbao143/thaibao/refs/heads/main/Orionlibrary"))()
+local v5 = vu4
+local v6 = vu4.MakeWindow(v5, {
+    Name = "OneTap v2.2",
+    HidePremium = false,
+    SaveConfig = true,
+    IntroText = " SCRIPT LOADING...SCRIPT LOADING... SCRIPT LOADING...SCRIPT LOADING...SCRIPT LOADING...SCRIPT LOADING...SCRIPT LOADING...SCRIPT LOADING...SCRIPT LOADING...SCRIPT LOADING..."
+})
+local v7 = v6:MakeTab({
+    Name = "Main",
+    Icon = "rbxassetid://7733964719",
+    PremiumOnly = false
+})
+v7:AddSection({
+    Name = "Ddossssssss"
+})
+v7:AddLabel("Status: detected maybe ban")
+local v8 = v6:MakeTab({
+    Name = "Aiming",
+    Icon = "rbxassetid://7733765307",
+    PremiumOnly = false
+})
+v8:AddSection({
+    Name = "Aim"
+})
+v8:AddButton({
+    Name = "Kill All (Other ui)",
+    Callback = function()
+        local v9 = loadstring(Game:HttpGet("https://raw.githubusercontent.com/bloodball/-back-ups-for-libs/main/wizard"))():NewWindow("Kill All by zxc | player"):NewSection("Main")
+        v9:CreateToggle("Auto farm", function(p10)
+            getgenv().AutoFarm = p10
+            local vu11 = nil
+            local vu12 = false
+            local vu13 = game.Players.LocalPlayer
+            local vu14 = game.Workspace.CurrentCamera
+            game:GetService("ReplicatedStorage").wkspc.CurrentCurse.Value = p10 and "Infinite Ammo" or ""
+            function getClosestEnemyPlayer()
+                local v15 = math.huge
+                local v16, v17, v18 = pairs(game.Players:GetPlayers())
+                local v19 = nil
+                while true do
+                    local v20
+                    v18, v20 = v16(v17, v18)
+                    if v18 == nil then
+                        break
+                    end
+                    if v20 ~= vu13 and (v20.TeamColor ~= vu13.TeamColor and v20.Character) then
+                        local v21 = v20.Character
+                        local v22 = v21:FindFirstChild("HumanoidRootPart")
+                        local v23 = v21:FindFirstChild("Humanoid")
+                        if v22 and (v23 and v23.Health > 0) then
+                            local v24 = (vu13.Character.HumanoidRootPart.Position - v22.Position).Magnitude
+                            if v24 < v15 then
+                                if v22.Position.Y >= 0 then
+                                    v19 = v20
+                                    v15 = v24
+                                end
+                            end
+                        end
+                    end
+                end
+                return v19
+            end
+            local function vu27()
+                game:GetService("ReplicatedStorage").wkspc.TimeScale.Value = 12
+                vu11 = game:GetService("RunService").Stepped:Connect(function()
+                    if getgenv().AutoFarm then
+                        local v25 = getClosestEnemyPlayer()
+                        if v25 then
+                            local v26 = v25.Character.HumanoidRootPart.Position + Vector3.new(0, 0, - 4)
+                            if vu13.Character and vu13.Character:FindFirstChild("HumanoidRootPart") then
+                                vu13.Character.HumanoidRootPart.CFrame = CFrame.new(v26)
+                                vu14.CFrame = CFrame.new(vu14.CFrame.Position, v25.Character.Head.Position)
+                                if not vu12 then
+                                    mouse1press()
+                                    vu12 = true
+                                end
+                            end
+                        elseif vu12 then
+                            mouse1release()
+                            vu12 = false
+                        end
+                    else
+                        if vu11 then
+                            vu11:Disconnect()
+                            vu11 = nil
+                        end
+                        if vu12 then
+                            mouse1release()
+                            vu12 = false
+                        end
+                    end
+                end)
+            end
+            local function v28(_)
+                wait(0.5)
+                vu27()
+            end
+            vu13.CharacterAdded:Connect(v28)
+            if p10 then
+                wait(0.5)
+                vu27()
+            else
+                game:GetService("ReplicatedStorage").wkspc.CurrentCurse.Value = ""
+                getgenv().AutoFarm = false
+                game:GetService("ReplicatedStorage").wkspc.TimeScale.Value = 1
+                if vu11 then
+                    vu11:Disconnect()
+                    local _ = nil
+                end
+                if vu12 then
+                    mouse1release()
+                    local _ = false
+                end
+            end
+        end)
+        v9:CreateToggle("no spread", function(_)
+            local v29, v30, v31 = pairs(game:GetService("ReplicatedStorage").Weapons:GetDescendants())
+            while true do
+                local v32
+                v31, v32 = v29(v30, v31)
+                if v31 == nil then
+                    break
+                end
+                if v32.Name == "MaxSpread" or (v32.Name == "Spread" or v32.Name == "SpreadControl") then
+                    if state then
+                        if not originalValues.Spread[v32] then
+                            originalValues.Spread[v32] = v32.Value
+                        end
+                        v32.Value = 0
+                    elseif originalValues.Spread[v32] then
+                        v32.Value = originalValues.Spread[v32]
+                    else
+                        v32.Value = 1
+                    end
+                end
+            end
+        end)
+        v9:CreateToggle("No Recoil", function(_)
+            local v33, v34, v35 = pairs(game:GetService("ReplicatedStorage").Weapons:GetDescendants())
+            while true do
+                local v36
+                v35, v36 = v33(v34, v35)
+                if v35 == nil then
+                    break
+                end
+                if v36.Name == "RecoilControl" or v36.Name == "Recoil" then
+                    if state then
+                        if not originalValues.Recoil[v36] then
+                            originalValues.Recoil[v36] = v36.Value
+                        end
+                        v36.Value = 0
+                    elseif originalValues.Recoil[v36] then
+                        v36.Value = originalValues.Recoil[v36]
+                    else
+                        v36.Value = 1
+                    end
+                end
+            end
+        end)
+        v9:CreateToggle("give admin (fe)", function(_)
+            if game.Players.LocalPlayer:FindFirstChild("IsAdmin") then
+                game.Players.LocalPlayer.IsAdmin:Destroy()
+            elseif x then
+                Instance.new("IntValue", game.Players.LocalPlayer).Name = "IsAdmin"
+            end
+        end)
+    end
+})
+v8:AddButton({
+    Name = "Speed Hack (50)",
+    Callback = function()
+        _G.WS = "50"
+        local vu37 = game:GetService("Players").LocalPlayer.Character.Humanoid
+        local v38 = vu37
+        vu37.GetPropertyChangedSignal(v38, "WalkSpeed"):Connect(function()
+            vu37.WalkSpeed = _G.WS
+        end)
+        vu37.WalkSpeed = _G.WS
+    end
+})
+v8:AddButton({
+    Name = "Speed Hack (100)",
+    Callback = function()
+        _G.WS = "100"
+        local vu39 = game:GetService("Players").LocalPlayer.Character.Humanoid
+        local v40 = vu39
+        vu39.GetPropertyChangedSignal(v40, "WalkSpeed"):Connect(function()
+            vu39.WalkSpeed = _G.WS
+        end)
+        vu39.WalkSpeed = _G.WS
+    end
+})
+v8:AddButton({
+    Name = "Silent Aim",
+    Callback = function()
+        function getplrsname()
+            local v41, v42, v43 = pairs(game:GetChildren())
+            while true do
+                local v44
+                v43, v44 = v41(v42, v43)
+                if v43 == nil then
+                    break
+                end
+                if v44.ClassName == "Players" then
+                    return v44.Name
+                end
+            end
+        end
+        local vu45 = getplrsname()
+        local vu46 = game[vu45].LocalPlayer
+        coroutine.resume(coroutine.create(function()
+            while wait(1) do
+                coroutine.resume(coroutine.create(function()
+                    local v47, v48, v49 = pairs(game[vu45]:GetPlayers())
+                    while true do
+                        local v50
+                        v49, v50 = v47(v48, v49)
+                        if v49 == nil then
+                            break
+                        end
+                        if v50.Name ~= vu46.Name and v50.Character then
+                            v50.Character.RightUpperLeg.CanCollide = false
+                            v50.Character.RightUpperLeg.Transparency = 75
+                            v50.Character.RightUpperLeg.Size = Vector3.new(21, 21, 21)
+                            v50.Character.LeftUpperLeg.CanCollide = false
+                            v50.Character.LeftUpperLeg.Transparency = 75
+                            v50.Character.LeftUpperLeg.Size = Vector3.new(21, 21, 21)
+                            v50.Character.HeadHB.CanCollide = false
+                            v50.Character.HeadHB.Transparency = 75
+                            v50.Character.HeadHB.Size = Vector3.new(21, 21, 21)
+                            v50.Character.HumanoidRootPart.CanCollide = false
+                            v50.Character.HumanoidRootPart.Transparency = 75
+                            v50.Character.HumanoidRootPart.Size = Vector3.new(21, 21, 21)
+                        end
+                    end
+                end))
+            end
+        end))
+    end
+})
+v8:AddButton({
+    Name = "patched",
+    Callback = function()
+    end
+})
+v8:AddButton({
+    Name = "Other mods Not mobile",
+    Callback = function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/aidarkunakbaev02/AllScripts/refs/heads/main/Lua.lua", true))()
+    end
+})
+v8:AddSection({
+    Name = "Gun Mod"
+})
+v8:AddButton({
+    Name = "Inf Ammo",
+    Callback = function()
+        while wait() do
+            game:GetService("Players").LocalPlayer.PlayerGui.GUI.Client.Variables.ammocount.Value = 2
+            game:GetService("Players").LocalPlayer.PlayerGui.GUI.Client.Variables.ammocount2.Value = 2
+        end
+    end
+})
+local vu51 = game.ReplicatedStorage
+v8:AddButton({
+    Name = "Rapid fire",
+    Callback = function()
+        local v52, v53, v54 = pairs(vu51.Weapons:GetDescendants())
+        while true do
+            local v55
+            v54, v55 = v52(v53, v54)
+            if v54 == nil then
+                break
+            end
+            if v55.Name == "FireRate" then
+                v55.Value = 0.05
+            end
+        end
+    end
+})
+local v56 = v6:MakeTab({
+    Name = "Visual",
+    Icon = "rbxassetid://7733954403",
+    PremiumOnly = false
+})
+v56:AddToggle({
+    Name = "Enable Esp",
+    Default = false,
+    Callback = function(p57)
+        vu1.Enabled = p57
+    end
+})
+v56:AddToggle({
+    Name = "Show Name Enemy",
+    Default = false,
+    Callback = function(p58)
+        vu1.ShowName = p58
+    end
+})
+v56:AddToggle({
+    Name = "Show Box Enemy",
+    Default = false,
+    Callback = function(p59)
+        vu1.ShowBox = p59
+    end
+})
+v56:AddToggle({
+    Name = "Show Tracers Enemy",
+    Default = false,
+    Callback = function(p60)
+        vu1.ShowTracer = p60
+    end
+})
+v56:AddToggle({
+    Name = "Show Health Enemy",
+    Default = false,
+    Callback = function(p61)
+        vu1.ShowHealth = p61
+    end
+})
+v56:AddToggle({
+    Name = "Show Enemy Skeleton",
+    Default = false,
+    Callback = function(p62)
+        vu1.ShowSkeletons = p62
+    end
+})
+v56:AddToggle({
+    Name = "TeamCheck",
+    Default = false,
+    Callback = function(p63)
+        vu1.Teamcheck = p63
+    end
+})
+v56:AddDropdown({
+    Name = "Esp box Type",
+    Default = "2D",
+    Options = {
+        "2D",
+        "Corner Box Esp"
+    },
+    Callback = function(p64)
+        vu1.BoxType = p64
+    end
+})
+v56:AddDropdown({
+    Name = "Tracer position",
+    Default = "Bottom",
+    Options = {
+        "Bottom",
+        "Top",
+        "Middle"
+    },
+    Callback = function(p65)
+        vu1.TracerPosition = p65
+    end
+})
+v56:AddSection({
+    Name = "POV fov"
+})
+v56:AddToggle({
+    Name = "Draw fov",
+    Default = false,
+    Callback = function(p66)
+        vu3.Visible = p66
+    end
+})
+v56:AddToggle({
+    Name = "Filled fov",
+    Default = false,
+    Callback = function(p67)
+        vu3.Filled = p67
+    end
+})
+v56:AddSlider({
+    Name = "fov Radius/Size",
+    Min = 40,
+    Max = 300,
+    Default = 50,
+    Color = Color3.fromRGB(255, 255, 255),
+    Increment = 1,
+    ValueName = "Radius",
+    Callback = function(p68)
+        vu3.Radius = p68
+    end
+})
+v56:AddColorpicker({
+    Name = "fov Color",
+    Default = Color3.fromRGB(255, 0, 0),
+    Callback = function(p69)
+        vu3.Color = p69
+    end
+})
+local v70 = v6:MakeTab({
+    Name = "More",
+    Icon = "rbxassetid://7734053426",
+    PremiumOnly = false
+})
+v70:AddButton({
+    Name = "Rainbow Gun (Skin FE)",
+    Callback = function()
+        local vu71 = 1
+        function zigzag(p72)
+            return math.acos(math.cos(p72 * math.pi)) / math.pi
+        end
+        game:GetService("RunService").RenderStepped:Connect(function()
+            if game.Workspace.Camera:FindFirstChild("Arms") then
+                local v73, v74, v75 = pairs(game.Workspace.Camera.Arms:GetDescendants())
+                while true do
+                    local v76
+                    v75, v76 = v73(v74, v75)
+                    if v75 == nil then
+                        break
+                    end
+                    if v76.ClassName == "MeshPart" then
+                        v76.Color = Color3.fromHSV(zigzag(vu71), 1, 1)
+                        vu71 = vu71 + 0.0001
+                    end
+                end
+            end
+        end)
+    end
+})
+v70:AddTextbox({
+    Name = "HitBox This not work",
+    Default = "Limit 1 don\'t put 0",
+    TextDisappear = true,
+    Callback = function(p77)
+        _G.HeadSize = p77
+        _G.Disabled = true
+        game:GetService("RunService").RenderStepped:connect(function()
+            if _G.Disabled then
+                local v78 = next
+                local v79, v80 = game:GetService("Players"):GetPlayers()
+                while true do
+                    local vu81
+                    v80, vu81 = v78(v79, v80)
+                    if v80 == nil then
+                        break
+                    end
+                    if vu81.Name ~= game:GetService("Players").LocalPlayer.Name then
+                        pcall(function()
+                            vu81.Character.HumanoidRootPart.Size = Vector3.new(_G.HeadSize, _G.HeadSize, _G.HeadSize)
+                            vu81.Character.HumanoidRootPart.Transparency = 0.7
+                            vu81.Character.HumanoidRootPart.BrickColor = BrickColor.new("Really blue")
+                            vu81.Character.HumanoidRootPart.Material = "Neon"
+                            vu81.Character.HumanoidRootPart.CanCollide = false
+                        end)
+                    end
+                end
+            end
+        end)
+    end
+})
+v70:AddButton({
+    Name = "kill all not my script",
+    Callback = function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/MisterGunXD/yes/main/rolve%3C3.lua"))()
+    end
+})
+v70:AddButton({
+    Name = "Small Server",
+    Callback = function()
+        local vu82 = game:GetService("HttpService")
+        local v83 = game:GetService("TeleportService")
+        local v84 = game.PlaceId
+        local vu85 = "https://games.roblox.com/v1/games/" .. v84 .. "/servers/Public?sortOrder=Asc&limit=100"
+        function ListServers(p86)
+            return vu82:JSONDecode((game:HttpGet(vu85 .. (p86 and "&cursor=" .. p86 or ""))))
+        end
+        local v87 = nil
+        repeat
+            local v88 = ListServers(v87)
+            local v89 = v88.data[1]
+            v87 = v88.nextPageCursor
+        until v89
+        v83:TeleportToPlaceInstance(v84, v89.id, game.Players.LocalPlayer)
+    end
+})
+v70:AddButton({
+    Name = "ReJoin",
+    Callback = function()
+        local v90 = game:GetService("TeleportService")
+        local v91 = game:GetService("Players").LocalPlayer
+        v90:Teleport(game.PlaceId, v91)
+    end
+})
+local v92 = v6:MakeTab({
+    Name = "other",
+    Icon = "rbxassetid://7733978098",
+    PremiumOnly = false
+})
+v92:AddLabel("Made By aidar#2500")
+v92:AddButton({
+    Name = "copy discord",
+    Callback = function()
+        setclipboard("Aidar#2500")
+    end
+})
+v92:AddButton({
+    Name = "Destroy gui",
+    Callback = function()
+        vu4:Destroy()
+    end
+})
+local v93 = vu4
+vu4.Init(v93)
