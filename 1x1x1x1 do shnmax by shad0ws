@@ -1,0 +1,180 @@
+-- By Shelby
+pcall(function()
+    local Players = game:GetService("Players")
+    local ReplicatedStorage = game:GetService("ReplicatedStorage")
+    local UserInputService = game:GetService("UserInputService")
+    local StarterGui = game:GetService("StarterGui")
+
+    local LocalPlayer = Players.LocalPlayer
+    local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+    local Humanoid = Character:FindFirstChildOfClass("Humanoid")
+    if not Humanoid then return end
+
+    local RemotesFolder = ReplicatedStorage:WaitForChild("Remotes")
+    local ChangeBodyColorRemote = RemotesFolder:FindFirstChild("ChangeBodyColor")
+    local ChangeCharacterBodyRemote = RemotesFolder:FindFirstChild("ChangeCharacterBody")
+    local WearRemote = RemotesFolder:WaitForChild("Wear")
+    local WearShirtRemote = RemotesFolder:WaitForChild("WearShirt")
+    local WearPantsRemote = RemotesFolder:WaitForChild("WearPants")
+    local RemoteSound = ReplicatedStorage:FindFirstChild("RE") and ReplicatedStorage.RE:FindFirstChild("1Gu1nSound1s")
+
+    if ChangeBodyColorRemote then
+        pcall(function() ChangeBodyColorRemote:FireServer("Lime green") end)
+    end
+
+    if ChangeCharacterBodyRemote then
+        pcall(function()
+            local args = {
+                [1] = {
+                    [1] = 123968377411056,
+                    [2] = 104281326156987,  
+                    [3] = 94645302037763,  
+                    [4] = 84431523780379,  
+                    [5] = 89124612345294,  
+                    [6] = 0
+                }
+            }
+            ChangeCharacterBodyRemote:InvokeServer(unpack(args))
+        end)
+    end
+
+    local ok, desc = pcall(function() return Humanoid:GetAppliedDescription() end)
+    if ok and desc then
+        for _, accessory in ipairs(desc:GetAccessories(true)) do
+            if accessory.AssetId then
+                pcall(function() WearRemote:InvokeServer(accessory.AssetId) end)
+            end
+        end
+    end
+
+    local accessoriesToWear = {138469192396526, 136658063467207}
+    for _, id in ipairs(accessoriesToWear) do
+        pcall(function() WearRemote:InvokeServer(id) end)
+    end
+
+    local shirtsToWear = {9683332649}
+    local pantsToWear = {730003802}
+    for _, id in ipairs(shirtsToWear) do pcall(function() WearShirtRemote:InvokeServer(id) end) end
+    for _, id in ipairs(pantsToWear) do pcall(function() WearPantsRemote:InvokeServer(id) end) end
+
+    local tool = Instance.new("Tool")
+    tool.Name = "1x1x1x1"
+    tool.RequiresHandle = false
+    tool.CanBeDropped = false
+    tool.TextureId = "rbxassetid://114841792124711"
+    tool.Parent = LocalPlayer:WaitForChild("Backpack")
+
+    local equipped = false
+    local active = {}
+    local animationPool = {
+        139879794862714,
+        139707883040856
+    }
+    math.randomseed(tick() + (LocalPlayer.UserId or 0))
+
+    local function stopActiveAnimations()
+        for id, track in pairs(active) do
+            pcall(function()
+                if track.IsPlaying then track:Stop() end
+                track:Destroy()
+            end)
+            active[id] = nil
+        end
+    end
+
+    local function playEmote()
+        pcall(function()
+            stopActiveAnimations()
+            local animId = animationPool[math.random(1, #animationPool)]
+            if typeof(Humanoid.PlayEmoteAndGetAnimTrackById) == "function" then
+                local track = Humanoid:PlayEmoteAndGetAnimTrackById(animId)
+                if track then
+                    track.Looped = true
+                    track.Priority = Enum.AnimationPriority.Action
+                    active[animId] = track
+                    track.Stopped:Connect(function() active[animId] = nil end)
+                    return
+                end
+            end
+
+            local anim = Instance.new("Animation")
+            anim.AnimationId = "rbxassetid://"..tostring(animId)
+            local track = Humanoid:LoadAnimation(anim)
+            track.Looped = true
+            track.Priority = Enum.AnimationPriority.Action
+            track:Play()
+            active[animId] = track
+            track.Stopped:Connect(function() active[animId] = nil end)
+        end)
+    end
+
+    local soundIds = {
+        132686709305301, 
+        111264583736529, 
+        83476292396738,
+        139477985881551,
+        132245317457036
+    }
+    local soundIndex = 1
+    local volume = 0.95
+
+    local function playLocalSound(parent, id)
+        pcall(function()
+            local sound = Instance.new("Sound")
+            sound.SoundId = "rbxassetid://"..tostring(id)
+            sound.Volume = volume
+            sound.Parent = parent
+            sound:Play()
+            sound.Ended:Connect(function() sound:Destroy() end)
+        end)
+    end
+
+    tool.Equipped:Connect(function() equipped = true end)
+    tool.Unequipped:Connect(function() equipped = false end)
+
+    UserInputService.InputBegan:Connect(function(input, gpe)
+        if not equipped or gpe then return end
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            playEmote()
+
+            local currentId = soundIds[soundIndex]
+
+            if RemoteSound then
+                pcall(function()
+                    RemoteSound:FireServer(Character:FindFirstChild("HumanoidRootPart"), currentId, volume)
+                end)
+            end
+
+            playLocalSound(Character:FindFirstChild("HumanoidRootPart") or Character.PrimaryPart or Character, currentId)
+
+            soundIndex = (soundIndex % #soundIds) + 1
+        end
+    end)
+
+    local animate = Character:WaitForChild("Animate")
+    for _, track in ipairs(Humanoid:GetPlayingAnimationTracks()) do
+        pcall(function() track:Stop(); track:Destroy() end)
+    end
+
+    pcall(function()
+        animate.walk.WalkAnim.AnimationId   = "http://www.roblox.com/asset/?id=121350640829746"
+        animate.run.RunAnim.AnimationId     = "http://www.roblox.com/asset/?id=121350640829746"
+        animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=135425213693488"
+        animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=135579638960045"
+        animate.jump.JumpAnim.AnimationId   = "http://www.roblox.com/asset/?id=104108770420406"
+        animate.fall.FallAnim.AnimationId   = "http://www.roblox.com/asset/?id=104108770420406"
+        animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=421121499"
+    end)
+
+    Humanoid.Jump = false
+
+    pcall(function()
+        StarterGui:SetCore("SendNotification", {
+            Title = "1x1x1x1",
+            Text = "By Shelby/Usuario_X1x1x1",
+            Icon = "rbxassetid://114841792124711",
+            Duration = 8,
+            Button1 = "OK"
+        })
+    end)
+end)

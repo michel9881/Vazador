@@ -1,0 +1,107 @@
+pcall(function()
+    do
+        local Players = game:GetService("Players")
+        local ReplicatedStorage = game:GetService("ReplicatedStorage")
+        local UserInputService = game:GetService("UserInputService")
+        local StarterGui = game:GetService("StarterGui")
+
+        local LocalPlayer = Players.LocalPlayer
+        local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+        local Humanoid = Character:FindFirstChildOfClass("Humanoid")
+        if not Humanoid then return end
+
+        local Remotes = ReplicatedStorage:WaitForChild("Remotes")
+        local WearRemote = Remotes:WaitForChild("Wear")
+
+        local accessoriesToWear = {17615158624}
+        for _, id in ipairs(accessoriesToWear) do
+            pcall(function()
+                WearRemote:InvokeServer(id)
+            end)
+        end
+
+        local animate = Character:WaitForChild("Animate")
+
+        local tool = Instance.new("Tool")
+        tool.Name = "Ban Hammer"
+        tool.RequiresHandle = false
+        tool.CanBeDropped = false
+        tool.TextureId = "rbxassetid://4813866018"
+        tool.Parent = LocalPlayer:WaitForChild("Backpack")
+
+        local equipped = false
+        local selectedAnimation = {id = 139707883040856}
+        local active = {}
+        local remote = ReplicatedStorage:WaitForChild("RE"):WaitForChild("1Gu1nSound1s")
+        local soundId = 96354959748895
+        local volume = 0.95
+
+        local function playEmote()
+            pcall(function()
+                local track = Humanoid:PlayEmoteAndGetAnimTrackById(selectedAnimation.id)
+                if track then
+                    track.Looped = true
+                    track.Priority = Enum.AnimationPriority.Action
+                    active[selectedAnimation.id] = track
+                    track.Stopped:Connect(function()
+                        active[selectedAnimation.id] = nil
+                    end)
+                end
+            end)
+        end
+
+        local function playLocalSound(parent)
+            pcall(function()
+                local sound = Instance.new("Sound")
+                sound.SoundId = "rbxassetid://"..soundId
+                sound.Volume = volume
+                sound.Parent = parent
+                sound:Play()
+                sound.Ended:Connect(function()
+                    sound:Destroy()
+                end)
+            end)
+        end
+
+        tool.Equipped:Connect(function() equipped = true end)
+        tool.Unequipped:Connect(function() equipped = false end)
+
+        UserInputService.InputBegan:Connect(function(input, gpe)
+            if not equipped or gpe then return end
+            if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+                playEmote()
+                if remote then
+                    pcall(function()
+                        remote:FireServer(Character.HumanoidRootPart, soundId, volume)
+                    end)
+                end
+                playLocalSound(Character.HumanoidRootPart)
+            end
+        end)
+
+        for _, track in ipairs(Humanoid:GetPlayingAnimationTracks()) do
+            pcall(function()
+                track:Stop()
+                track:Destroy()
+            end)
+        end
+
+        animate.walk.WalkAnim.AnimationId   = "http://www.roblox.com/asset/?id=121350640829746"
+        animate.run.RunAnim.AnimationId     = "http://www.roblox.com/asset/?id=121350640829746"
+        animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=135425213693488"
+        animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=135579638960045"
+        animate.jump.JumpAnim.AnimationId   = "http://www.roblox.com/asset/?id=104108770420406"
+        animate.fall.FallAnim.AnimationId   = "http://www.roblox.com/asset/?id=104108770420406"
+        animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=421121499"
+
+        Humanoid.Jump = false
+
+        StarterGui:SetCore("SendNotification", {
+            Title = "Ban Hammer",
+            Text = "By Shelby/Usuario_X1x1x1",
+            Icon = "rbxassetid://4813866018",
+            Duration = 8,
+            Button1 = "OK"
+        })
+    end
+end)

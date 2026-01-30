@@ -1,0 +1,143 @@
+-- by Shelby: Gubby + Noly Sound System
+
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local UserInputService = game:GetService("UserInputService")
+local StarterGui = game:GetService("StarterGui")
+
+local LocalPlayer = Players.LocalPlayer
+local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+local Humanoid = Character:WaitForChild("Humanoid")
+
+-- Configs de WalkSpeed
+local defaultWalkSpeed = Humanoid.WalkSpeed
+local boostedSpeed = 45
+local decayTime = 3 -- segundos pra voltar pro padrão
+
+-- Muda a cor do corpo
+pcall(function()
+    local args = {[1] = "Institutional white"}
+    ReplicatedStorage.Remotes.ChangeBodyColor:FireServer(unpack(args))
+end)
+
+-- Muda partes do corpo
+pcall(function()
+    local args = {
+        [1] = {
+            [1] = 114525997390086, -- Torso
+            [2] = 124496762543782, -- Perna Esquerda 
+            [3] = 136750702448142, -- Perna Direita 
+            [4] = 80856732801320,  -- Braço Direito
+            [5] = 90534370226216,  -- Braço Esquerdo 
+            [6] = 0
+        }
+    }
+    ReplicatedStorage.Remotes.ChangeCharacterBody:InvokeServer(unpack(args))
+end)
+
+-- Coloca acessórios atuais do humanoid
+local Remotes = ReplicatedStorage:WaitForChild("Remotes")
+local WearRemote = Remotes:WaitForChild("Wear")
+
+pcall(function()
+    local Desc = Humanoid:GetAppliedDescription()
+    for _, accessory in ipairs(Desc:GetAccessories(true)) do
+        if accessory.AssetId then
+            WearRemote:InvokeServer(accessory.AssetId)
+        end
+    end
+
+    local accessoriesToWear = {130565002944315} -- adicionais
+    for _, id in ipairs(accessoriesToWear) do
+        WearRemote:InvokeServer(id)
+    end
+end)
+
+-- Cria a ferramenta Gubby
+local tool = Instance.new("Tool")
+tool.Name = "Gubby"
+tool.RequiresHandle = false
+tool.CanBeDropped = false
+tool.TextureId = "rbxassetid://132322722596320"
+tool.Parent = LocalPlayer:WaitForChild("Backpack")
+
+-- Sons do Gubby + Noly
+local soundIds = {9118862378, 6715870978} -- adiciona o sound do Noly
+local volume = 0.80
+local nolyRemote = ReplicatedStorage:FindFirstChild("RE") and ReplicatedStorage.RE:FindFirstChild("1Gu1nSound1s")
+
+local function playLocalSound(parent)
+    pcall(function()
+        local sound = Instance.new("Sound")
+        local soundId = soundIds[math.random(1, #soundIds)]
+        sound.SoundId = "rbxassetid://"..soundId
+        sound.Volume = volume
+        sound.Parent = parent
+        sound:Play()
+        sound.Ended:Connect(function() sound:Destroy() end)
+    end)
+end
+
+-- Ferramenta equipada
+local equipped = false
+tool.Equipped:Connect(function() equipped = true end)
+tool.Unequipped:Connect(function() equipped = false end)
+
+-- Clique aumenta WalkSpeed e toca sons
+UserInputService.InputBegan:Connect(function(input, gpe)
+    if not equipped or gpe then return end
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        -- aumenta instantaneamente
+        Humanoid.WalkSpeed = boostedSpeed
+
+        -- reduz devagar pro padrão
+        local step = 0.1
+        local decrement = (boostedSpeed - defaultWalkSpeed) * step / decayTime
+        spawn(function()
+            local current = Humanoid.WalkSpeed
+            while current > defaultWalkSpeed do
+                current = current - decrement
+                if current < defaultWalkSpeed then current = defaultWalkSpeed end
+                Humanoid.WalkSpeed = current
+                wait(step)
+            end
+        end)
+
+        -- toca som local
+        playLocalSound(Character.HumanoidRootPart)
+
+        -- toca som remoto Noly
+        if nolyRemote then
+            pcall(function()
+                nolyRemote:FireServer(Character.HumanoidRootPart, 126967668249129, 0.65)
+            end)
+        end
+    end
+end)
+
+-- Aplica todas as animações pro humanoid (não tocam automaticamente)
+pcall(function()
+    local animationIds = {
+        Idle  = 2510235063,
+        Walk  = 2510235063,
+        Run   = 2510238627,
+        Jump  = 2510236649,
+        Fall  = 2510233257,
+        Climb = 2510230574,
+        Swim  = 2510240941
+    }
+    for _, animId in pairs(animationIds) do
+        WearRemote:InvokeServer(animId)
+    end
+end)
+
+Humanoid.Jump = false
+
+-- Notificação inicial
+StarterGui:SetCore("SendNotification", {
+    Title = "Gubby Special Members",
+    Text = "By Shelby/Usuario_X1x1x1",
+    Icon = "rbxassetid://132322722596320",
+    Duration = 8,
+    Button1 = "OK"
+})

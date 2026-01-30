@@ -1,0 +1,4088 @@
+        -- Criar aba FE
+        local feTab = Window:MakeTab({"FE", "rbxassetid://17829956110"})
+
+        -- Adicionar seção BONI
+        feTab:AddSection({ "VARIOS FE" })
+
+        -- Função para bugar player (reutilizável)
+        local function bugPlayer(targetPlayer)
+            local ReplicatedStorage = game:GetService("ReplicatedStorage")
+            local Remote = ReplicatedStorage.RE:FindFirstChild("1Gu1n")
+            
+            if not Remote then
+                game:GetService("StarterGui"):SetCore("SendNotification",{
+                    Title = "Erro",
+                    Text = "Remote não encontrado",
+                    Duration = 3
+                })
+                return
+            end
+            
+            if not targetPlayer or not targetPlayer.Character then
+                game:GetService("StarterGui"):SetCore("SendNotification",{
+                    Title = "Erro",
+                    Text = "Player inválido",
+                    Duration = 3
+                })
+                return
+            end
+            
+            local playerName = targetPlayer.Name
+            
+            if buggedPlayers[playerName] then
+                -- Se já está bugado, para o bug
+                if bugConnections[playerName] then
+                    bugConnections[playerName]:Disconnect()
+                    bugConnections[playerName] = nil
+                end
+                buggedPlayers[playerName] = nil
+                game:GetService("StarterGui"):SetCore("SendNotification",{
+                    Title = "Bug Parado",
+                    Text = playerName .. " foi desbugado",
+                    Duration = 3
+                })
+                return
+            end
+            
+            -- Buga o player
+            buggedPlayers[playerName] = true
+            game:GetService("StarterGui"):SetCore("SendNotification",{
+                Title = "Ataque",
+                Text = playerName .. " foi bugado pelo comando",
+                Duration = 3
+            })
+            
+            bugConnections[playerName] = RunService.Stepped:Connect(function()
+                local target = Players:FindFirstChild(playerName)
+                
+                if not target or not target.Character or not target.Character:FindFirstChild("HumanoidRootPart") then
+                    if bugConnections[playerName] then
+                        bugConnections[playerName]:Disconnect()
+                        bugConnections[playerName] = nil
+                    end
+                    buggedPlayers[playerName] = nil
+                    return
+                end
+                
+                local crazyVector = Vector3.new(
+                    math.random(1e14, 1e15),
+                    math.random(1e14, 1e15),
+                    math.random(1e14, 1e15)
+                )
+                
+                local args = {
+                    [1] = target.Character.HumanoidRootPart,
+                    [2] = target.Character.HumanoidRootPart,
+                    [3] = crazyVector,
+                    [4] = target.Character.HumanoidRootPart.Position,
+                    [5] = LocalPlayer.Backpack:FindFirstChild("Assault") and LocalPlayer.Backpack.Assault:FindFirstChild("GunScript_Local") and LocalPlayer.Backpack.Assault.GunScript_Local:FindFirstChild("MuzzleEffect"),
+                    [6] = LocalPlayer.Backpack:FindFirstChild("Assault") and LocalPlayer.Backpack.Assault:FindFirstChild("GunScript_Local") and LocalPlayer.Backpack.Assault.GunScript_Local:FindFirstChild("HitEffect"),
+                    [7] = 0,
+                    [8] = 0,
+                    [9] = { [1] = false },
+                    [10] = {
+                        [1] = 25,
+                        [2] = Vector3.new(100, 100, 100),
+                        [3] = BrickColor.new(29),
+                        [4] = 0.25,
+                        [5] = Enum.Material.SmoothPlastic,
+                        [6] = 0.25
+                    },
+                    [11] = true,
+                    [12] = false
+                }
+                
+                Remote:FireServer(unpack(args))
+            end)
+        end
+
+        -- Função para processar comando /bugged
+        local function processBuggedCommand(message)
+            local command, playerName = message:match("^/bugged%s+(.+)$")
+            
+            if command and playerName then
+                -- Remove espaços extras
+                playerName = playerName:gsub("%s+", "")
+                
+                -- Procura o player
+                local targetPlayer = nil
+                for _, player in pairs(Players:GetPlayers()) do
+                    if player.Name:lower() == playerName:lower() then
+                        targetPlayer = player
+                        break
+                    end
+                end
+                
+                if targetPlayer then
+                    if targetPlayer == LocalPlayer then
+                        game:GetService("StarterGui"):SetCore("SendNotification",{
+                            Title = "Erro",
+                            Text = "Você não pode se bugar!",
+                            Duration = 3
+                        })
+                    else
+                        bugPlayer(targetPlayer)
+                    end
+                else
+                    game:GetService("StarterGui"):SetCore("SendNotification",{
+                        Title = "Erro",
+                        Text = "Player '" .. playerName .. "' não encontrado",
+                        Duration = 3
+                    })
+                end
+            end
+        end
+
+        -- Conectar ao evento de chat
+        LocalPlayer.Chatted:Connect(function(message)
+            -- Comando /bugged
+            if message:lower():match("^/bugged") then
+                processBuggedCommand(message)
+            end
+            
+            -- Comandos existentes (mantidos para compatibilidade)
+            if message:lower() == "/stopallbugs" then
+                for playerName, connection in pairs(bugConnections) do
+                    if connection then
+                        connection:Disconnect()
+                    end
+                end
+                bugConnections = {}
+                buggedPlayers = {}
+                game:GetService("StarterGui"):SetCore("SendNotification",{
+                    Title = "Bugs Parados",
+                    Text = "Todos os players foram desbugados",
+                    Duration = 3
+                })
+            elseif message:lower() == "/buggedlist" then
+                local count = 0
+                for _ in pairs(buggedPlayers) do
+                    count = count + 1
+                end
+                if count > 0 then
+                    local playerList = ""
+                    for playerName in pairs(buggedPlayers) do
+                        playerList = playerList .. playerName .. ", "
+                    end
+                    playerList = playerList:sub(1, -3) -- Remove a última vírgula e espaço
+                    game:GetService("StarterGui"):SetCore("SendNotification",{
+                        Title = "Players Bugados (" .. count .. ")",
+                        Text = playerList,
+                        Duration = 5
+                    })
+                else
+                    game:GetService("StarterGui"):SetCore("SendNotification",{
+                        Title = "Lista de Bugs",
+                        Text = "Nenhum player bugado",
+                        Duration = 3
+                    })
+                end
+            end
+        end)
+
+        -- Função do script BONI COMPLETA SEM TOOLS DE ANIMAÇÃO E SPEED
+        local function executeLULA()
+            game:GetService("StarterGui"):SetCore("SendNotification",{
+                Title = "Fe Coolkid",
+                Text = "Made by BONI",
+                Button1 = "ok",
+                Button2 = "-",
+                Duration = 30
+            })
+
+            wait(1)
+
+            local Players = game:GetService("Players")
+            local ReplicatedStorage = game:GetService("ReplicatedStorage")
+            local RunService = game:GetService("RunService")
+            local UserInputService = game:GetService("UserInputService")
+            local Workspace = game:GetService("Workspace")
+            local LocalPlayer = Players.LocalPlayer
+
+            local args1 = {
+                [1] = {
+                    [1] = 121838871518791,
+                    [2] = 89124612345294,
+                    [3] = 84431523780379,
+                    [4] = 104281326156987,
+                    [5] = 94645302037763,
+                }
+            }
+
+            game:GetService("ReplicatedStorage").Remotes.ChangeCharacterBody:InvokeServer(unpack(args1))
+
+            wait(0.5)
+
+            local torsoId = 94619376315261
+
+            pcall(function()
+                game:GetService("ReplicatedStorage").Remotes.EquipTorso:InvokeServer(torsoId)
+            end)
+
+            wait(0.3)
+
+            pcall(function()
+                game:GetService("ReplicatedStorage").Remotes.ChangeCharacterTorso:InvokeServer(torsoId)
+            end)
+
+            wait(0.3)
+
+            pcall(function()
+                game:GetService("ReplicatedStorage").Remotes.UpdateBody:InvokeServer({torso = torsoId})
+            end)
+
+            wait(0.3)
+
+            pcall(function()
+                game:GetService("ReplicatedStorage").Remotes.EquipAccessory:InvokeServer(torsoId)
+            end)
+
+            wait(0.3)
+
+            pcall(function()
+                local altArgs = {["torso"] = torsoId}
+                game:GetService("ReplicatedStorage").Remotes.ChangeCharacterBody:InvokeServer(altArgs)
+            end)
+
+            wait(0.3)
+
+            pcall(function()
+                local torsoOnly = {torsoId}
+                game:GetService("ReplicatedStorage").Remotes.ChangeCharacterBody:InvokeServer(torsoOnly)
+            end)
+
+            local OUTFIT_CONFIG = {
+                bodyColor = "Red",
+                pants = 14754344222,
+                shirt = 95177026682493,
+                accessories = {
+                    107183560601609,
+                    137409614063378,
+                },
+                bundles = {
+                    155839511828543
+                },
+                equipDelay = 0.8,
+                maxRetries = 3
+            }
+
+            local function equipWithRetry(remoteName, id, itemType, retries)
+                retries = retries or OUTFIT_CONFIG.maxRetries
+                for attempt = 1, retries do
+                    local success = pcall(function()
+                        local args = {[1] = id}
+                        if remoteName == "ChangeBodyColor" then
+                            ReplicatedStorage.Remotes[remoteName]:FireServer(unpack(args))
+                        else
+                            ReplicatedStorage.Remotes[remoteName]:InvokeServer(unpack(args))
+                        end
+                    end)
+                    if success then
+                        return true
+                    else
+                        if attempt < retries then
+                            wait(0.5)
+                        else
+                            return false
+                        end
+                    end
+                end
+                return false
+            end
+
+            equipWithRetry("ChangeBodyColor", OUTFIT_CONFIG.bodyColor, "Cor do corpo")
+            wait(1)
+            equipWithRetry("WearPants", OUTFIT_CONFIG.pants, "Calca")
+            wait(OUTFIT_CONFIG.equipDelay)
+            equipWithRetry("WearShirt", OUTFIT_CONFIG.shirt, "Camisa")
+            wait(OUTFIT_CONFIG.equipDelay)
+
+            for i, accessoryID in pairs(OUTFIT_CONFIG.accessories) do
+                equipWithRetry("Wear", accessoryID, "Acessorio")
+                if i < #OUTFIT_CONFIG.accessories then
+                    wait(OUTFIT_CONFIG.equipDelay)
+                end
+            end
+
+            wait(1)
+
+            for i, bundleID in pairs(OUTFIT_CONFIG.bundles) do
+                equipWithRetry("WearBundle", bundleID, "Bundle")
+                if i < #OUTFIT_CONFIG.bundles then
+                    wait(OUTFIT_CONFIG.equipDelay)
+                end
+            end
+
+            local args = {
+                [1] = "18637078598",
+                [2] = "032RedFire"
+            }
+
+            game:GetService("ReplicatedStorage").Remotes.ApplyEmmiter:InvokeServer(unpack(args))
+
+            local character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+            local humanoid = character:WaitForChild("Humanoid")
+            local lastPosition = character.PrimaryPart and character.PrimaryPart.Position or Vector3.new()
+
+            LocalPlayer.CharacterAdded:Connect(function(newCharacter)
+                character = newCharacter
+                humanoid = newCharacter:WaitForChild("Humanoid")
+                lastPosition = character.PrimaryPart and character.PrimaryPart.Position or Vector3.new()
+            end)
+
+            local Settings = {
+                ["Stop On Move"] = true,
+                ["Fade In"] = 0.1,
+                ["Fade Out"] = 0.1,
+                ["Weight"] = 1,
+                ["Speed"] = 1,
+                ["Time Position"] = 0
+            }
+
+            local EmoteIDs = {
+                idle = "135425213693488",
+                walk = "121350640829746",
+                run = "121350640829746",
+                jump = "104108770420406"
+            }
+
+            local TOOL1_NAME = "Coolkid"
+            local TOOL1_IMAGE = "rbxassetid://10764744805"
+            local TOOL1_AUDIO = 112087273852369
+            local TOOL1_ANIM = "117254600864069"
+
+            local CurrentTrack = nil
+            local CurrentTracks = {}
+            local lastState = "idle"
+            local stateTime = 0
+            local isSystemActive = false
+            local isToolAnimationPlaying = false
+
+            local function LoadTrack(id)
+                if CurrentTrack then CurrentTrack:Stop(Settings["Fade Out"]) end
+                local anim = Instance.new("Animation")
+                anim.AnimationId = "rbxassetid://"..id
+                local track = humanoid:LoadAnimation(anim)
+                track.Priority = Enum.AnimationPriority.Action4
+                track:Play(Settings["Fade In"], Settings["Weight"], Settings["Speed"])
+                CurrentTrack = track
+                return track
+            end
+
+            local function LoadEmoteTrack(id, trackName)
+                if CurrentTracks[trackName] then
+                    CurrentTracks[trackName]:Stop(Settings["Fade Out"])
+                    CurrentTracks[trackName] = nil
+                end
+                local anim = Instance.new("Animation")
+                anim.AnimationId = "rbxassetid://"..id
+                anim.Name = "EmoteMovement_"..trackName
+                local track = humanoid:LoadAnimation(anim)
+                track.Priority = Enum.AnimationPriority.Action
+                track:Play(Settings["Fade In"], Settings["Weight"], Settings["Speed"])
+                track.Looped = trackName ~= "jump"
+                CurrentTracks[trackName] = track
+                return track
+            end
+
+            local function detectMovementState()
+                if not humanoid then return "idle" end
+                local moveDir = humanoid.MoveDirection
+                local walkSpeed = humanoid.WalkSpeed
+                local jumpState = humanoid:GetState()
+                if jumpState == Enum.HumanoidStateType.Jumping or jumpState == Enum.HumanoidStateType.Freefall then
+                    return "jump"
+                elseif moveDir.Magnitude > 0.1 then
+                    return walkSpeed >= 20 and "run" or "walk"
+                else
+                    return "idle"
+                end
+            end
+
+            local function updateEmoteMovement()
+                if not isSystemActive or isToolAnimationPlaying then return end
+                local currentTime = tick()
+                local newState = detectMovementState()
+                if newState ~= lastState and (currentTime - stateTime) > 0.3 then
+                    if CurrentTracks[lastState] and CurrentTracks[lastState].IsPlaying then
+                        CurrentTracks[lastState]:Stop(Settings["Fade Out"])
+                    end
+                    if EmoteIDs[newState] then
+                        LoadEmoteTrack(EmoteIDs[newState], newState)
+                    end
+                    lastState = newState
+                    stateTime = currentTime
+                end
+            end
+
+            local function playTool1Once()
+                if CurrentTrack and CurrentTrack.IsPlaying then CurrentTrack:Stop(0.1) end
+                for _, track in pairs(CurrentTracks) do
+                    if track and track.IsPlaying then track:Stop(0.1) end
+                end
+                for _, track in pairs(humanoid:GetPlayingAnimationTracks()) do
+                    track:Stop(0.1)
+                end
+
+                isToolAnimationPlaying = true
+                isSystemActive = false
+
+                local anim = Instance.new("Animation")
+                anim.AnimationId = "rbxassetid://"..TOOL1_ANIM
+                local track = humanoid:LoadAnimation(anim)
+                track.Priority = Enum.AnimationPriority.Action
+                track.Looped = false
+                track:Play(0.1, 1, 1)
+                track.Stopped:Connect(function()
+                    isToolAnimationPlaying = false
+                    isSystemActive = true
+                    lastState = ""
+                    CurrentTracks = {}
+                end)
+            end
+
+            local tool1 = Instance.new("Tool")
+            tool1.Name = TOOL1_NAME
+            tool1.RequiresHandle = false
+            tool1.CanBeDropped = false
+            tool1.TextureId = TOOL1_IMAGE
+            tool1.Parent = LocalPlayer.Backpack
+
+            tool1.Activated:Connect(function()
+                local sound = Instance.new("Sound")
+                sound.SoundId = "rbxassetid://"..TOOL1_AUDIO
+                sound.Volume = 1
+                sound.Parent = character:FindFirstChild("HumanoidRootPart") or character:WaitForChild("Head")
+                sound:Play()
+                sound.Ended:Connect(function() sound:Destroy() end)
+                playTool1Once()
+            end)
+
+            RunService.Heartbeat:Connect(updateEmoteMovement)
+
+            LocalPlayer.CharacterAdded:Connect(function(newChar)
+                character = newChar
+                humanoid = newChar:WaitForChild("Humanoid")
+                lastPosition = character.PrimaryPart and character.PrimaryPart.Position or Vector3.new()
+                wait(3)
+            end)
+
+            wait(1)
+            isSystemActive = true
+
+            game:GetService("StarterGui"):SetCore("SendNotification",{
+                Title = "Coolkid Hammer Ready",
+                Text = "Use to bug players",
+                Duration = 10
+            })
+
+            -- Variáveis locais para o martelo
+            local hammerBuggedPlayers = {}
+            local hammerBugConnections = {}
+            local Remote = ReplicatedStorage.RE:FindFirstChild("1Gu1n")
+            local currentAnimationTrack = nil
+            local isAttacking = false
+
+            local ATTACK_SOUND_ID = 3417831369
+            local ATTACK_ANIMATION_ID = "83509299779732"
+
+            local HammerSettings = {
+                ["Stop On Move"] = true,
+                ["Fade In"] = 0.1,
+                ["Fade Out"] = 0.1,
+                ["Weight"] = 1,
+                ["Speed"] = 2,
+                ["Time Position"] = 0
+            }
+
+            local hammerLastPosition = Vector3.new()
+
+            local function PlayServerAudio(ID)
+                if type(ID) ~= "number" then return end
+                local ev = ReplicatedStorage:FindFirstChild("RE")
+                if ev and ev:FindFirstChild("1Gu1nSound1s") then
+                    ev["1Gu1nSound1s"]:FireServer(Workspace, ID, 1)
+                end
+            end
+
+            local function PlayLocalAudio(ID)
+                if type(ID) ~= "number" then return end
+                
+                local char = LocalPlayer.Character
+                if not char then return end
+                
+                local sound = Instance.new("Sound")
+                sound.SoundId = "rbxassetid://" .. ID
+                sound.Volume = 1
+                sound.Parent = char:FindFirstChild("HumanoidRootPart") or char:WaitForChild("Head")
+                sound:Play()
+                
+                sound.Ended:Connect(function()
+                    sound:Destroy()
+                end)
+                
+                task.delay(10, function()
+                    if sound and sound.Parent then
+                        sound:Destroy()
+                    end
+                end)
+                
+                return sound
+            end
+
+            local function PlayAttackSound()
+                PlayServerAudio(ATTACK_SOUND_ID)
+                return PlayLocalAudio(ATTACK_SOUND_ID)
+            end
+
+            RunService.RenderStepped:Connect(function()
+                if character and character.PrimaryPart then
+                    if HammerSettings["Stop On Move"] and currentAnimationTrack and currentAnimationTrack.IsPlaying then
+                        local moved = (character.PrimaryPart.Position - hammerLastPosition).Magnitude > 0.1
+                        local jumped = humanoid and humanoid:GetState() == Enum.HumanoidStateType.Jumping
+                        
+                        if moved or jumped then
+                            currentAnimationTrack:Stop(HammerSettings["Fade Out"])
+                            currentAnimationTrack = nil
+                            isAttacking = false
+                        end
+                    end
+                    hammerLastPosition = character.PrimaryPart.Position
+                end
+            end)
+
+            local function LoadAndPlayAttackAnimation()
+                if not character or not character:FindFirstChild("Humanoid") then return end
+                
+                local humanoid = character:FindFirstChildOfClass("Humanoid")
+                if not humanoid then return end
+                
+                if currentAnimationTrack then
+                    currentAnimationTrack:Stop(HammerSettings["Fade Out"])
+                    currentAnimationTrack = nil
+                end
+                
+                local newAnim = Instance.new("Animation")
+                newAnim.AnimationId = "rbxassetid://" .. ATTACK_ANIMATION_ID
+                
+                local newTrack = humanoid:LoadAnimation(newAnim)
+                newTrack.Priority = Enum.AnimationPriority.Action4
+                newTrack.Looped = false
+                
+                local weight = HammerSettings["Weight"]
+                if weight == 0 then weight = 0.001 end
+                
+                newTrack:Play(HammerSettings["Fade In"], weight, HammerSettings["Speed"])
+                currentAnimationTrack = newTrack
+                currentAnimationTrack.TimePosition = math.clamp(HammerSettings["Time Position"], 0, 1) * currentAnimationTrack.Length
+                
+                currentAnimationTrack.Stopped:Connect(function()
+                    currentAnimationTrack = nil
+                    isAttacking = false
+                end)
+                
+                task.delay(1.5, function()
+                    if currentAnimationTrack == newTrack then
+                        newTrack:Stop(HammerSettings["Fade Out"])
+                        currentAnimationTrack = nil
+                        isAttacking = false
+                    end
+                end)
+                
+                return newTrack
+            end
+
+            local function PerformAttack()
+                if isAttacking then return end
+                
+                isAttacking = true
+                PlayAttackSound()
+                LoadAndPlayAttackAnimation()
+                
+                task.delay(0.8, function()
+                    isAttacking = false
+                end)
+            end
+
+            -- Função local para bugar com martelo
+            local function hammerBugPlayer(targetPlayer)
+                if not Remote then
+                    game:GetService("StarterGui"):SetCore("SendNotification",{
+                        Title = "Erro",
+                        Text = "Remote não encontrado",
+                        Duration = 3
+                    })
+                    return
+                end
+                
+                if not targetPlayer or not targetPlayer.Character then
+                    game:GetService("StarterGui"):SetCore("SendNotification",{
+                        Title = "Erro",
+                        Text = "Player inválido",
+                        Duration = 3
+                    })
+                    return
+                end
+                
+                local playerName = targetPlayer.Name
+                
+                if hammerBuggedPlayers[playerName] then
+                    if hammerBugConnections[playerName] then
+                        hammerBugConnections[playerName]:Disconnect()
+                        hammerBugConnections[playerName] = nil
+                    end
+                    hammerBuggedPlayers[playerName] = nil
+                    game:GetService("StarterGui"):SetCore("SendNotification",{
+                        Title = "Bug Parado",
+                        Text = playerName .. " foi desbugado",
+                        Duration = 3
+                    })
+                    return
+                end
+                
+                hammerBuggedPlayers[playerName] = true
+                game:GetService("StarterGui"):SetCore("SendNotification",{
+                    Title = "Ataque",
+                    Text = playerName .. " foi atingido",
+                    Duration = 3
+                })
+                
+                hammerBugConnections[playerName] = RunService.Stepped:Connect(function()
+                    local target = Players:FindFirstChild(playerName)
+                    
+                    if not target or not target.Character or not target.Character:FindFirstChild("HumanoidRootPart") then
+                        if hammerBugConnections[playerName] then
+                            hammerBugConnections[playerName]:Disconnect()
+                            hammerBugConnections[playerName] = nil
+                        end
+                        hammerBuggedPlayers[playerName] = nil
+                        return
+                    end
+                    
+                    local crazyVector = Vector3.new(
+                        math.random(1e14, 1e15),
+                        math.random(1e14, 1e15),
+                        math.random(1e14, 1e15)
+                    )
+                    
+                    local args = {
+                        [1] = target.Character.HumanoidRootPart,
+                        [2] = target.Character.HumanoidRootPart,
+                        [3] = crazyVector,
+                        [4] = target.Character.HumanoidRootPart.Position,
+                        [5] = LocalPlayer.Backpack:FindFirstChild("Assault") and LocalPlayer.Backpack.Assault:FindFirstChild("GunScript_Local") and LocalPlayer.Backpack.Assault.GunScript_Local:FindFirstChild("MuzzleEffect"),
+                        [6] = LocalPlayer.Backpack:FindFirstChild("Assault") and LocalPlayer.Backpack.Assault:FindFirstChild("GunScript_Local") and LocalPlayer.Backpack.Assault.GunScript_Local:FindFirstChild("HitEffect"),
+                        [7] = 0,
+                        [8] = 0,
+                        [9] = { [1] = false },
+                        [10] = {
+                            [1] = 25,
+                            [2] = Vector3.new(100, 100, 100),
+                            [3] = BrickColor.new(29),
+                            [4] = 0.25,
+                            [5] = Enum.Material.SmoothPlastic,
+                            [6] = 0.25
+                        },
+                        [11] = true,
+                        [12] = false
+                    }
+                    
+                    Remote:FireServer(unpack(args))
+                end)
+            end
+
+            local function getPlayerFromMouse(mouse)
+                local target = mouse.Target
+                if not target then return nil end
+                
+                local character = target.Parent
+                while character and not character:FindFirstChild("Humanoid") do
+                    character = character.Parent
+                end
+                
+                if character and character:FindFirstChild("Humanoid") then
+                    return Players:GetPlayerFromCharacter(character)
+                end
+                
+                return nil
+            end
+
+            local tool = Instance.new("Tool")
+            tool.Name = "Hammer Coolkid"
+            tool.RequiresHandle = true
+            tool.CanBeDropped = true
+
+            local handle = Instance.new("Part")
+            handle.Name = "Handle"
+            handle.Size = Vector3.new(0.1, 0.1, 0.1)
+            handle.Massless = true
+            handle.Anchored = false
+            handle.CanCollide = false
+            handle.Transparency = 0.5
+            handle.Color = Color3.fromRGB(255, 0, 0)
+
+            local mesh = Instance.new("SpecialMesh", handle)
+            mesh.MeshType = Enum.MeshType.Sphere
+            mesh.Scale = Vector3.new(0.05, 0.05, 0.05)
+            mesh.Parent = handle
+
+            handle.Parent = tool
+
+            local mouseConnection = nil
+            local hammerAppearanceEquipped = false
+
+            tool.Equipped:Connect(function(mouse)
+                character = tool.Parent
+                if character and character:FindFirstChild("Humanoid") and character.Humanoid.RigType == Enum.HumanoidRigType.R15 then
+                    humanoid = character:FindFirstChild("Humanoid")
+                    if character.PrimaryPart then
+                        hammerLastPosition = character.PrimaryPart.Position
+                    end
+                    
+                    if not hammerAppearanceEquipped then
+                        pcall(function()
+                            local args = { 17615158624 }
+                            game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Wear"):InvokeServer(unpack(args))
+                            hammerAppearanceEquipped = true
+                        end)
+                    end
+                    
+                    if mouseConnection then
+                        mouseConnection:Disconnect()
+                    end
+                    
+                    mouseConnection = mouse.Button1Down:Connect(function()
+                        PerformAttack()
+                        
+                        local targetPlayer = getPlayerFromMouse(mouse)
+                        if targetPlayer and targetPlayer ~= LocalPlayer then
+                            hammerBugPlayer(targetPlayer)
+                        end
+                    end)
+                    
+                    game:GetService("StarterGui"):SetCore("SendNotification",{
+                        Title = "Hammer Equipado",
+                        Text = "Clique para atacar com som sincronizado",
+                        Duration = 3
+                    })
+                end
+            end)
+
+            tool.Unequipped:Connect(function()
+                if currentAnimationTrack then
+                    currentAnimationTrack:Stop(HammerSettings["Fade Out"])
+                    currentAnimationTrack = nil
+                end
+                
+                if mouseConnection then
+                    mouseConnection:Disconnect()
+                    mouseConnection = nil
+                end
+                
+                isAttacking = false
+                
+                game:GetService("StarterGui"):SetCore("SendNotification",{
+                    Title = "Hammer Guardado",
+                    Text = "Tool desequipado",
+                    Duration = 3
+                })
+            end)
+
+            Players.PlayerRemoving:Connect(function(player)
+                local playerName = player.Name
+                if hammerBugConnections[playerName] then
+                    hammerBugConnections[playerName]:Disconnect()
+                    hammerBugConnections[playerName] = nil
+                end
+                if hammerBuggedPlayers[playerName] then
+                    hammerBuggedPlayers[playerName] = nil
+                end
+            end)
+
+            local function stopAllHammerBugs()
+                for playerName, connection in pairs(hammerBugConnections) do
+                    if connection then
+                        connection:Disconnect()
+                    end
+                end
+                hammerBugConnections = {}
+                hammerBuggedPlayers = {}
+                game:GetService("StarterGui"):SetCore("SendNotification",{
+                    Title = "Bugs Parados",
+                    Text = "Todos os players foram desbugados do martelo",
+                    Duration = 3
+                })
+            end
+
+            -- Comandos locais do martelo
+            LocalPlayer.Chatted:Connect(function(message)
+                if message:lower() == "/stopallbugs" then
+                    stopAllHammerBugs()
+                elseif message:lower() == "/buggedlist" then
+                    local count = 0
+                    for _ in pairs(hammerBuggedPlayers) do
+                        count = count + 1
+                    end
+                    if count > 0 then
+                        game:GetService("StarterGui"):SetCore("SendNotification",{
+                            Title = "Lista",
+                            Text = count .. " players bugados pelo martelo",
+                            Duration = 3
+                        })
+                    else
+                        game:GetService("StarterGui"):SetCore("SendNotification",{
+                            Title = "Lista",
+                            Text = "Nenhum player bugado pelo martelo",
+                            Duration = 3
+                        })
+                    end
+                elseif message:lower() == "/stopanim" then
+                    if currentAnimationTrack then
+                        currentAnimationTrack:Stop(HammerSettings["Fade Out"])
+                        currentAnimationTrack = nil
+                    end
+                    isAttacking = false
+                    game:GetService("StarterGui"):SetCore("SendNotification",{
+                        Title = "Parado",
+                        Text = "Animacao interrompida",
+                        Duration = 3
+                    })
+                end
+            end)
+
+            tool.Parent = LocalPlayer.Backpack
+
+            game:GetService("StarterGui"):SetCore("SendNotification",{
+                Title = "Carregado",
+                Text = "Sistema sincronizado ativo",
+                Duration = 3
+            })
+
+            -- ============================================
+            -- ADICIONAR TOOL DA RISADA
+            -- ============================================
+            
+            local Players = game:GetService("Players")
+            local RunService = game:GetService("RunService")
+            local ReplicatedStorage = game:GetService("ReplicatedStorage")
+            local Workspace = game:GetService("Workspace")
+
+            local player = Players.LocalPlayer
+            local character = player.Character or player.CharacterAdded:Wait()
+            local humanoid = character:WaitForChild("Humanoid")
+            local lastPosition = character.PrimaryPart and character.PrimaryPart.Position or Vector3.new()
+
+            player.CharacterAdded:Connect(function(newCharacter)
+                character = newCharacter
+                humanoid = newCharacter:WaitForChild("Humanoid")
+                lastPosition = character.PrimaryPart and character.PrimaryPart.Position or Vector3.new()
+            end)
+
+            -- ======================
+            -- Configurações Emote
+            -- ======================
+            local Settings = {}
+            Settings["Stop On Move"] = true
+            Settings["Fade In"] = 0.1
+            Settings["Fade Out"] = 0.1
+            Settings["Weight"] = 1
+            Settings["Speed"] = 1
+            Settings["Time Position"] = 0
+
+            local CurrentTrack = nil
+            local DEMOMAN_LAUGH_ID = "122240620529815" -- ID atualizado do emote
+
+            local function LoadTrack(id)
+                if CurrentTrack then 
+                    CurrentTrack:Stop(Settings["Fade Out"]) 
+                end
+                
+                local animId
+                local ok, result = pcall(function() 
+                    return game:GetObjects("rbxassetid://" .. tostring(id)) 
+                end)
+                
+                if ok and result and #result > 0 then
+                    local anim = result[1]
+                    if anim:IsA("Animation") then
+                        animId = anim.AnimationId
+                    else
+                        animId = "rbxassetid://" .. tostring(id)
+                    end
+                else
+                    animId = "rbxassetid://" .. tostring(id)
+                end
+                
+                local newAnim = Instance.new("Animation")
+                newAnim.AnimationId = animId
+                local newTrack = humanoid:LoadAnimation(newAnim)
+                newTrack.Priority = Enum.AnimationPriority.Action4
+                
+                local weight = Settings["Weight"]
+                if weight == 0 then weight = 0.001 end
+                
+                newTrack:Play(Settings["Fade In"], weight, Settings["Speed"])
+                CurrentTrack = newTrack
+                CurrentTrack.TimePosition = math.clamp(Settings["Time Position"], 0, 1) * CurrentTrack.Length
+                CurrentTrack.Priority = Enum.AnimationPriority.Action4
+                
+                return newTrack
+            end
+
+            RunService.RenderStepped:Connect(function()
+                if character.PrimaryPart then
+                    if Settings["Stop On Move"] and CurrentTrack and CurrentTrack.IsPlaying then
+                        local moved = (character.PrimaryPart.Position - lastPosition).Magnitude > 0.1
+                        local jumped = humanoid and humanoid:GetState() == Enum.HumanoidStateType.Jumping
+                        if moved or jumped then
+                            CurrentTrack:Stop(Settings["Fade Out"])
+                            CurrentTrack = nil
+                        end
+                    end
+                    lastPosition = character.PrimaryPart.Position
+                end
+            end)
+
+            local function playDemomanLaugh()
+                LoadTrack(DEMOMAN_LAUGH_ID)
+            end
+
+            local function stopEmote()
+                if CurrentTrack then
+                    CurrentTrack:Stop(Settings["Fade Out"])
+                    CurrentTrack = nil
+                end
+            end
+
+            -- ======================
+            -- Configurações Áudio
+            -- ======================
+            local AUDIO_ID = 91272519331317
+            local TOOL_NAME = "Risada"
+
+            local function PlayServerAudio(ID)
+                if type(ID) ~= "number" then return end
+                local ev = ReplicatedStorage:FindFirstChild("RE")
+                if ev and ev:FindFirstChild("1Gu1nSound1s") then
+                    ev["1Gu1nSound1s"]:FireServer(Workspace, ID, 1)
+                end
+            end
+
+            local function PlayLocalAudio(ID)
+                if type(ID) ~= "number" then return end
+                local char = player.Character or player.CharacterAdded:Wait()
+                local sound = Instance.new("Sound")
+                sound.SoundId = "rbxassetid://" .. ID
+                sound.Volume = 1
+                sound.Parent = char:FindFirstChild("HumanoidRootPart") or char:WaitForChild("Head")
+                sound:Play()
+                sound.Ended:Connect(function()
+                    sound:Destroy()
+                end)
+            end
+
+            local function PlayAudio(ID)
+                PlayServerAudio(ID)
+                PlayLocalAudio(ID)
+            end
+
+            -- ======================
+            -- Criar Tool
+            -- ======================
+            local tool = Instance.new("Tool")
+            tool.Name = TOOL_NAME
+            tool.RequiresHandle = false
+            tool.CanBeDropped = false
+            tool.Parent = player.Backpack
+
+            tool.Activated:Connect(function()
+                PlayAudio(AUDIO_ID)
+                playDemomanLaugh()
+            end)
+
+            tool.Equipped:Connect(function()
+                -- opcional: tocar automaticamente ao equipar
+                -- playDemomanLaugh()
+            end)
+
+            print("✅ Tool completa (Emote + Áudio) criada no Backpack!")
+        end
+
+        -- Adicionar botão BONI
+        feTab:AddButton({
+            Name = "Coolkid Fe",
+            Callback = function()
+                executeLULA()
+            end
+        })
+
+        -- Função para bugar player (reutilizável)
+        local function bugPlayer(targetPlayer)
+            local ReplicatedStorage = game:GetService("ReplicatedStorage")
+            local Remote = ReplicatedStorage.RE:FindFirstChild("1Gu1n")
+            
+            if not Remote then
+                game:GetService("StarterGui"):SetCore("SendNotification",{
+                    Title = "Erro",
+                    Text = "Remote não encontrado",
+                    Duration = 3
+                })
+                return
+            end
+            
+            if not targetPlayer or not targetPlayer.Character then
+                game:GetService("StarterGui"):SetCore("SendNotification",{
+                    Title = "Erro",
+                    Text = "Player inválido",
+                    Duration = 3
+                })
+                return
+            end
+            
+            local playerName = targetPlayer.Name
+            
+            if buggedPlayers[playerName] then
+                -- Se já está bugado, para o bug
+                if bugConnections[playerName] then
+                    bugConnections[playerName]:Disconnect()
+                    bugConnections[playerName] = nil
+                end
+                buggedPlayers[playerName] = nil
+                game:GetService("StarterGui"):SetCore("SendNotification",{
+                    Title = "Bug Parado",
+                    Text = playerName .. " foi desbugado",
+                    Duration = 3
+                })
+                return
+            end
+            
+            -- Buga o player
+            buggedPlayers[playerName] = true
+            game:GetService("StarterGui"):SetCore("SendNotification",{
+                Title = "Ataque",
+                Text = playerName .. " foi bugado pelo comando",
+                Duration = 3
+            })
+            
+            bugConnections[playerName] = RunService.Stepped:Connect(function()
+                local target = Players:FindFirstChild(playerName)
+                
+                if not target or not target.Character or not target.Character:FindFirstChild("HumanoidRootPart") then
+                    if bugConnections[playerName] then
+                        bugConnections[playerName]:Disconnect()
+                        bugConnections[playerName] = nil
+                    end
+                    buggedPlayers[playerName] = nil
+                    return
+                end
+                
+                local crazyVector = Vector3.new(
+                    math.random(1e14, 1e15),
+                    math.random(1e14, 1e15),
+                    math.random(1e14, 1e15)
+                )
+                
+                local args = {
+                    [1] = target.Character.HumanoidRootPart,
+                    [2] = target.Character.HumanoidRootPart,
+                    [3] = crazyVector,
+                    [4] = target.Character.HumanoidRootPart.Position,
+                    [5] = LocalPlayer.Backpack:FindFirstChild("Assault") and LocalPlayer.Backpack.Assault:FindFirstChild("GunScript_Local") and LocalPlayer.Backpack.Assault.GunScript_Local:FindFirstChild("MuzzleEffect"),
+                    [6] = LocalPlayer.Backpack:FindFirstChild("Assault") and LocalPlayer.Backpack.Assault:FindFirstChild("GunScript_Local") and LocalPlayer.Backpack.Assault.GunScript_Local:FindFirstChild("HitEffect"),
+                    [7] = 0,
+                    [8] = 0,
+                    [9] = { [1] = false },
+                    [10] = {
+                        [1] = 25,
+                        [2] = Vector3.new(100, 100, 100),
+                        [3] = BrickColor.new(29),
+                        [4] = 0.25,
+                        [5] = Enum.Material.SmoothPlastic,
+                        [6] = 0.25
+                    },
+                    [11] = true,
+                    [12] = false
+                }
+                
+                Remote:FireServer(unpack(args))
+            end)
+        end
+
+        -- Função para processar comando /bugged
+        local function processBuggedCommand(message)
+            local command, playerName = message:match("^/bugged%s+(.+)$")
+            
+            if command and playerName then
+                -- Remove espaços extras
+                playerName = playerName:gsub("%s+", "")
+                
+                -- Procura o player
+                local targetPlayer = nil
+                for _, player in pairs(Players:GetPlayers()) do
+                    if player.Name:lower() == playerName:lower() then
+                        targetPlayer = player
+                        break
+                    end
+                end
+                
+                if targetPlayer then
+                    if targetPlayer == LocalPlayer then
+                        game:GetService("StarterGui"):SetCore("SendNotification",{
+                            Title = "Erro",
+                            Text = "Você não pode se bugar!",
+                            Duration = 3
+                        })
+                    else
+                        bugPlayer(targetPlayer)
+                    end
+                else
+                    game:GetService("StarterGui"):SetCore("SendNotification",{
+                        Title = "Erro",
+                        Text = "Player '" .. playerName .. "' não encontrado",
+                        Duration = 3
+                    })
+                end
+            end
+        end
+
+        -- Conectar ao evento de chat
+        LocalPlayer.Chatted:Connect(function(message)
+            -- Comando /bugged
+            if message:lower():match("^/bugged") then
+                processBuggedCommand(message)
+            end
+            
+            -- Comandos existentes (mantidos para compatibilidade)
+            if message:lower() == "/stopallbugs" then
+                for playerName, connection in pairs(bugConnections) do
+                    if connection then
+                        connection:Disconnect()
+                    end
+                end
+                bugConnections = {}
+                buggedPlayers = {}
+                game:GetService("StarterGui"):SetCore("SendNotification",{
+                    Title = "Bugs Parados",
+                    Text = "Todos os players foram desbugados",
+                    Duration = 3
+                })
+            elseif message:lower() == "/buggedlist" then
+                local count = 0
+                for _ in pairs(buggedPlayers) do
+                    count = count + 1
+                end
+                if count > 0 then
+                    local playerList = ""
+                    for playerName in pairs(buggedPlayers) do
+                        playerList = playerList .. playerName .. ", "
+                    end
+                    playerList = playerList:sub(1, -3) -- Remove a última vírgula e espaço
+                    game:GetService("StarterGui"):SetCore("SendNotification",{
+                        Title = "Players Bugados (" .. count .. ")",
+                        Text = playerList,
+                        Duration = 5
+                    })
+                else
+                    game:GetService("StarterGui"):SetCore("SendNotification",{
+                        Title = "Lista de Bugs",
+                        Text = "Nenhum player bugado",
+                        Duration = 3
+                    })
+                end
+            end
+        end)
+
+        -- Função do script BONI COMPLETA SEM TOOLS DE ANIMAÇÃO E SPEED
+        local function executeGHOST()
+            game:GetService("StarterGui"):SetCore("SendNotification",{
+                Title = "Fe TUBERS93",
+                Text = "Made by BONI",
+                Button1 = "ok",
+                Button2 = "-",
+                Duration = 30
+            })
+
+            wait(1)
+
+            local Players = game:GetService("Players")
+            local ReplicatedStorage = game:GetService("ReplicatedStorage")
+            local RunService = game:GetService("RunService")
+            local UserInputService = game:GetService("UserInputService")
+            local Workspace = game:GetService("Workspace")
+            local LocalPlayer = Players.LocalPlayer
+
+            local args1 = {
+                [1] = {
+                    [1] = 121838871518791,
+                    [2] = 89124612345294,
+                    [3] = 84431523780379,
+                    [4] = 104281326156987,
+                    [5] = 94645302037763,
+                }
+            }
+
+            game:GetService("ReplicatedStorage").Remotes.ChangeCharacterBody:InvokeServer(unpack(args1))
+
+            wait(0.5)
+
+            local torsoId = 86500008
+
+            pcall(function()
+                game:GetService("ReplicatedStorage").Remotes.EquipTorso:InvokeServer(torsoId)
+            end)
+
+            wait(0.3)
+
+            pcall(function()
+                game:GetService("ReplicatedStorage").Remotes.ChangeCharacterTorso:InvokeServer(torsoId)
+            end)
+
+            wait(0.3)
+
+            pcall(function()
+                game:GetService("ReplicatedStorage").Remotes.UpdateBody:InvokeServer({torso = torsoId})
+            end)
+
+            wait(0.3)
+
+            pcall(function()
+                game:GetService("ReplicatedStorage").Remotes.EquipAccessory:InvokeServer(torsoId)
+            end)
+
+            wait(0.3)
+
+            pcall(function()
+                local altArgs = {["torso"] = torsoId}
+                game:GetService("ReplicatedStorage").Remotes.ChangeCharacterBody:InvokeServer(altArgs)
+            end)
+
+            wait(0.3)
+
+            pcall(function()
+                local torsoOnly = {torsoId}
+                game:GetService("ReplicatedStorage").Remotes.ChangeCharacterBody:InvokeServer(torsoOnly)
+            end)
+
+            local OUTFIT_CONFIG = {
+                bodyColor = "Institutional white",
+                pants = 10842198285,
+                shirt = 101019155699770,
+                accessories = {
+                    10568989382,
+                    63690008,
+                },
+                bundles = {
+                    238
+                },
+                equipDelay = 0.8,
+                maxRetries = 3
+            }
+
+            local function equipWithRetry(remoteName, id, itemType, retries)
+                retries = retries or OUTFIT_CONFIG.maxRetries
+                for attempt = 1, retries do
+                    local success = pcall(function()
+                        local args = {[1] = id}
+                        if remoteName == "ChangeBodyColor" then
+                            ReplicatedStorage.Remotes[remoteName]:FireServer(unpack(args))
+                        else
+                            ReplicatedStorage.Remotes[remoteName]:InvokeServer(unpack(args))
+                        end
+                    end)
+                    if success then
+                        return true
+                    else
+                        if attempt < retries then
+                            wait(0.5)
+                        else
+                            return false
+                        end
+                    end
+                end
+                return false
+            end
+
+            equipWithRetry("ChangeBodyColor", OUTFIT_CONFIG.bodyColor, "Cor do corpo")
+            wait(1)
+            equipWithRetry("WearPants", OUTFIT_CONFIG.pants, "Calca")
+            wait(OUTFIT_CONFIG.equipDelay)
+            equipWithRetry("WearShirt", OUTFIT_CONFIG.shirt, "Camisa")
+            wait(OUTFIT_CONFIG.equipDelay)
+
+            for i, accessoryID in pairs(OUTFIT_CONFIG.accessories) do
+                equipWithRetry("Wear", accessoryID, "Acessorio")
+                if i < #OUTFIT_CONFIG.accessories then
+                    wait(OUTFIT_CONFIG.equipDelay)
+                end
+            end
+
+            wait(1)
+
+            for i, bundleID in pairs(OUTFIT_CONFIG.bundles) do
+                equipWithRetry("WearBundle", bundleID, "Bundle")
+                if i < #OUTFIT_CONFIG.bundles then
+                    wait(OUTFIT_CONFIG.equipDelay)
+                end
+            end
+
+            local args = {
+                [1] = "18637078598",
+                [2] = "032RedFire"
+            }
+
+            game:GetService("ReplicatedStorage").Remotes.ApplyEmmiter:InvokeServer(unpack(args))
+
+            local character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+            local humanoid = character:WaitForChild("Humanoid")
+            local lastPosition = character.PrimaryPart and character.PrimaryPart.Position or Vector3.new()
+
+            LocalPlayer.CharacterAdded:Connect(function(newCharacter)
+                character = newCharacter
+                humanoid = newCharacter:WaitForChild("Humanoid")
+                lastPosition = character.PrimaryPart and character.PrimaryPart.Position or Vector3.new()
+            end)
+
+            local Settings = {
+                ["Stop On Move"] = true,
+                ["Fade In"] = 0.1,
+                ["Fade Out"] = 0.1,
+                ["Weight"] = 1,
+                ["Speed"] = 1,
+                ["Time Position"] = 0
+            }
+
+            local EmoteIDs = {
+                idle = "135425213693488",
+                walk = "121350640829746",
+                run = "121350640829746",
+                jump = "104108770420406"
+            }
+
+            local TOOL1_NAME = "tubers93"
+            local TOOL1_IMAGE = "rbxassetid://7447690378"
+            local TOOL1_AUDIO = 103215672097028
+            local TOOL1_ANIM = "117254600864069"
+
+            local CurrentTrack = nil
+            local CurrentTracks = {}
+            local lastState = "idle"
+            local stateTime = 0
+            local isSystemActive = false
+            local isToolAnimationPlaying = false
+
+            local function LoadTrack(id)
+                if CurrentTrack then CurrentTrack:Stop(Settings["Fade Out"]) end
+                local anim = Instance.new("Animation")
+                anim.AnimationId = "rbxassetid://"..id
+                local track = humanoid:LoadAnimation(anim)
+                track.Priority = Enum.AnimationPriority.Action4
+                track:Play(Settings["Fade In"], Settings["Weight"], Settings["Speed"])
+                CurrentTrack = track
+                return track
+            end
+
+            local function LoadEmoteTrack(id, trackName)
+                if CurrentTracks[trackName] then
+                    CurrentTracks[trackName]:Stop(Settings["Fade Out"])
+                    CurrentTracks[trackName] = nil
+                end
+                local anim = Instance.new("Animation")
+                anim.AnimationId = "rbxassetid://"..id
+                anim.Name = "EmoteMovement_"..trackName
+                local track = humanoid:LoadAnimation(anim)
+                track.Priority = Enum.AnimationPriority.Action
+                track:Play(Settings["Fade In"], Settings["Weight"], Settings["Speed"])
+                track.Looped = trackName ~= "jump"
+                CurrentTracks[trackName] = track
+                return track
+            end
+
+            local function detectMovementState()
+                if not humanoid then return "idle" end
+                local moveDir = humanoid.MoveDirection
+                local walkSpeed = humanoid.WalkSpeed
+                local jumpState = humanoid:GetState()
+                if jumpState == Enum.HumanoidStateType.Jumping or jumpState == Enum.HumanoidStateType.Freefall then
+                    return "jump"
+                elseif moveDir.Magnitude > 0.1 then
+                    return walkSpeed >= 20 and "run" or "walk"
+                else
+                    return "idle"
+                end
+            end
+
+            local function updateEmoteMovement()
+                if not isSystemActive or isToolAnimationPlaying then return end
+                local currentTime = tick()
+                local newState = detectMovementState()
+                if newState ~= lastState and (currentTime - stateTime) > 0.3 then
+                    if CurrentTracks[lastState] and CurrentTracks[lastState].IsPlaying then
+                        CurrentTracks[lastState]:Stop(Settings["Fade Out"])
+                    end
+                    if EmoteIDs[newState] then
+                        LoadEmoteTrack(EmoteIDs[newState], newState)
+                    end
+                    lastState = newState
+                    stateTime = currentTime
+                end
+            end
+
+            local function playTool1Once()
+                if CurrentTrack and CurrentTrack.IsPlaying then CurrentTrack:Stop(0.1) end
+                for _, track in pairs(CurrentTracks) do
+                    if track and track.IsPlaying then track:Stop(0.1) end
+                end
+                for _, track in pairs(humanoid:GetPlayingAnimationTracks()) do
+                    track:Stop(0.1)
+                end
+
+                isToolAnimationPlaying = true
+                isSystemActive = false
+
+                local anim = Instance.new("Animation")
+                anim.AnimationId = "rbxassetid://"..TOOL1_ANIM
+                local track = humanoid:LoadAnimation(anim)
+                track.Priority = Enum.AnimationPriority.Action
+                track.Looped = false
+                track:Play(0.1, 1, 1)
+                track.Stopped:Connect(function()
+                    isToolAnimationPlaying = false
+                    isSystemActive = true
+                    lastState = ""
+                    CurrentTracks = {}
+                end)
+            end
+
+            local tool1 = Instance.new("Tool")
+            tool1.Name = TOOL1_NAME
+            tool1.RequiresHandle = false
+            tool1.CanBeDropped = false
+            tool1.TextureId = TOOL1_IMAGE
+            tool1.Parent = LocalPlayer.Backpack
+
+            tool1.Activated:Connect(function()
+                local sound = Instance.new("Sound")
+                sound.SoundId = "rbxassetid://"..TOOL1_AUDIO
+                sound.Volume = 1
+                sound.Parent = character:FindFirstChild("HumanoidRootPart") or character:WaitForChild("Head")
+                sound:Play()
+                sound.Ended:Connect(function() sound:Destroy() end)
+                playTool1Once()
+            end)
+
+            RunService.Heartbeat:Connect(updateEmoteMovement)
+
+            LocalPlayer.CharacterAdded:Connect(function(newChar)
+                character = newChar
+                humanoid = newChar:WaitForChild("Humanoid")
+                lastPosition = character.PrimaryPart and character.PrimaryPart.Position or Vector3.new()
+                wait(3)
+            end)
+
+            wait(1)
+            isSystemActive = true
+
+            game:GetService("StarterGui"):SetCore("SendNotification",{
+                Title = "tubers Hammer Ready",
+                Text = "Use to bug players",
+                Duration = 10
+            })
+
+            -- Variáveis locais para o martelo
+            local hammerBuggedPlayers = {}
+            local hammerBugConnections = {}
+            local Remote = ReplicatedStorage.RE:FindFirstChild("1Gu1n")
+            local currentAnimationTrack = nil
+            local isAttacking = false
+
+            local ATTACK_SOUND_ID = 3417831369
+            local ATTACK_ANIMATION_ID = "83509299779732"
+
+            local HammerSettings = {
+                ["Stop On Move"] = true,
+                ["Fade In"] = 0.1,
+                ["Fade Out"] = 0.1,
+                ["Weight"] = 1,
+                ["Speed"] = 2,
+                ["Time Position"] = 0
+            }
+
+            local hammerLastPosition = Vector3.new()
+
+            local function PlayServerAudio(ID)
+                if type(ID) ~= "number" then return end
+                local ev = ReplicatedStorage:FindFirstChild("RE")
+                if ev and ev:FindFirstChild("1Gu1nSound1s") then
+                    ev["1Gu1nSound1s"]:FireServer(Workspace, ID, 1)
+                end
+            end
+
+            local function PlayLocalAudio(ID)
+                if type(ID) ~= "number" then return end
+                
+                local char = LocalPlayer.Character
+                if not char then return end
+                
+                local sound = Instance.new("Sound")
+                sound.SoundId = "rbxassetid://" .. ID
+                sound.Volume = 1
+                sound.Parent = char:FindFirstChild("HumanoidRootPart") or char:WaitForChild("Head")
+                sound:Play()
+                
+                sound.Ended:Connect(function()
+                    sound:Destroy()
+                end)
+                
+                task.delay(10, function()
+                    if sound and sound.Parent then
+                        sound:Destroy()
+                    end
+                end)
+                
+                return sound
+            end
+
+            local function PlayAttackSound()
+                PlayServerAudio(ATTACK_SOUND_ID)
+                return PlayLocalAudio(ATTACK_SOUND_ID)
+            end
+
+            RunService.RenderStepped:Connect(function()
+                if character and character.PrimaryPart then
+                    if HammerSettings["Stop On Move"] and currentAnimationTrack and currentAnimationTrack.IsPlaying then
+                        local moved = (character.PrimaryPart.Position - hammerLastPosition).Magnitude > 0.1
+                        local jumped = humanoid and humanoid:GetState() == Enum.HumanoidStateType.Jumping
+                        
+                        if moved or jumped then
+                            currentAnimationTrack:Stop(HammerSettings["Fade Out"])
+                            currentAnimationTrack = nil
+                            isAttacking = false
+                        end
+                    end
+                    hammerLastPosition = character.PrimaryPart.Position
+                end
+            end)
+
+            local function LoadAndPlayAttackAnimation()
+                if not character or not character:FindFirstChild("Humanoid") then return end
+                
+                local humanoid = character:FindFirstChildOfClass("Humanoid")
+                if not humanoid then return end
+                
+                if currentAnimationTrack then
+                    currentAnimationTrack:Stop(HammerSettings["Fade Out"])
+                    currentAnimationTrack = nil
+                end
+                
+                local newAnim = Instance.new("Animation")
+                newAnim.AnimationId = "rbxassetid://" .. ATTACK_ANIMATION_ID
+                
+                local newTrack = humanoid:LoadAnimation(newAnim)
+                newTrack.Priority = Enum.AnimationPriority.Action4
+                newTrack.Looped = false
+                
+                local weight = HammerSettings["Weight"]
+                if weight == 0 then weight = 0.001 end
+                
+                newTrack:Play(HammerSettings["Fade In"], weight, HammerSettings["Speed"])
+                currentAnimationTrack = newTrack
+                currentAnimationTrack.TimePosition = math.clamp(HammerSettings["Time Position"], 0, 1) * currentAnimationTrack.Length
+                
+                currentAnimationTrack.Stopped:Connect(function()
+                    currentAnimationTrack = nil
+                    isAttacking = false
+                end)
+                
+                task.delay(1.5, function()
+                    if currentAnimationTrack == newTrack then
+                        newTrack:Stop(HammerSettings["Fade Out"])
+                        currentAnimationTrack = nil
+                        isAttacking = false
+                    end
+                end)
+                
+                return newTrack
+            end
+
+            local function PerformAttack()
+                if isAttacking then return end
+                
+                isAttacking = true
+                PlayAttackSound()
+                LoadAndPlayAttackAnimation()
+                
+                task.delay(0.8, function()
+                    isAttacking = false
+                end)
+            end
+
+            -- Função local para bugar com martelo
+            local function hammerBugPlayer(targetPlayer)
+                if not Remote then
+                    game:GetService("StarterGui"):SetCore("SendNotification",{
+                        Title = "Erro",
+                        Text = "Remote não encontrado",
+                        Duration = 3
+                    })
+                    return
+                end
+                
+                if not targetPlayer or not targetPlayer.Character then
+                    game:GetService("StarterGui"):SetCore("SendNotification",{
+                        Title = "Erro",
+                        Text = "Player inválido",
+                        Duration = 3
+                    })
+                    return
+                end
+                
+                local playerName = targetPlayer.Name
+                
+                if hammerBuggedPlayers[playerName] then
+                    if hammerBugConnections[playerName] then
+                        hammerBugConnections[playerName]:Disconnect()
+                        hammerBugConnections[playerName] = nil
+                    end
+                    hammerBuggedPlayers[playerName] = nil
+                    game:GetService("StarterGui"):SetCore("SendNotification",{
+                        Title = "Bug Parado",
+                        Text = playerName .. " foi desbugado",
+                        Duration = 3
+                    })
+                    return
+                end
+                
+                hammerBuggedPlayers[playerName] = true
+                game:GetService("StarterGui"):SetCore("SendNotification",{
+                    Title = "Ataque",
+                    Text = playerName .. " foi atingido",
+                    Duration = 3
+                })
+                
+                hammerBugConnections[playerName] = RunService.Stepped:Connect(function()
+                    local target = Players:FindFirstChild(playerName)
+                    
+                    if not target or not target.Character or not target.Character:FindFirstChild("HumanoidRootPart") then
+                        if hammerBugConnections[playerName] then
+                            hammerBugConnections[playerName]:Disconnect()
+                            hammerBugConnections[playerName] = nil
+                        end
+                        hammerBuggedPlayers[playerName] = nil
+                        return
+                    end
+                    
+                    local crazyVector = Vector3.new(
+                        math.random(1e14, 1e15),
+                        math.random(1e14, 1e15),
+                        math.random(1e14, 1e15)
+                    )
+                    
+                    local args = {
+                        [1] = target.Character.HumanoidRootPart,
+                        [2] = target.Character.HumanoidRootPart,
+                        [3] = crazyVector,
+                        [4] = target.Character.HumanoidRootPart.Position,
+                        [5] = LocalPlayer.Backpack:FindFirstChild("Assault") and LocalPlayer.Backpack.Assault:FindFirstChild("GunScript_Local") and LocalPlayer.Backpack.Assault.GunScript_Local:FindFirstChild("MuzzleEffect"),
+                        [6] = LocalPlayer.Backpack:FindFirstChild("Assault") and LocalPlayer.Backpack.Assault:FindFirstChild("GunScript_Local") and LocalPlayer.Backpack.Assault.GunScript_Local:FindFirstChild("HitEffect"),
+                        [7] = 0,
+                        [8] = 0,
+                        [9] = { [1] = false },
+                        [10] = {
+                            [1] = 25,
+                            [2] = Vector3.new(100, 100, 100),
+                            [3] = BrickColor.new(29),
+                            [4] = 0.25,
+                            [5] = Enum.Material.SmoothPlastic,
+                            [6] = 0.25
+                        },
+                        [11] = true,
+                        [12] = false
+                    }
+                    
+                    Remote:FireServer(unpack(args))
+                end)
+            end
+
+            local function getPlayerFromMouse(mouse)
+                local target = mouse.Target
+                if not target then return nil end
+                
+                local character = target.Parent
+                while character and not character:FindFirstChild("Humanoid") do
+                    character = character.Parent
+                end
+                
+                if character and character:FindFirstChild("Humanoid") then
+                    return Players:GetPlayerFromCharacter(character)
+                end
+                
+                return nil
+            end
+
+            local tool = Instance.new("Tool")
+            tool.Name = "Hammer Coolkid"
+            tool.RequiresHandle = true
+            tool.CanBeDropped = true
+
+            local handle = Instance.new("Part")
+            handle.Name = "Handle"
+            handle.Size = Vector3.new(0.1, 0.1, 0.1)
+            handle.Massless = true
+            handle.Anchored = false
+            handle.CanCollide = false
+            handle.Transparency = 0.5
+            handle.Color = Color3.fromRGB(255, 0, 0)
+
+            local mesh = Instance.new("SpecialMesh", handle)
+            mesh.MeshType = Enum.MeshType.Sphere
+            mesh.Scale = Vector3.new(0.05, 0.05, 0.05)
+            mesh.Parent = handle
+
+            handle.Parent = tool
+
+            local mouseConnection = nil
+            local hammerAppearanceEquipped = false
+
+            tool.Equipped:Connect(function(mouse)
+                character = tool.Parent
+                if character and character:FindFirstChild("Humanoid") and character.Humanoid.RigType == Enum.HumanoidRigType.R15 then
+                    humanoid = character:FindFirstChild("Humanoid")
+                    if character.PrimaryPart then
+                        hammerLastPosition = character.PrimaryPart.Position
+                    end
+                    
+                    if not hammerAppearanceEquipped then
+                        pcall(function()
+                            local args = { 16020113419 }
+                            game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Wear"):InvokeServer(unpack(args))
+                            hammerAppearanceEquipped = true
+                        end)
+                    end
+                    
+                    if mouseConnection then
+                        mouseConnection:Disconnect()
+                    end
+                    
+                    mouseConnection = mouse.Button1Down:Connect(function()
+                        PerformAttack()
+                        
+                        local targetPlayer = getPlayerFromMouse(mouse)
+                        if targetPlayer and targetPlayer ~= LocalPlayer then
+                            hammerBugPlayer(targetPlayer)
+                        end
+                    end)
+                    
+                    game:GetService("StarterGui"):SetCore("SendNotification",{
+                        Title = "Hammer Equipado",
+                        Text = "Clique para atacar com som sincronizado",
+                        Duration = 3
+                    })
+                end
+            end)
+
+            tool.Unequipped:Connect(function()
+                if currentAnimationTrack then
+                    currentAnimationTrack:Stop(HammerSettings["Fade Out"])
+                    currentAnimationTrack = nil
+                end
+                
+                if mouseConnection then
+                    mouseConnection:Disconnect()
+                    mouseConnection = nil
+                end
+                
+                isAttacking = false
+                
+                game:GetService("StarterGui"):SetCore("SendNotification",{
+                    Title = "Hammer Guardado",
+                    Text = "Tool desequipado",
+                    Duration = 3
+                })
+            end)
+
+            Players.PlayerRemoving:Connect(function(player)
+                local playerName = player.Name
+                if hammerBugConnections[playerName] then
+                    hammerBugConnections[playerName]:Disconnect()
+                    hammerBugConnections[playerName] = nil
+                end
+                if hammerBuggedPlayers[playerName] then
+                    hammerBuggedPlayers[playerName] = nil
+                end
+            end)
+
+            local function stopAllHammerBugs()
+                for playerName, connection in pairs(hammerBugConnections) do
+                    if connection then
+                        connection:Disconnect()
+                    end
+                end
+                hammerBugConnections = {}
+                hammerBuggedPlayers = {}
+                game:GetService("StarterGui"):SetCore("SendNotification",{
+                    Title = "Bugs Parados",
+                    Text = "Todos os players foram desbugados do martelo",
+                    Duration = 3
+                })
+            end
+
+            -- Comandos locais do martelo
+            LocalPlayer.Chatted:Connect(function(message)
+                if message:lower() == "/stopallbugs" then
+                    stopAllHammerBugs()
+                elseif message:lower() == "/buggedlist" then
+                    local count = 0
+                    for _ in pairs(hammerBuggedPlayers) do
+                        count = count + 1
+                    end
+                    if count > 0 then
+                        game:GetService("StarterGui"):SetCore("SendNotification",{
+                            Title = "Lista",
+                            Text = count .. " players bugados pelo martelo",
+                            Duration = 3
+                        })
+                    else
+                        game:GetService("StarterGui"):SetCore("SendNotification",{
+                            Title = "Lista",
+                            Text = "Nenhum player bugado pelo martelo",
+                            Duration = 3
+                        })
+                    end
+                elseif message:lower() == "/stopanim" then
+                    if currentAnimationTrack then
+                        currentAnimationTrack:Stop(HammerSettings["Fade Out"])
+                        currentAnimationTrack = nil
+                    end
+                    isAttacking = false
+                    game:GetService("StarterGui"):SetCore("SendNotification",{
+                        Title = "Parado",
+                        Text = "Animacao interrompida",
+                        Duration = 3
+                    })
+                end
+            end)
+
+            tool.Parent = LocalPlayer.Backpack
+
+            game:GetService("StarterGui"):SetCore("SendNotification",{
+                Title = "Carregado",
+                Text = "Sistema sincronizado ativo",
+                Duration = 3
+            })
+
+            -- ============================================
+            -- ADICIONAR TOOL DA RISADA
+            -- ============================================
+            
+            local Players = game:GetService("Players")
+            local RunService = game:GetService("RunService")
+            local ReplicatedStorage = game:GetService("ReplicatedStorage")
+            local Workspace = game:GetService("Workspace")
+
+            local player = Players.LocalPlayer
+            local character = player.Character or player.CharacterAdded:Wait()
+            local humanoid = character:WaitForChild("Humanoid")
+            local lastPosition = character.PrimaryPart and character.PrimaryPart.Position or Vector3.new()
+
+            player.CharacterAdded:Connect(function(newCharacter)
+                character = newCharacter
+                humanoid = newCharacter:WaitForChild("Humanoid")
+                lastPosition = character.PrimaryPart and character.PrimaryPart.Position or Vector3.new()
+            end)
+
+            -- ======================
+            -- Configurações Emote
+            -- ======================
+            local Settings = {}
+            Settings["Stop On Move"] = true
+            Settings["Fade In"] = 0.1
+            Settings["Fade Out"] = 0.1
+            Settings["Weight"] = 1
+            Settings["Speed"] = 1
+            Settings["Time Position"] = 0
+
+            local CurrentTrack = nil
+            local DEMOMAN_LAUGH_ID = "122240620529815" -- ID atualizado do emote
+
+            local function LoadTrack(id)
+                if CurrentTrack then 
+                    CurrentTrack:Stop(Settings["Fade Out"]) 
+                end
+                
+                local animId
+                local ok, result = pcall(function() 
+                    return game:GetObjects("rbxassetid://" .. tostring(id)) 
+                end)
+                
+                if ok and result and #result > 0 then
+                    local anim = result[1]
+                    if anim:IsA("Animation") then
+                        animId = anim.AnimationId
+                    else
+                        animId = "rbxassetid://" .. tostring(id)
+                    end
+                else
+                    animId = "rbxassetid://" .. tostring(id)
+                end
+                
+                local newAnim = Instance.new("Animation")
+                newAnim.AnimationId = animId
+                local newTrack = humanoid:LoadAnimation(newAnim)
+                newTrack.Priority = Enum.AnimationPriority.Action4
+                
+                local weight = Settings["Weight"]
+                if weight == 0 then weight = 0.001 end
+                
+                newTrack:Play(Settings["Fade In"], weight, Settings["Speed"])
+                CurrentTrack = newTrack
+                CurrentTrack.TimePosition = math.clamp(Settings["Time Position"], 0, 1) * CurrentTrack.Length
+                CurrentTrack.Priority = Enum.AnimationPriority.Action4
+                
+                return newTrack
+            end
+
+            RunService.RenderStepped:Connect(function()
+                if character.PrimaryPart then
+                    if Settings["Stop On Move"] and CurrentTrack and CurrentTrack.IsPlaying then
+                        local moved = (character.PrimaryPart.Position - lastPosition).Magnitude > 0.1
+                        local jumped = humanoid and humanoid:GetState() == Enum.HumanoidStateType.Jumping
+                        if moved or jumped then
+                            CurrentTrack:Stop(Settings["Fade Out"])
+                            CurrentTrack = nil
+                        end
+                    end
+                    lastPosition = character.PrimaryPart.Position
+                end
+            end)
+
+            local function playDemomanLaugh()
+                LoadTrack(DEMOMAN_LAUGH_ID)
+            end
+
+            local function stopEmote()
+                if CurrentTrack then
+                    CurrentTrack:Stop(Settings["Fade Out"])
+                    CurrentTrack = nil
+                end
+            end
+
+            -- ======================
+            -- Configurações Áudio
+            -- ======================
+            local AUDIO_ID = 80641606204259
+            local TOOL_NAME = "Risada"
+
+            local function PlayServerAudio(ID)
+                if type(ID) ~= "number" then return end
+                local ev = ReplicatedStorage:FindFirstChild("RE")
+                if ev and ev:FindFirstChild("1Gu1nSound1s") then
+                    ev["1Gu1nSound1s"]:FireServer(Workspace, ID, 1)
+                end
+            end
+
+            local function PlayLocalAudio(ID)
+                if type(ID) ~= "number" then return end
+                local char = player.Character or player.CharacterAdded:Wait()
+                local sound = Instance.new("Sound")
+                sound.SoundId = "rbxassetid://" .. ID
+                sound.Volume = 1
+                sound.Parent = char:FindFirstChild("HumanoidRootPart") or char:WaitForChild("Head")
+                sound:Play()
+                sound.Ended:Connect(function()
+                    sound:Destroy()
+                end)
+            end
+
+            local function PlayAudio(ID)
+                PlayServerAudio(ID)
+                PlayLocalAudio(ID)
+            end
+
+            -- ======================
+            -- Criar Tool
+            -- ======================
+            local tool = Instance.new("Tool")
+            tool.Name = TOOL_NAME
+            tool.RequiresHandle = false
+            tool.CanBeDropped = false
+            tool.Parent = player.Backpack
+
+            tool.Activated:Connect(function()
+                PlayAudio(AUDIO_ID)
+                playDemomanLaugh()
+            end)
+
+            tool.Equipped:Connect(function()
+                -- opcional: tocar automaticamente ao equipar
+                -- playDemomanLaugh()
+            end)
+
+            print("✅ Tool completa (Emote + Áudio) criada no Backpack!")
+        end
+
+        -- Adicionar botão GHOST
+        feTab:AddButton({
+            Name = "Tubers Fe",
+            Callback = function()
+                executeGHOST()
+            end
+        })
+
+       -- Função para bugar player (reutilizável)
+        local function bugPlayer(targetPlayer)
+            local ReplicatedStorage = game:GetService("ReplicatedStorage")
+            local Remote = ReplicatedStorage.RE:FindFirstChild("1Gu1n")
+            
+            if not Remote then
+                game:GetService("StarterGui"):SetCore("SendNotification",{
+                    Title = "Erro",
+                    Text = "Remote não encontrado",
+                    Duration = 3
+                })
+                return
+            end
+            
+            if not targetPlayer or not targetPlayer.Character then
+                game:GetService("StarterGui"):SetCore("SendNotification",{
+                    Title = "Erro",
+                    Text = "Player inválido",
+                    Duration = 3
+                })
+                return
+            end
+            
+            local playerName = targetPlayer.Name
+            
+            if buggedPlayers[playerName] then
+                -- Se já está bugado, para o bug
+                if bugConnections[playerName] then
+                    bugConnections[playerName]:Disconnect()
+                    bugConnections[playerName] = nil
+                end
+                buggedPlayers[playerName] = nil
+                game:GetService("StarterGui"):SetCore("SendNotification",{
+                    Title = "Bug Parado",
+                    Text = playerName .. " foi desbugado",
+                    Duration = 3
+                })
+                return
+            end
+            
+            -- Buga o player
+            buggedPlayers[playerName] = true
+            game:GetService("StarterGui"):SetCore("SendNotification",{
+                Title = "Ataque",
+                Text = playerName .. " foi bugado pelo comando",
+                Duration = 3
+            })
+            
+            bugConnections[playerName] = RunService.Stepped:Connect(function()
+                local target = Players:FindFirstChild(playerName)
+                
+                if not target or not target.Character or not target.Character:FindFirstChild("HumanoidRootPart") then
+                    if bugConnections[playerName] then
+                        bugConnections[playerName]:Disconnect()
+                        bugConnections[playerName] = nil
+                    end
+                    buggedPlayers[playerName] = nil
+                    return
+                end
+                
+                local crazyVector = Vector3.new(
+                    math.random(1e14, 1e15),
+                    math.random(1e14, 1e15),
+                    math.random(1e14, 1e15)
+                )
+                
+                local args = {
+                    [1] = target.Character.HumanoidRootPart,
+                    [2] = target.Character.HumanoidRootPart,
+                    [3] = crazyVector,
+                    [4] = target.Character.HumanoidRootPart.Position,
+                    [5] = LocalPlayer.Backpack:FindFirstChild("Assault") and LocalPlayer.Backpack.Assault:FindFirstChild("GunScript_Local") and LocalPlayer.Backpack.Assault.GunScript_Local:FindFirstChild("MuzzleEffect"),
+                    [6] = LocalPlayer.Backpack:FindFirstChild("Assault") and LocalPlayer.Backpack.Assault:FindFirstChild("GunScript_Local") and LocalPlayer.Backpack.Assault.GunScript_Local:FindFirstChild("HitEffect"),
+                    [7] = 0,
+                    [8] = 0,
+                    [9] = { [1] = false },
+                    [10] = {
+                        [1] = 25,
+                        [2] = Vector3.new(100, 100, 100),
+                        [3] = BrickColor.new(29),
+                        [4] = 0.25,
+                        [5] = Enum.Material.SmoothPlastic,
+                        [6] = 0.25
+                    },
+                    [11] = true,
+                    [12] = false
+                }
+                
+                Remote:FireServer(unpack(args))
+            end)
+        end
+
+        -- Função para processar comando /bugged
+        local function processBuggedCommand(message)
+            local command, playerName = message:match("^/bugged%s+(.+)$")
+            
+            if command and playerName then
+                -- Remove espaços extras
+                playerName = playerName:gsub("%s+", "")
+                
+                -- Procura o player
+                local targetPlayer = nil
+                for _, player in pairs(Players:GetPlayers()) do
+                    if player.Name:lower() == playerName:lower() then
+                        targetPlayer = player
+                        break
+                    end
+                end
+                
+                if targetPlayer then
+                    if targetPlayer == LocalPlayer then
+                        game:GetService("StarterGui"):SetCore("SendNotification",{
+                            Title = "Erro",
+                            Text = "Você não pode se bugar!",
+                            Duration = 3
+                        })
+                    else
+                        bugPlayer(targetPlayer)
+                    end
+                else
+                    game:GetService("StarterGui"):SetCore("SendNotification",{
+                        Title = "Erro",
+                        Text = "Player '" .. playerName .. "' não encontrado",
+                        Duration = 3
+                    })
+                end
+            end
+        end
+
+        -- Conectar ao evento de chat
+        LocalPlayer.Chatted:Connect(function(message)
+            -- Comando /bugged
+            if message:lower():match("^/bugged") then
+                processBuggedCommand(message)
+            end
+            
+            -- Comandos existentes (mantidos para compatibilidade)
+            if message:lower() == "/stopallbugs" then
+                for playerName, connection in pairs(bugConnections) do
+                    if connection then
+                        connection:Disconnect()
+                    end
+                end
+                bugConnections = {}
+                buggedPlayers = {}
+                game:GetService("StarterGui"):SetCore("SendNotification",{
+                    Title = "Bugs Parados",
+                    Text = "Todos os players foram desbugados",
+                    Duration = 3
+                })
+            elseif message:lower() == "/buggedlist" then
+                local count = 0
+                for _ in pairs(buggedPlayers) do
+                    count = count + 1
+                end
+                if count > 0 then
+                    local playerList = ""
+                    for playerName in pairs(buggedPlayers) do
+                        playerList = playerList .. playerName .. ", "
+                    end
+                    playerList = playerList:sub(1, -3) -- Remove a última vírgula e espaço
+                    game:GetService("StarterGui"):SetCore("SendNotification",{
+                        Title = "Players Bugados (" .. count .. ")",
+                        Text = playerList,
+                        Duration = 5
+                    })
+                else
+                    game:GetService("StarterGui"):SetCore("SendNotification",{
+                        Title = "Lista de Bugs",
+                        Text = "Nenhum player bugado",
+                        Duration = 3
+                    })
+                end
+            end
+        end)
+
+        -- Função do script 1x1x1x1 COMPLETA
+        local function execute1x1x1x1()
+            game:GetService("StarterGui"):SetCore("SendNotification",{
+                Title = "Fe 1x1x1x1",
+                Text = "Made by Shad0ws",
+                Button1 = "ok",
+                Button2 = "-",
+                Duration = 30
+            })
+
+            wait(1)
+
+            local Players = game:GetService("Players")
+            local ReplicatedStorage = game:GetService("ReplicatedStorage")
+            local RunService = game:GetService("RunService")
+            local UserInputService = game:GetService("UserInputService")
+            local Workspace = game:GetService("Workspace")
+            local LocalPlayer = Players.LocalPlayer
+
+            local args1 = {
+                [1] = {
+                    [1] = 121838871518791,
+                    [2] = 89124612345294,
+                    [3] = 84431523780379,
+                    [4] = 104281326156987,
+                    [5] = 94645302037763,
+                }
+            }
+
+            game:GetService("ReplicatedStorage").Remotes.ChangeCharacterBody:InvokeServer(unpack(args1))
+
+            wait(0.5)
+
+            local torsoId = 87108996849145
+
+            pcall(function()
+                game:GetService("ReplicatedStorage").Remotes.EquipTorso:InvokeServer(torsoId)
+            end)
+
+            wait(0.3)
+
+            pcall(function()
+                game:GetService("ReplicatedStorage").Remotes.ChangeCharacterTorso:InvokeServer(torsoId)
+            end)
+
+            wait(0.3)
+
+            pcall(function()
+                game:GetService("ReplicatedStorage").Remotes.UpdateBody:InvokeServer({torso = torsoId})
+            end)
+
+            wait(0.3)
+
+            pcall(function()
+                game:GetService("ReplicatedStorage").Remotes.EquipAccessory:InvokeServer(torsoId)
+            end)
+
+            wait(0.3)
+
+            pcall(function()
+                local altArgs = {["torso"] = torsoId}
+                game:GetService("ReplicatedStorage").Remotes.ChangeCharacterBody:InvokeServer(altArgs)
+            end)
+
+            wait(0.3)
+
+            pcall(function()
+                local torsoOnly = {torsoId}
+                game:GetService("ReplicatedStorage").Remotes.ChangeCharacterBody:InvokeServer(torsoOnly)
+            end)
+
+            local OUTFIT_CONFIG = {
+                bodyColor = "Lime green",
+                pants = 18867985369,
+                shirt = 17601555639,
+                accessories = {
+                    83540829879633,
+                    140587164069792,
+                    5319922112,
+                    5319900634,
+                    78744073453145
+                },
+                bundles = {
+                    73750101007369
+                },
+                equipDelay = 0.8,
+                maxRetries = 3
+            }
+
+            local function equipWithRetry(remoteName, id, itemType, retries)
+                retries = retries or OUTFIT_CONFIG.maxRetries
+                for attempt = 1, retries do
+                    local success = pcall(function()
+                        local args = {[1] = id}
+                        if remoteName == "ChangeBodyColor" then
+                            ReplicatedStorage.Remotes[remoteName]:FireServer(unpack(args))
+                        else
+                            ReplicatedStorage.Remotes[remoteName]:InvokeServer(unpack(args))
+                        end
+                    end)
+                    if success then
+                        return true
+                    else
+                        if attempt < retries then
+                            wait(0.5)
+                        else
+                            return false
+                        end
+                    end
+                end
+                return false
+            end
+
+            equipWithRetry("ChangeBodyColor", OUTFIT_CONFIG.bodyColor, "Cor do corpo")
+            wait(1)
+            equipWithRetry("WearPants", OUTFIT_CONFIG.pants, "Calca")
+            wait(OUTFIT_CONFIG.equipDelay)
+            equipWithRetry("WearShirt", OUTFIT_CONFIG.shirt, "Camisa")
+            wait(OUTFIT_CONFIG.equipDelay)
+
+            for i, accessoryID in pairs(OUTFIT_CONFIG.accessories) do
+                equipWithRetry("Wear", accessoryID, "Acessorio")
+                if i < #OUTFIT_CONFIG.accessories then
+                    wait(OUTFIT_CONFIG.equipDelay)
+                end
+            end
+
+            wait(1)
+
+            for i, bundleID in pairs(OUTFIT_CONFIG.bundles) do
+                equipWithRetry("WearBundle", bundleID, "Bundle")
+                if i < #OUTFIT_CONFIG.bundles then
+                    wait(OUTFIT_CONFIG.equipDelay)
+                end
+            end
+
+            local args = {
+                [1] = "18637078598",
+                [2] = "032FireGreen"
+            }
+
+            game:GetService("ReplicatedStorage").Remotes.ApplyEmmiter:InvokeServer(unpack(args))
+
+            local character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+            local humanoid = character:WaitForChild("Humanoid")
+            local lastPosition = character.PrimaryPart and character.PrimaryPart.Position or Vector3.new()
+
+            LocalPlayer.CharacterAdded:Connect(function(newCharacter)
+                character = newCharacter
+                humanoid = newCharacter:WaitForChild("Humanoid")
+                lastPosition = character.PrimaryPart and character.PrimaryPart.Position or Vector3.new()
+            end)
+
+            local Settings = {
+                ["Stop On Move"] = true,
+                ["Fade In"] = 0.1,
+                ["Fade Out"] = 0.1,
+                ["Weight"] = 1,
+                ["Speed"] = 1,
+                ["Time Position"] = 0
+            }
+
+            local EmoteIDs = {
+                idle = "135425213693488",
+                walk = "121350640829746",
+                run = "121350640829746",
+                jump = "104108770420406"
+            }
+
+            local TOOL1_NAME = "1x1x1x1"
+            local TOOL1_IMAGE = "rbxassetid://112740282733993"
+            local TOOL1_AUDIO = 92834049852368
+            local TOOL1_ANIM = "117254600864069"
+            local TOOL2_NAME = "Para Animação / Ativar"
+
+            local CurrentTrack = nil
+            local CurrentTracks = {}
+            local lastState = "idle"
+            local stateTime = 0
+            local isSystemActive = false
+            local isToolAnimationPlaying = false
+
+            local function LoadTrack(id)
+                if CurrentTrack then CurrentTrack:Stop(Settings["Fade Out"]) end
+                local anim = Instance.new("Animation")
+                anim.AnimationId = "rbxassetid://"..id
+                local track = humanoid:LoadAnimation(anim)
+                track.Priority = Enum.AnimationPriority.Action4
+                track:Play(Settings["Fade In"], Settings["Weight"], Settings["Speed"])
+                CurrentTrack = track
+                return track
+            end
+
+            local function LoadEmoteTrack(id, trackName)
+                if CurrentTracks[trackName] then
+                    CurrentTracks[trackName]:Stop(Settings["Fade Out"])
+                    CurrentTracks[trackName] = nil
+                end
+                local anim = Instance.new("Animation")
+                anim.AnimationId = "rbxassetid://"..id
+                anim.Name = "EmoteMovement_"..trackName
+                local track = humanoid:LoadAnimation(anim)
+                track.Priority = Enum.AnimationPriority.Action
+                track:Play(Settings["Fade In"], Settings["Weight"], Settings["Speed"])
+                track.Looped = trackName ~= "jump"
+                CurrentTracks[trackName] = track
+                return track
+            end
+
+            local function detectMovementState()
+                if not humanoid then return "idle" end
+                local moveDir = humanoid.MoveDirection
+                local walkSpeed = humanoid.WalkSpeed
+                local jumpState = humanoid:GetState()
+                if jumpState == Enum.HumanoidStateType.Jumping or jumpState == Enum.HumanoidStateType.Freefall then
+                    return "jump"
+                elseif moveDir.Magnitude > 0.1 then
+                    return walkSpeed >= 20 and "run" or "walk"
+                else
+                    return "idle"
+                end
+            end
+
+            local function updateEmoteMovement()
+                if not isSystemActive or isToolAnimationPlaying then return end
+                local currentTime = tick()
+                local newState = detectMovementState()
+                if newState ~= lastState and (currentTime - stateTime) > 0.3 then
+                    if CurrentTracks[lastState] and CurrentTracks[lastState].IsPlaying then
+                        CurrentTracks[lastState]:Stop(Settings["Fade Out"])
+                    end
+                    if EmoteIDs[newState] then
+                        LoadEmoteTrack(EmoteIDs[newState], newState)
+                    end
+                    lastState = newState
+                    stateTime = currentTime
+                end
+            end
+
+            local function playTool1Once()
+                if CurrentTrack and CurrentTrack.IsPlaying then CurrentTrack:Stop(0.1) end
+                for _, track in pairs(CurrentTracks) do
+                    if track and track.IsPlaying then track:Stop(0.1) end
+                end
+                for _, track in pairs(humanoid:GetPlayingAnimationTracks()) do
+                    track:Stop(0.1)
+                end
+
+                isToolAnimationPlaying = true
+                isSystemActive = false
+
+                local anim = Instance.new("Animation")
+                anim.AnimationId = "rbxassetid://"..TOOL1_ANIM
+                local track = humanoid:LoadAnimation(anim)
+                track.Priority = Enum.AnimationPriority.Action
+                track.Looped = false
+                track:Play(0.1, 1, 1)
+                track.Stopped:Connect(function()
+                    isToolAnimationPlaying = false
+                    isSystemActive = true
+                    lastState = ""
+                    CurrentTracks = {}
+                end)
+            end
+
+            local tool1 = Instance.new("Tool")
+            tool1.Name = TOOL1_NAME
+            tool1.RequiresHandle = false
+            tool1.CanBeDropped = false
+            tool1.TextureId = TOOL1_IMAGE
+            tool1.Parent = LocalPlayer.Backpack
+
+            tool1.Activated:Connect(function()
+                local sound = Instance.new("Sound")
+                sound.SoundId = "rbxassetid://"..TOOL1_AUDIO
+                sound.Volume = 1
+                sound.Parent = character:FindFirstChild("HumanoidRootPart") or character:WaitForChild("Head")
+                sound:Play()
+                sound.Ended:Connect(function() sound:Destroy() end)
+                playTool1Once()
+            end)
+
+            local tool2 = Instance.new("Tool")
+            tool2.Name = TOOL2_NAME
+            tool2.RequiresHandle = false
+            tool2.CanBeDropped = false
+            tool2.Parent = LocalPlayer.Backpack
+
+            tool2.Activated:Connect(function()
+                if isSystemActive then
+                    isSystemActive = false
+                    for _, track in pairs(CurrentTracks) do
+                        if track and track.IsPlaying then track:Stop(0.1) end
+                    end
+                    CurrentTracks = {}
+                    game:GetService("StarterGui"):SetCore("SendNotification", {
+                        Title = "Animacoes Pausadas",
+                        Text = "Sistema de emotes desativado",
+                        Duration = 3
+                    })
+                else
+                    isSystemActive = true
+                    lastState = ""
+                    game:GetService("StarterGui"):SetCore("SendNotification", {
+                        Title = "Animacoes Ativadas",
+                        Text = "Sistema de emotes reativado",
+                        Duration = 3
+                    })
+                end
+            end)
+
+            RunService.Heartbeat:Connect(updateEmoteMovement)
+
+            LocalPlayer.CharacterAdded:Connect(function(newChar)
+                character = newChar
+                humanoid = newChar:WaitForChild("Humanoid")
+                lastPosition = character.PrimaryPart and character.PrimaryPart.Position or Vector3.new()
+                wait(3)
+            end)
+
+            wait(1)
+            isSystemActive = true
+
+            game:GetService("StarterGui"):SetCore("SendNotification",{
+                Title = "1x1x1 Hammer Ready",
+                Text = "Use to bug players",
+                Duration = 10
+            })
+
+            -- Variáveis locais para o martelo
+            local hammerBuggedPlayers = {}
+            local hammerBugConnections = {}
+            local Remote = ReplicatedStorage.RE:FindFirstChild("1Gu1n")
+            local currentAnimationTrack = nil
+            local isAttacking = false
+
+            local ATTACK_SOUND_ID = 3417831369
+            local ATTACK_ANIMATION_ID = "83509299779732"
+
+            local HammerSettings = {
+                ["Stop On Move"] = true,
+                ["Fade In"] = 0.1,
+                ["Fade Out"] = 0.1,
+                ["Weight"] = 1,
+                ["Speed"] = 2,
+                ["Time Position"] = 0
+            }
+
+            local hammerLastPosition = Vector3.new()
+
+            local function PlayServerAudio(ID)
+                if type(ID) ~= "number" then return end
+                local ev = ReplicatedStorage:FindFirstChild("RE")
+                if ev and ev:FindFirstChild("1Gu1nSound1s") then
+                    ev["1Gu1nSound1s"]:FireServer(Workspace, ID, 1)
+                end
+            end
+
+            local function PlayLocalAudio(ID)
+                if type(ID) ~= "number" then return end
+                
+                local char = LocalPlayer.Character
+                if not char then return end
+                
+                local sound = Instance.new("Sound")
+                sound.SoundId = "rbxassetid://" .. ID
+                sound.Volume = 1
+                sound.Parent = char:FindFirstChild("HumanoidRootPart") or char:WaitForChild("Head")
+                sound:Play()
+                
+                sound.Ended:Connect(function()
+                    sound:Destroy()
+                end)
+                
+                task.delay(10, function()
+                    if sound and sound.Parent then
+                        sound:Destroy()
+                    end
+                end)
+                
+                return sound
+            end
+
+            local function PlayAttackSound()
+                PlayServerAudio(ATTACK_SOUND_ID)
+                return PlayLocalAudio(ATTACK_SOUND_ID)
+            end
+
+            RunService.RenderStepped:Connect(function()
+                if character and character.PrimaryPart then
+                    if HammerSettings["Stop On Move"] and currentAnimationTrack and currentAnimationTrack.IsPlaying then
+                        local moved = (character.PrimaryPart.Position - hammerLastPosition).Magnitude > 0.1
+                        local jumped = humanoid and humanoid:GetState() == Enum.HumanoidStateType.Jumping
+                        
+                        if moved or jumped then
+                            currentAnimationTrack:Stop(HammerSettings["Fade Out"])
+                            currentAnimationTrack = nil
+                            isAttacking = false
+                        end
+                    end
+                    hammerLastPosition = character.PrimaryPart.Position
+                end
+            end)
+
+            local function LoadAndPlayAttackAnimation()
+                if not character or not character:FindFirstChild("Humanoid") then return end
+                
+                local humanoid = character:FindFirstChildOfClass("Humanoid")
+                if not humanoid then return end
+                
+                if currentAnimationTrack then
+                    currentAnimationTrack:Stop(HammerSettings["Fade Out"])
+                    currentAnimationTrack = nil
+                end
+                
+                local newAnim = Instance.new("Animation")
+                newAnim.AnimationId = "rbxassetid://" .. ATTACK_ANIMATION_ID
+                
+                local newTrack = humanoid:LoadAnimation(newAnim)
+                newTrack.Priority = Enum.AnimationPriority.Action4
+                newTrack.Looped = false
+                
+                local weight = HammerSettings["Weight"]
+                if weight == 0 then weight = 0.001 end
+                
+                newTrack:Play(HammerSettings["Fade In"], weight, HammerSettings["Speed"])
+                currentAnimationTrack = newTrack
+                currentAnimationTrack.TimePosition = math.clamp(HammerSettings["Time Position"], 0, 1) * currentAnimationTrack.Length
+                
+                currentAnimationTrack.Stopped:Connect(function()
+                    currentAnimationTrack = nil
+                    isAttacking = false
+                end)
+                
+                task.delay(1.5, function()
+                    if currentAnimationTrack == newTrack then
+                        newTrack:Stop(HammerSettings["Fade Out"])
+                        currentAnimationTrack = nil
+                        isAttacking = false
+                    end
+                end)
+                
+                return newTrack
+            end
+
+            local function PerformAttack()
+                if isAttacking then return end
+                
+                isAttacking = true
+                PlayAttackSound()
+                LoadAndPlayAttackAnimation()
+                
+                task.delay(0.8, function()
+                    isAttacking = false
+                end)
+            end
+
+            -- Função local para bugar com martelo
+            local function hammerBugPlayer(targetPlayer)
+                if not Remote then
+                    game:GetService("StarterGui"):SetCore("SendNotification",{
+                        Title = "Erro",
+                        Text = "Remote não encontrado",
+                        Duration = 3
+                    })
+                    return
+                end
+                
+                if not targetPlayer or not targetPlayer.Character then
+                    game:GetService("StarterGui"):SetCore("SendNotification",{
+                        Title = "Erro",
+                        Text = "Player inválido",
+                        Duration = 3
+                    })
+                    return
+                end
+                
+                local playerName = targetPlayer.Name
+                
+                if hammerBuggedPlayers[playerName] then
+                    if hammerBugConnections[playerName] then
+                        hammerBugConnections[playerName]:Disconnect()
+                        hammerBugConnections[playerName] = nil
+                    end
+                    hammerBuggedPlayers[playerName] = nil
+                    game:GetService("StarterGui"):SetCore("SendNotification",{
+                        Title = "Bug Parado",
+                        Text = playerName .. " foi desbugado",
+                        Duration = 3
+                    })
+                    return
+                end
+                
+                hammerBuggedPlayers[playerName] = true
+                game:GetService("StarterGui"):SetCore("SendNotification",{
+                    Title = "Ataque",
+                    Text = playerName .. " foi atingido",
+                    Duration = 3
+                })
+                
+                hammerBugConnections[playerName] = RunService.Stepped:Connect(function()
+                    local target = Players:FindFirstChild(playerName)
+                    
+                    if not target or not target.Character or not target.Character:FindFirstChild("HumanoidRootPart") then
+                        if hammerBugConnections[playerName] then
+                            hammerBugConnections[playerName]:Disconnect()
+                            hammerBugConnections[playerName] = nil
+                        end
+                        hammerBuggedPlayers[playerName] = nil
+                        return
+                    end
+                    
+                    local crazyVector = Vector3.new(
+                        math.random(1e14, 1e15),
+                        math.random(1e14, 1e15),
+                        math.random(1e14, 1e15)
+                    )
+                    
+                    local args = {
+                        [1] = target.Character.HumanoidRootPart,
+                        [2] = target.Character.HumanoidRootPart,
+                        [3] = crazyVector,
+                        [4] = target.Character.HumanoidRootPart.Position,
+                        [5] = LocalPlayer.Backpack:FindFirstChild("Assault") and LocalPlayer.Backpack.Assault:FindFirstChild("GunScript_Local") and LocalPlayer.Backpack.Assault.GunScript_Local:FindFirstChild("MuzzleEffect"),
+                        [6] = LocalPlayer.Backpack:FindFirstChild("Assault") and LocalPlayer.Backpack.Assault:FindFirstChild("GunScript_Local") and LocalPlayer.Backpack.Assault.GunScript_Local:FindFirstChild("HitEffect"),
+                        [7] = 0,
+                        [8] = 0,
+                        [9] = { [1] = false },
+                        [10] = {
+                            [1] = 25,
+                            [2] = Vector3.new(100, 100, 100),
+                            [3] = BrickColor.new(29),
+                            [4] = 0.25,
+                            [5] = Enum.Material.SmoothPlastic,
+                            [6] = 0.25
+                        },
+                        [11] = true,
+                        [12] = false
+                    }
+                    
+                    Remote:FireServer(unpack(args))
+                end)
+            end
+
+            local function getPlayerFromMouse(mouse)
+                local target = mouse.Target
+                if not target then return nil end
+                
+                local character = target.Parent
+                while character and not character:FindFirstChild("Humanoid") do
+                    character = character.Parent
+                end
+                
+                if character and character:FindFirstChild("Humanoid") then
+                    return Players:GetPlayerFromCharacter(character)
+                end
+                
+                return nil
+            end
+
+            local tool = Instance.new("Tool")
+            tool.Name = "Hammer 1x1x1x1"
+            tool.RequiresHandle = true
+            tool.CanBeDropped = true
+
+            local handle = Instance.new("Part")
+            handle.Name = "Handle"
+            handle.Size = Vector3.new(0.1, 0.1, 0.1)
+            handle.Massless = true
+            handle.Anchored = false
+            handle.CanCollide = false
+            handle.Transparency = 0.5
+            handle.Color = Color3.fromRGB(255, 0, 0)
+
+            local mesh = Instance.new("SpecialMesh", handle)
+            mesh.MeshType = Enum.MeshType.Sphere
+            mesh.Scale = Vector3.new(0.05, 0.05, 0.05)
+            mesh.Parent = handle
+
+            handle.Parent = tool
+
+            local mouseConnection = nil
+            local hammerAppearanceEquipped = false
+
+            tool.Equipped:Connect(function(mouse)
+                character = tool.Parent
+                if character and character:FindFirstChild("Humanoid") and character.Humanoid.RigType == Enum.HumanoidRigType.R15 then
+                    humanoid = character:FindFirstChild("Humanoid")
+                    if character.PrimaryPart then
+                        hammerLastPosition = character.PrimaryPart.Position
+                    end
+                    
+                    if not hammerAppearanceEquipped then
+                        pcall(function()
+                            local args = { 18854147316 }
+                            game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Wear"):InvokeServer(unpack(args))
+                            hammerAppearanceEquipped = true
+                        end)
+                    end
+                    
+                    if mouseConnection then
+                        mouseConnection:Disconnect()
+                    end
+                    
+                    mouseConnection = mouse.Button1Down:Connect(function()
+                        PerformAttack()
+                        
+                        local targetPlayer = getPlayerFromMouse(mouse)
+                        if targetPlayer and targetPlayer ~= LocalPlayer then
+                            hammerBugPlayer(targetPlayer)
+                        end
+                    end)
+                    
+                    game:GetService("StarterGui"):SetCore("SendNotification",{
+                        Title = "Hammer Equipado",
+                        Text = "Clique para atacar com som sincronizado",
+                        Duration = 3
+                    })
+                end
+            end)
+
+            tool.Unequipped:Connect(function()
+                if currentAnimationTrack then
+                    currentAnimationTrack:Stop(HammerSettings["Fade Out"])
+                    currentAnimationTrack = nil
+                end
+                
+                if mouseConnection then
+                    mouseConnection:Disconnect()
+                    mouseConnection = nil
+                end
+                
+                isAttacking = false
+                
+                game:GetService("StarterGui"):SetCore("SendNotification",{
+                    Title = "Hammer Guardado",
+                    Text = "Tool desequipado",
+                    Duration = 3
+                })
+            end)
+
+            Players.PlayerRemoving:Connect(function(player)
+                local playerName = player.Name
+                if hammerBugConnections[playerName] then
+                    hammerBugConnections[playerName]:Disconnect()
+                    hammerBugConnections[playerName] = nil
+                end
+                if hammerBuggedPlayers[playerName] then
+                    hammerBuggedPlayers[playerName] = nil
+                end
+            end)
+
+            local function stopAllHammerBugs()
+                for playerName, connection in pairs(hammerBugConnections) do
+                    if connection then
+                        connection:Disconnect()
+                    end
+                end
+                hammerBugConnections = {}
+                hammerBuggedPlayers = {}
+                game:GetService("StarterGui"):SetCore("SendNotification",{
+                    Title = "Bugs Parados",
+                    Text = "Todos os players foram desbugados do martelo",
+                    Duration = 3
+                })
+            end
+
+            -- Comandos locais do martelo
+            LocalPlayer.Chatted:Connect(function(message)
+                if message:lower() == "/stopallbugs" then
+                    stopAllHammerBugs()
+                elseif message:lower() == "/buggedlist" then
+                    local count = 0
+                    for _ in pairs(hammerBuggedPlayers) do
+                        count = count + 1
+                    end
+                    if count > 0 then
+                        game:GetService("StarterGui"):SetCore("SendNotification",{
+                            Title = "Lista",
+                            Text = count .. " players bugados pelo martelo",
+                            Duration = 3
+                        })
+                    else
+                        game:GetService("StarterGui"):SetCore("SendNotification",{
+                            Title = "Lista",
+                            Text = "Nenhum player bugado pelo martelo",
+                            Duration = 3
+                        })
+                    end
+                elseif message:lower() == "/stopanim" then
+                    if currentAnimationTrack then
+                        currentAnimationTrack:Stop(HammerSettings["Fade Out"])
+                        currentAnimationTrack = nil
+                    end
+                    isAttacking = false
+                    game:GetService("StarterGui"):SetCore("SendNotification",{
+                        Title = "Parado",
+                        Text = "Animacao interrompida",
+                        Duration = 3
+                    })
+                end
+            end)
+
+            tool.Parent = LocalPlayer.Backpack
+
+            game:GetService("StarterGui"):SetCore("SendNotification",{
+                Title = "Carregado",
+                Text = "Sistema sincronizado ativo",
+                Duration = 3
+            })
+
+            -- ============================================
+            -- ADICIONAR TOOL DA RISADA DO 1x1x1
+            -- ============================================
+            
+            local Players = game:GetService("Players")
+            local RunService = game:GetService("RunService")
+            local ReplicatedStorage = game:GetService("ReplicatedStorage")
+            local Workspace = game:GetService("Workspace")
+
+            local player = Players.LocalPlayer
+            local character = player.Character or player.CharacterAdded:Wait()
+            local humanoid = character:WaitForChild("Humanoid")
+            local lastPosition = character.PrimaryPart and character.PrimaryPart.Position or Vector3.new()
+
+            player.CharacterAdded:Connect(function(newCharacter)
+                character = newCharacter
+                humanoid = newCharacter:WaitForChild("Humanoid")
+                lastPosition = character.PrimaryPart and character.PrimaryPart.Position or Vector3.new()
+            end)
+
+            -- ======================
+            -- Configurações Emote
+            -- ======================
+            local Settings = {}
+            Settings["Stop On Move"] = true
+            Settings["Fade In"] = 0.1
+            Settings["Fade Out"] = 0.1
+            Settings["Weight"] = 1
+            Settings["Speed"] = 1
+            Settings["Time Position"] = 0
+
+            local CurrentTrack = nil
+            local DEMOMAN_LAUGH_ID = "122240620529815" -- ID atualizado do emote
+
+            local function LoadTrack(id)
+                if CurrentTrack then 
+                    CurrentTrack:Stop(Settings["Fade Out"]) 
+                end
+                
+                local animId
+                local ok, result = pcall(function() 
+                    return game:GetObjects("rbxassetid://" .. tostring(id)) 
+                end)
+                
+                if ok and result and #result > 0 then
+                    local anim = result[1]
+                    if anim:IsA("Animation") then
+                        animId = anim.AnimationId
+                    else
+                        animId = "rbxassetid://" .. tostring(id)
+                    end
+                else
+                    animId = "rbxassetid://" .. tostring(id)
+                end
+                
+                local newAnim = Instance.new("Animation")
+                newAnim.AnimationId = animId
+                local newTrack = humanoid:LoadAnimation(newAnim)
+                newTrack.Priority = Enum.AnimationPriority.Action4
+                
+                local weight = Settings["Weight"]
+                if weight == 0 then weight = 0.001 end
+                
+                newTrack:Play(Settings["Fade In"], weight, Settings["Speed"])
+                CurrentTrack = newTrack
+                CurrentTrack.TimePosition = math.clamp(Settings["Time Position"], 0, 1) * CurrentTrack.Length
+                CurrentTrack.Priority = Enum.AnimationPriority.Action4
+                
+                return newTrack
+            end
+
+            RunService.RenderStepped:Connect(function()
+                if character.PrimaryPart then
+                    if Settings["Stop On Move"] and CurrentTrack and CurrentTrack.IsPlaying then
+                        local moved = (character.PrimaryPart.Position - lastPosition).Magnitude > 0.1
+                        local jumped = humanoid and humanoid:GetState() == Enum.HumanoidStateType.Jumping
+                        if moved or jumped then
+                            CurrentTrack:Stop(Settings["Fade Out"])
+                            CurrentTrack = nil
+                        end
+                    end
+                    lastPosition = character.PrimaryPart.Position
+                end
+            end)
+
+            local function playDemomanLaugh()
+                LoadTrack(DEMOMAN_LAUGH_ID)
+            end
+
+            local function stopEmote()
+                if CurrentTrack then
+                    CurrentTrack:Stop(Settings["Fade Out"])
+                    CurrentTrack = nil
+                end
+            end
+
+            -- ======================
+            -- Configurações Áudio
+            -- ======================
+            local AUDIO_ID = 9085226116
+            local TOOL_NAME = "Risada do 1x1x1"
+
+            local function PlayServerAudio(ID)
+                if type(ID) ~= "number" then return end
+                local ev = ReplicatedStorage:FindFirstChild("RE")
+                if ev and ev:FindFirstChild("1Gu1nSound1s") then
+                    ev["1Gu1nSound1s"]:FireServer(Workspace, ID, 1)
+                end
+            end
+
+            local function PlayLocalAudio(ID)
+                if type(ID) ~= "number" then return end
+                local char = player.Character or player.CharacterAdded:Wait()
+                local sound = Instance.new("Sound")
+                sound.SoundId = "rbxassetid://" .. ID
+                sound.Volume = 1
+                sound.Parent = char:FindFirstChild("HumanoidRootPart") or char:WaitForChild("Head")
+                sound:Play()
+                sound.Ended:Connect(function()
+                    sound:Destroy()
+                end)
+            end
+
+            local function PlayAudio(ID)
+                PlayServerAudio(ID)
+                PlayLocalAudio(ID)
+            end
+
+            -- ======================
+            -- Criar Tool
+            -- ======================
+            local tool = Instance.new("Tool")
+            tool.Name = TOOL_NAME
+            tool.RequiresHandle = false
+            tool.CanBeDropped = false
+            tool.Parent = player.Backpack
+
+            tool.Activated:Connect(function()
+                PlayAudio(AUDIO_ID)
+                playDemomanLaugh()
+            end)
+
+            tool.Equipped:Connect(function()
+                -- opcional: tocar automaticamente ao equipar
+                -- playDemomanLaugh()
+            end)
+
+            print("✅ Tool completa (Emote + Áudio) criada no Backpack!")
+            
+        -- Adicionar botão 1x1x1x1
+        feTab:AddButton({
+            Name = "1x1x1x1",
+            Callback = function()
+                execute1x1x1x1()
+            end
+        })
+
+-- Função para bugar player (reutilizável)
+local function bugPlayer(targetPlayer)
+    local ReplicatedStorage = game:GetService("ReplicatedStorage")
+    local Remote = ReplicatedStorage.RE:FindFirstChild("1Gu1n")
+    
+    if not Remote then
+        game:GetService("StarterGui"):SetCore("SendNotification",{
+            Title = "Erro",
+            Text = "Remote não encontrado",
+            Duration = 3
+        })
+        return
+    end
+    
+    if not targetPlayer or not targetPlayer.Character then
+        game:GetService("StarterGui"):SetCore("SendNotification",{
+            Title = "Erro",
+            Text = "Player inválido",
+            Duration = 3
+        })
+        return
+    end
+    
+    local playerName = targetPlayer.Name
+    
+    if buggedPlayers[playerName] then
+        -- Se já está bugado, para o bug
+        if bugConnections[playerName] then
+            bugConnections[playerName]:Disconnect()
+            bugConnections[playerName] = nil
+        end
+        buggedPlayers[playerName] = nil
+        game:GetService("StarterGui"):SetCore("SendNotification",{
+            Title = "Bug Parado",
+            Text = playerName .. " foi desbugado",
+            Duration = 3
+        })
+        return
+    end
+    
+    -- Buga o player
+    buggedPlayers[playerName] = true
+    game:GetService("StarterGui"):SetCore("SendNotification",{
+        Title = "Ataque",
+        Text = playerName .. " foi bugado pelo comando",
+        Duration = 3
+    })
+    
+    bugConnections[playerName] = RunService.Stepped:Connect(function()
+        local target = Players:FindFirstChild(playerName)
+        
+        if not target or not target.Character or not target.Character:FindFirstChild("HumanoidRootPart") then
+            if bugConnections[playerName] then
+                bugConnections[playerName]:Disconnect()
+                bugConnections[playerName] = nil
+            end
+            buggedPlayers[playerName] = nil
+            return
+        end
+        
+        local crazyVector = Vector3.new(
+            math.random(1e14, 1e15),
+            math.random(1e14, 1e15),
+            math.random(1e14, 1e15)
+        )
+        
+        local args = {
+            [1] = target.Character.HumanoidRootPart,
+            [2] = target.Character.HumanoidRootPart,
+            [3] = crazyVector,
+            [4] = target.Character.HumanoidRootPart.Position,
+            [5] = LocalPlayer.Backpack:FindFirstChild("Assault") and LocalPlayer.Backpack.Assault:FindFirstChild("GunScript_Local") and LocalPlayer.Backpack.Assault.GunScript_Local:FindFirstChild("MuzzleEffect"),
+            [6] = LocalPlayer.Backpack:FindFirstChild("Assault") and LocalPlayer.Backpack.Assault:FindFirstChild("GunScript_Local") and LocalPlayer.Backpack.Assault.GunScript_Local:FindFirstChild("HitEffect"),
+            [7] = 0,
+            [8] = 0,
+            [9] = { [1] = false },
+            [10] = {
+                [1] = 25,
+                [2] = Vector3.new(100, 100, 100),
+                [3] = BrickColor.new(29),
+                [4] = 0.25,
+                [5] = Enum.Material.SmoothPlastic,
+                [6] = 0.25
+            },
+            [11] = true,
+            [12] = false
+        }
+        
+        Remote:FireServer(unpack(args))
+    end)
+end
+
+-- Função para processar comando /bugged
+local function processBuggedCommand(message)
+    local command, playerName = message:match("^/bugged%s+(.+)$")
+    
+    if command and playerName then
+        -- Remove espaços extras
+        playerName = playerName:gsub("%s+", "")
+        
+        -- Procura o player
+        local targetPlayer = nil
+        for _, player in pairs(Players:GetPlayers()) do
+            if player.Name:lower() == playerName:lower() then
+                targetPlayer = player
+                break
+            end
+        end
+        
+        if targetPlayer then
+            if targetPlayer == LocalPlayer then
+                game:GetService("StarterGui"):SetCore("SendNotification",{
+                    Title = "Erro",
+                    Text = "Você não pode se bugar!",
+                    Duration = 3
+                })
+            else
+                bugPlayer(targetPlayer)
+            end
+        else
+            game:GetService("StarterGui"):SetCore("SendNotification",{
+                Title = "Erro",
+                Text = "Player '" .. playerName .. "' não encontrado",
+                Duration = 3
+            })
+        end
+    end
+end
+
+-- Conectar ao evento de chat
+LocalPlayer.Chatted:Connect(function(message)
+    -- Comando /bugged
+    if message:lower():match("^/bugged") then
+        processBuggedCommand(message)
+    end
+    
+    -- Comandos existentes (mantidos para compatibilidade)
+    if message:lower() == "/stopallbugs" then
+        for playerName, connection in pairs(bugConnections) do
+            if connection then
+                connection:Disconnect()
+            end
+        end
+        bugConnections = {}
+        buggedPlayers = {}
+        game:GetService("StarterGui"):SetCore("SendNotification",{
+            Title = "Bugs Parados",
+            Text = "Todos os players foram desbugados",
+            Duration = 3
+        })
+    elseif message:lower() == "/buggedlist" then
+        local count = 0
+        for _ in pairs(buggedPlayers) do
+            count = count + 1
+        end
+        if count > 0 then
+            local playerList = ""
+            for playerName in pairs(buggedPlayers) do
+                playerList = playerList .. playerName .. ", "
+            end
+            playerList = playerList:sub(1, -3) -- Remove a última vírgula e espaço
+            game:GetService("StarterGui"):SetCore("SendNotification",{
+                Title = "Players Bugados (" .. count .. ")",
+                Text = playerList,
+                Duration = 5
+            })
+        else
+            game:GetService("StarterGui"):SetCore("SendNotification",{
+                Title = "Lista de Bugs",
+                Text = "Nenhum player bugado",
+                Duration = 3
+            })
+        end
+    end
+end)
+
+-- Função do script BONI COMPLETA SEM TOOLS DE ANIMAÇÃO E SPEED
+local function executeBONI()
+    game:GetService("StarterGui"):SetCore("SendNotification",{
+        Title = "Fe BONI",
+        Text = "Made by BONI",
+        Button1 = "ok",
+        Button2 = "-",
+        Duration = 30
+    })
+
+    wait(1)
+
+    local Players = game:GetService("Players")
+    local ReplicatedStorage = game:GetService("ReplicatedStorage")
+    local RunService = game:GetService("RunService")
+    local UserInputService = game:GetService("UserInputService")
+    local Workspace = game:GetService("Workspace")
+    local LocalPlayer = Players.LocalPlayer
+
+    local args1 = {
+        [1] = {
+            [1] = 121838871518791,
+            [2] = 89124612345294,
+            [3] = 84431523780379,
+            [4] = 104281326156987,
+            [5] = 94645302037763,
+        }
+    }
+
+    game:GetService("ReplicatedStorage").Remotes.ChangeCharacterBody:InvokeServer(unpack(args1))
+
+    wait(0.5)
+
+    local torsoId = 87108996849145
+
+    pcall(function()
+        game:GetService("ReplicatedStorage").Remotes.EquipTorso:InvokeServer(torsoId)
+    end)
+
+    wait(0.3)
+
+    pcall(function()
+        game:GetService("ReplicatedStorage").Remotes.ChangeCharacterTorso:InvokeServer(torsoId)
+    end)
+
+    wait(0.3)
+
+    pcall(function()
+        game:GetService("ReplicatedStorage").Remotes.UpdateBody:InvokeServer({torso = torsoId})
+    end)
+
+    wait(0.3)
+
+    pcall(function()
+        game:GetService("ReplicatedStorage").Remotes.EquipAccessory:InvokeServer(torsoId)
+    end)
+
+    wait(0.3)
+
+    pcall(function()
+        local altArgs = {["torso"] = torsoId}
+        game:GetService("ReplicatedStorage").Remotes.ChangeCharacterBody:InvokeServer(altArgs)
+    end)
+
+    wait(0.3)
+
+    pcall(function()
+        local torsoOnly = {torsoId}
+        game:GetService("ReplicatedStorage").Remotes.ChangeCharacterBody:InvokeServer(torsoOnly)
+    end)
+
+    local OUTFIT_CONFIG = {
+        bodyColor = "Lime green",
+        pants = 2783031628,
+        shirt = 17332995995,
+        accessories = {
+            109133261904056,
+            131744792363610,
+            85892786028167,
+            5319900634,
+            136291864697480
+        },
+        bundles = {
+            73750101007369
+        },
+        equipDelay = 0.8,
+        maxRetries = 3
+    }
+
+    local function equipWithRetry(remoteName, id, itemType, retries)
+        retries = retries or OUTFIT_CONFIG.maxRetries
+        for attempt = 1, retries do
+            local success = pcall(function()
+                local args = {[1] = id}
+                if remoteName == "ChangeBodyColor" then
+                    ReplicatedStorage.Remotes[remoteName]:FireServer(unpack(args))
+                else
+                    ReplicatedStorage.Remotes[remoteName]:InvokeServer(unpack(args))
+                end
+            end)
+            if success then
+                return true
+            else
+                if attempt < retries then
+                    wait(0.5)
+                else
+                    return false
+                end
+            end
+        end
+        return false
+    end
+
+    equipWithRetry("ChangeBodyColor", OUTFIT_CONFIG.bodyColor, "Cor do corpo")
+    wait(1)
+    equipWithRetry("WearPants", OUTFIT_CONFIG.pants, "Calca")
+    wait(OUTFIT_CONFIG.equipDelay)
+    equipWithRetry("WearShirt", OUTFIT_CONFIG.shirt, "Camisa")
+    wait(OUTFIT_CONFIG.equipDelay)
+
+    for i, accessoryID in pairs(OUTFIT_CONFIG.accessories) do
+        equipWithRetry("Wear", accessoryID, "Acessorio")
+        if i < #OUTFIT_CONFIG.accessories then
+            wait(OUTFIT_CONFIG.equipDelay)
+        end
+    end
+
+    wait(1)
+
+    for i, bundleID in pairs(OUTFIT_CONFIG.bundles) do
+        equipWithRetry("WearBundle", bundleID, "Bundle")
+        if i < #OUTFIT_CONFIG.bundles then
+            wait(OUTFIT_CONFIG.equipDelay)
+        end
+    end
+
+    local args = {
+        [1] = "18637078598",
+        [2] = "032FireGreen"
+    }
+
+    game:GetService("ReplicatedStorage").Remotes.ApplyEmmiter:InvokeServer(unpack(args))
+
+    local character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+    local humanoid = character:WaitForChild("Humanoid")
+    local lastPosition = character.PrimaryPart and character.PrimaryPart.Position or Vector3.new()
+
+    LocalPlayer.CharacterAdded:Connect(function(newCharacter)
+        character = newCharacter
+        humanoid = newCharacter:WaitForChild("Humanoid")
+        lastPosition = character.PrimaryPart and character.PrimaryPart.Position or Vector3.new()
+    end)
+
+    local Settings = {
+        ["Stop On Move"] = true,
+        ["Fade In"] = 0.1,
+        ["Fade Out"] = 0.1,
+        ["Weight"] = 1,
+        ["Speed"] = 1,
+        ["Time Position"] = 0
+    }
+
+    local EmoteIDs = {
+        idle = "135425213693488",
+        walk = "121350640829746",
+        run = "121350640829746",
+        jump = "104108770420406"
+    }
+
+    local TOOL1_NAME = "BONI"
+    local TOOL1_IMAGE = "rbxassetid://112740282733993"
+    local TOOL1_AUDIO = 92834049852368
+    local TOOL1_ANIM = "117254600864069"
+
+    local CurrentTrack = nil
+    local CurrentTracks = {}
+    local lastState = "idle"
+    local stateTime = 0
+    local isSystemActive = false
+    local isToolAnimationPlaying = false
+
+    local function LoadTrack(id)
+        if CurrentTrack then CurrentTrack:Stop(Settings["Fade Out"]) end
+        local anim = Instance.new("Animation")
+        anim.AnimationId = "rbxassetid://"..id
+        local track = humanoid:LoadAnimation(anim)
+        track.Priority = Enum.AnimationPriority.Action4
+        track:Play(Settings["Fade In"], Settings["Weight"], Settings["Speed"])
+        CurrentTrack = track
+        return track
+    end
+
+    local function LoadEmoteTrack(id, trackName)
+        if CurrentTracks[trackName] then
+            CurrentTracks[trackName]:Stop(Settings["Fade Out"])
+            CurrentTracks[trackName] = nil
+        end
+        local anim = Instance.new("Animation")
+        anim.AnimationId = "rbxassetid://"..id
+        anim.Name = "EmoteMovement_"..trackName
+        local track = humanoid:LoadAnimation(anim)
+        track.Priority = Enum.AnimationPriority.Action
+        track:Play(Settings["Fade In"], Settings["Weight"], Settings["Speed"])
+        track.Looped = trackName ~= "jump"
+        CurrentTracks[trackName] = track
+        return track
+    end
+
+    local function detectMovementState()
+        if not humanoid then return "idle" end
+        local moveDir = humanoid.MoveDirection
+        local walkSpeed = humanoid.WalkSpeed
+        local jumpState = humanoid:GetState()
+        if jumpState == Enum.HumanoidStateType.Jumping or jumpState == Enum.HumanoidStateType.Freefall then
+            return "jump"
+        elseif moveDir.Magnitude > 0.1 then
+            return walkSpeed >= 20 and "run" or "walk"
+        else
+            return "idle"
+        end
+    end
+
+    local function updateEmoteMovement()
+        if not isSystemActive or isToolAnimationPlaying then return end
+        local currentTime = tick()
+        local newState = detectMovementState()
+        if newState ~= lastState and (currentTime - stateTime) > 0.3 then
+            if CurrentTracks[lastState] and CurrentTracks[lastState].IsPlaying then
+                CurrentTracks[lastState]:Stop(Settings["Fade Out"])
+            end
+            if EmoteIDs[newState] then
+                LoadEmoteTrack(EmoteIDs[newState], newState)
+            end
+            lastState = newState
+            stateTime = currentTime
+        end
+    end
+
+    local function playTool1Once()
+        if CurrentTrack and CurrentTrack.IsPlaying then CurrentTrack:Stop(0.1) end
+        for _, track in pairs(CurrentTracks) do
+            if track and track.IsPlaying then track:Stop(0.1) end
+        end
+        for _, track in pairs(humanoid:GetPlayingAnimationTracks()) do
+            track:Stop(0.1)
+        end
+
+        isToolAnimationPlaying = true
+        isSystemActive = false
+
+        local anim = Instance.new("Animation")
+        anim.AnimationId = "rbxassetid://"..TOOL1_ANIM
+        local track = humanoid:LoadAnimation(anim)
+        track.Priority = Enum.AnimationPriority.Action
+        track.Looped = false
+        track:Play(0.1, 1, 1)
+        track.Stopped:Connect(function()
+            isToolAnimationPlaying = false
+            isSystemActive = true
+            lastState = ""
+            CurrentTracks = {}
+        end)
+    end
+
+    local tool1 = Instance.new("Tool")
+    tool1.Name = TOOL1_NAME
+    tool1.RequiresHandle = false
+    tool1.CanBeDropped = false
+    tool1.TextureId = TOOL1_IMAGE
+    tool1.Parent = LocalPlayer.Backpack
+
+    tool1.Activated:Connect(function()
+        local sound = Instance.new("Sound")
+        sound.SoundId = "rbxassetid://"..TOOL1_AUDIO
+        sound.Volume = 1
+        sound.Parent = character:FindFirstChild("HumanoidRootPart") or character:WaitForChild("Head")
+        sound:Play()
+        sound.Ended:Connect(function() sound:Destroy() end)
+        playTool1Once()
+    end)
+
+    RunService.Heartbeat:Connect(updateEmoteMovement)
+
+    LocalPlayer.CharacterAdded:Connect(function(newChar)
+        character = newChar
+        humanoid = newChar:WaitForChild("Humanoid")
+        lastPosition = character.PrimaryPart and character.PrimaryPart.Position or Vector3.new()
+        wait(3)
+    end)
+
+    wait(1)
+    isSystemActive = true
+
+    game:GetService("StarterGui"):SetCore("SendNotification",{
+        Title = "boni Hammer Ready",
+        Text = "Use to bug players",
+        Duration = 10
+    })
+
+    -- Variáveis locais para o martelo
+    local hammerBuggedPlayers = {}
+    local hammerBugConnections = {}
+    local Remote = ReplicatedStorage.RE:FindFirstChild("1Gu1n")
+    local currentAnimationTrack = nil
+    local isAttacking = false
+
+    local ATTACK_SOUND_ID = 3417831369
+    local ATTACK_ANIMATION_ID = "83509299779732"
+
+    local HammerSettings = {
+        ["Stop On Move"] = true,
+        ["Fade In"] = 0.1,
+        ["Fade Out"] = 0.1,
+        ["Weight"] = 1,
+        ["Speed"] = 2,
+        ["Time Position"] = 0
+    }
+
+    local hammerLastPosition = Vector3.new()
+
+    local function PlayServerAudio(ID)
+        if type(ID) ~= "number" then return end
+        local ev = ReplicatedStorage:FindFirstChild("RE")
+        if ev and ev:FindFirstChild("1Gu1nSound1s") then
+            ev["1Gu1nSound1s"]:FireServer(Workspace, ID, 1)
+        end
+    end
+
+    local function PlayLocalAudio(ID)
+        if type(ID) ~= "number" then return end
+        
+        local char = LocalPlayer.Character
+        if not char then return end
+        
+        local sound = Instance.new("Sound")
+        sound.SoundId = "rbxassetid://" .. ID
+        sound.Volume = 1
+        sound.Parent = char:FindFirstChild("HumanoidRootPart") or char:WaitForChild("Head")
+        sound:Play()
+        
+        sound.Ended:Connect(function()
+            sound:Destroy()
+        end)
+        
+        task.delay(10, function()
+            if sound and sound.Parent then
+                sound:Destroy()
+            end
+        end)
+        
+        return sound
+    end
+
+    local function PlayAttackSound()
+        PlayServerAudio(ATTACK_SOUND_ID)
+        return PlayLocalAudio(ATTACK_SOUND_ID)
+    end
+
+    RunService.RenderStepped:Connect(function()
+        if character and character.PrimaryPart then
+            if HammerSettings["Stop On Move"] and currentAnimationTrack and currentAnimationTrack.IsPlaying then
+                local moved = (character.PrimaryPart.Position - hammerLastPosition).Magnitude > 0.1
+                local jumped = humanoid and humanoid:GetState() == Enum.HumanoidStateType.Jumping
+                
+                if moved or jumped then
+                    currentAnimationTrack:Stop(HammerSettings["Fade Out"])
+                    currentAnimationTrack = nil
+                    isAttacking = false
+                end
+            end
+            hammerLastPosition = character.PrimaryPart.Position
+        end
+    end)
+
+    local function LoadAndPlayAttackAnimation()
+        if not character or not character:FindFirstChild("Humanoid") then return end
+        
+        local humanoid = character:FindFirstChildOfClass("Humanoid")
+        if not humanoid then return end
+        
+        if currentAnimationTrack then
+            currentAnimationTrack:Stop(HammerSettings["Fade Out"])
+            currentAnimationTrack = nil
+        end
+        
+        local newAnim = Instance.new("Animation")
+        newAnim.AnimationId = "rbxassetid://" .. ATTACK_ANIMATION_ID
+        
+        local newTrack = humanoid:LoadAnimation(newAnim)
+        newTrack.Priority = Enum.AnimationPriority.Action4
+        newTrack.Looped = false
+        
+        local weight = HammerSettings["Weight"]
+        if weight == 0 then weight = 0.001 end
+        
+        newTrack:Play(HammerSettings["Fade In"], weight, HammerSettings["Speed"])
+        currentAnimationTrack = newTrack
+        currentAnimationTrack.TimePosition = math.clamp(HammerSettings["Time Position"], 0, 1) * currentAnimationTrack.Length
+        
+        currentAnimationTrack.Stopped:Connect(function()
+            currentAnimationTrack = nil
+            isAttacking = false
+        end)
+        
+        task.delay(1.5, function()
+            if currentAnimationTrack == newTrack then
+                newTrack:Stop(HammerSettings["Fade Out"])
+                currentAnimationTrack = nil
+                isAttacking = false
+            end
+        end)
+        
+        return newTrack
+    end
+
+    local function PerformAttack()
+        if isAttacking then return end
+        
+        isAttacking = true
+        PlayAttackSound()
+        LoadAndPlayAttackAnimation()
+        
+        task.delay(0.8, function()
+            isAttacking = false
+        end)
+    end
+
+    -- Função local para bugar com martelo
+    local function hammerBugPlayer(targetPlayer)
+        if not Remote then
+            game:GetService("StarterGui"):SetCore("SendNotification",{
+                Title = "Erro",
+                Text = "Remote não encontrado",
+                Duration = 3
+            })
+            return
+        end
+        
+        if not targetPlayer or not targetPlayer.Character then
+            game:GetService("StarterGui"):SetCore("SendNotification",{
+                Title = "Erro",
+                Text = "Player inválido",
+                Duration = 3
+            })
+            return
+        end
+        
+        local playerName = targetPlayer.Name
+        
+        if hammerBuggedPlayers[playerName] then
+            if hammerBugConnections[playerName] then
+                hammerBugConnections[playerName]:Disconnect()
+                hammerBugConnections[playerName] = nil
+            end
+            hammerBuggedPlayers[playerName] = nil
+            game:GetService("StarterGui"):SetCore("SendNotification",{
+                Title = "Bug Parado",
+                Text = playerName .. " foi desbugado",
+                Duration = 3
+            })
+            return
+        end
+        
+        hammerBuggedPlayers[playerName] = true
+        game:GetService("StarterGui"):SetCore("SendNotification",{
+            Title = "Ataque",
+            Text = playerName .. " foi atingido",
+            Duration = 3
+        })
+        
+        hammerBugConnections[playerName] = RunService.Stepped:Connect(function()
+            local target = Players:FindFirstChild(playerName)
+            
+            if not target or not target.Character or not target.Character:FindFirstChild("HumanoidRootPart") then
+                if hammerBugConnections[playerName] then
+                    hammerBugConnections[playerName]:Disconnect()
+                    hammerBugConnections[playerName] = nil
+                end
+                hammerBuggedPlayers[playerName] = nil
+                return
+            end
+            
+            local crazyVector = Vector3.new(
+                math.random(1e14, 1e15),
+                math.random(1e14, 1e15),
+                math.random(1e14, 1e15)
+            )
+            
+            local args = {
+                [1] = target.Character.HumanoidRootPart,
+                [2] = target.Character.HumanoidRootPart,
+                [3] = crazyVector,
+                [4] = target.Character.HumanoidRootPart.Position,
+                [5] = LocalPlayer.Backpack:FindFirstChild("Assault") and LocalPlayer.Backpack.Assault:FindFirstChild("GunScript_Local") and LocalPlayer.Backpack.Assault.GunScript_Local:FindFirstChild("MuzzleEffect"),
+                [6] = LocalPlayer.Backpack:FindFirstChild("Assault") and LocalPlayer.Backpack.Assault:FindFirstChild("GunScript_Local") and LocalPlayer.Backpack.Assault.GunScript_Local:FindFirstChild("HitEffect"),
+                [7] = 0,
+                [8] = 0,
+                [9] = { [1] = false },
+                [10] = {
+                    [1] = 25,
+                    [2] = Vector3.new(100, 100, 100),
+                    [3] = BrickColor.new(29),
+                    [4] = 0.25,
+                    [5] = Enum.Material.SmoothPlastic,
+                    [6] = 0.25
+                },
+                [11] = true,
+                [12] = false
+            }
+            
+            Remote:FireServer(unpack(args))
+        end)
+    end
+
+    local function getPlayerFromMouse(mouse)
+        local target = mouse.Target
+        if not target then return nil end
+        
+        local character = target.Parent
+        while character and not character:FindFirstChild("Humanoid") do
+            character = character.Parent
+        end
+        
+        if character and character:FindFirstChild("Humanoid") then
+            return Players:GetPlayerFromCharacter(character)
+        end
+        
+        return nil
+    end
+
+    local tool = Instance.new("Tool")
+    tool.Name = "Hammer boni"
+    tool.RequiresHandle = true
+    tool.CanBeDropped = true
+
+    local handle = Instance.new("Part")
+    handle.Name = "Handle"
+    handle.Size = Vector3.new(0.1, 0.1, 0.1)
+    handle.Massless = true
+    handle.Anchored = false
+    handle.CanCollide = false
+    handle.Transparency = 0.5
+    handle.Color = Color3.fromRGB(255, 0, 0)
+
+    local mesh = Instance.new("SpecialMesh", handle)
+    mesh.MeshType = Enum.MeshType.Sphere
+    mesh.Scale = Vector3.new(0.05, 0.05, 0.05)
+    mesh.Parent = handle
+
+    handle.Parent = tool
+
+    local mouseConnection = nil
+    local hammerAppearanceEquipped = false
+
+    tool.Equipped:Connect(function(mouse)
+        character = tool.Parent
+        if character and character:FindFirstChild("Humanoid") and character.Humanoid.RigType == Enum.HumanoidRigType.R15 then
+            humanoid = character:FindFirstChild("Humanoid")
+            if character.PrimaryPart then
+                hammerLastPosition = character.PrimaryPart.Position
+            end
+            
+            if not hammerAppearanceEquipped then
+                pcall(function()
+                    local args = { 18854147316 }
+                    game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Wear"):InvokeServer(unpack(args))
+                    hammerAppearanceEquipped = true
+                end)
+            end
+            
+            if mouseConnection then
+                mouseConnection:Disconnect()
+            end
+            
+            mouseConnection = mouse.Button1Down:Connect(function()
+                PerformAttack()
+                
+                local targetPlayer = getPlayerFromMouse(mouse)
+                if targetPlayer and targetPlayer ~= LocalPlayer then
+                    hammerBugPlayer(targetPlayer)
+                end
+            end)
+            
+            game:GetService("StarterGui"):SetCore("SendNotification",{
+                Title = "Hammer Equipado",
+                Text = "Clique para atacar com som sincronizado",
+                Duration = 3
+            })
+        end
+    end)
+
+    tool.Unequipped:Connect(function()
+        if currentAnimationTrack then
+            currentAnimationTrack:Stop(HammerSettings["Fade Out"])
+            currentAnimationTrack = nil
+        end
+        
+        if mouseConnection then
+            mouseConnection:Disconnect()
+            mouseConnection = nil
+        end
+        
+        isAttacking = false
+        
+        game:GetService("StarterGui"):SetCore("SendNotification",{
+            Title = "Hammer Guardado",
+            Text = "Tool desequipado",
+            Duration = 3
+        })
+    end)
+
+    Players.PlayerRemoving:Connect(function(player)
+        local playerName = player.Name
+        if hammerBugConnections[playerName] then
+            hammerBugConnections[playerName]:Disconnect()
+            hammerBugConnections[playerName] = nil
+        end
+        if hammerBuggedPlayers[playerName] then
+            hammerBuggedPlayers[playerName] = nil
+        end
+    end)
+
+    local function stopAllHammerBugs()
+        for playerName, connection in pairs(hammerBugConnections) do
+            if connection then
+                connection:Disconnect()
+            end
+        end
+        hammerBugConnections = {}
+        hammerBuggedPlayers = {}
+        game:GetService("StarterGui"):SetCore("SendNotification",{
+            Title = "Bugs Parados",
+            Text = "Todos os players foram desbugados do martelo",
+            Duration = 3
+        })
+    end
+
+    -- Comandos locais do martelo
+    LocalPlayer.Chatted:Connect(function(message)
+        if message:lower() == "/stopallbugs" then
+            stopAllHammerBugs()
+        elseif message:lower() == "/buggedlist" then
+            local count = 0
+            for _ in pairs(hammerBuggedPlayers) do
+                count = count + 1
+            end
+            if count > 0 then
+                game:GetService("StarterGui"):SetCore("SendNotification",{
+                    Title = "Lista",
+                    Text = count .. " players bugados pelo martelo",
+                    Duration = 3
+                })
+            else
+                game:GetService("StarterGui"):SetCore("SendNotification",{
+                    Title = "Lista",
+                    Text = "Nenhum player bugado pelo martelo",
+                    Duration = 3
+                })
+            end
+        elseif message:lower() == "/stopanim" then
+            if currentAnimationTrack then
+                currentAnimationTrack:Stop(HammerSettings["Fade Out"])
+                currentAnimationTrack = nil
+            end
+            isAttacking = false
+            game:GetService("StarterGui"):SetCore("SendNotification",{
+                Title = "Parado",
+                Text = "Animacao interrompida",
+                Duration = 3
+            })
+        end
+    end)
+
+    tool.Parent = LocalPlayer.Backpack
+
+    game:GetService("StarterGui"):SetCore("SendNotification",{
+        Title = "Carregado",
+        Text = "Sistema sincronizado ativo",
+        Duration = 3
+    })
+
+    -- ============================================
+    -- ADICIONAR TOOL DA RISADA
+    -- ============================================
+    
+    local Players = game:GetService("Players")
+    local RunService = game:GetService("RunService")
+    local ReplicatedStorage = game:GetService("ReplicatedStorage")
+    local Workspace = game:GetService("Workspace")
+
+    local player = Players.LocalPlayer
+    local character = player.Character or player.CharacterAdded:Wait()
+    local humanoid = character:WaitForChild("Humanoid")
+    local lastPosition = character.PrimaryPart and character.PrimaryPart.Position or Vector3.new()
+
+    player.CharacterAdded:Connect(function(newCharacter)
+        character = newCharacter
+        humanoid = newCharacter:WaitForChild("Humanoid")
+        lastPosition = character.PrimaryPart and character.PrimaryPart.Position or Vector3.new()
+    end)
+
+    -- ======================
+    -- Configurações Emote
+    -- ======================
+    local Settings = {}
+    Settings["Stop On Move"] = true
+    Settings["Fade In"] = 0.1
+    Settings["Fade Out"] = 0.1
+    Settings["Weight"] = 1
+    Settings["Speed"] = 1
+    Settings["Time Position"] = 0
+
+    local CurrentTrack = nil
+    local DEMOMAN_LAUGH_ID = "122240620529815" -- ID atualizado do emote
+
+    local function LoadTrack(id)
+        if CurrentTrack then 
+            CurrentTrack:Stop(Settings["Fade Out"]) 
+        end
+        
+        local animId
+        local ok, result = pcall(function() 
+            return game:GetObjects("rbxassetid://" .. tostring(id)) 
+        end)
+        
+        if ok and result and #result > 0 then
+            local anim = result[1]
+            if anim:IsA("Animation") then
+                animId = anim.AnimationId
+            else
+                animId = "rbxassetid://" .. tostring(id)
+            end
+        else
+            animId = "rbxassetid://" .. tostring(id)
+        end
+        
+        local newAnim = Instance.new("Animation")
+        newAnim.AnimationId = animId
+        local newTrack = humanoid:LoadAnimation(newAnim)
+        newTrack.Priority = Enum.AnimationPriority.Action4
+        
+        local weight = Settings["Weight"]
+        if weight == 0 then weight = 0.001 end
+        
+        newTrack:Play(Settings["Fade In"], weight, Settings["Speed"])
+        CurrentTrack = newTrack
+        CurrentTrack.TimePosition = math.clamp(Settings["Time Position"], 0, 1) * CurrentTrack.Length
+        CurrentTrack.Priority = Enum.AnimationPriority.Action4
+        
+        return newTrack
+    end
+
+    RunService.RenderStepped:Connect(function()
+        if character.PrimaryPart then
+            if Settings["Stop On Move"] and CurrentTrack and CurrentTrack.IsPlaying then
+                local moved = (character.PrimaryPart.Position - lastPosition).Magnitude > 0.1
+                local jumped = humanoid and humanoid:GetState() == Enum.HumanoidStateType.Jumping
+                if moved or jumped then
+                    CurrentTrack:Stop(Settings["Fade Out"])
+                    CurrentTrack = nil
+                end
+            end
+            lastPosition = character.PrimaryPart.Position
+        end
+    end)
+
+    local function playDemomanLaugh()
+        LoadTrack(DEMOMAN_LAUGH_ID)
+    end
+
+    local function stopEmote()
+        if CurrentTrack then
+            CurrentTrack:Stop(Settings["Fade Out"])
+            CurrentTrack = nil
+        end
+    end
+
+    -- ======================
+    -- Configurações Áudio
+    -- ======================
+    local AUDIO_ID = 9085226116
+    local TOOL_NAME = "Risada"
+
+    local function PlayServerAudio(ID)
+        if type(ID) ~= "number" then return end
+        local ev = ReplicatedStorage:FindFirstChild("RE")
+        if ev and ev:FindFirstChild("1Gu1nSound1s") then
+            ev["1Gu1nSound1s"]:FireServer(Workspace, ID, 1)
+        end
+    end
+
+    local function PlayLocalAudio(ID)
+        if type(ID) ~= "number" then return end
+        local char = player.Character or player.CharacterAdded:Wait()
+        local sound = Instance.new("Sound")
+        sound.SoundId = "rbxassetid://" .. ID
+        sound.Volume = 1
+        sound.Parent = char:FindFirstChild("HumanoidRootPart") or char:WaitForChild("Head")
+        sound:Play()
+        sound.Ended:Connect(function()
+            sound:Destroy()
+        end)
+    end
+
+    local function PlayAudio(ID)
+        PlayServerAudio(ID)
+        PlayLocalAudio(ID)
+    end
+
+    -- ======================
+    -- Criar Tool
+    -- ======================
+    local tool = Instance.new("Tool")
+    tool.Name = TOOL_NAME
+    tool.RequiresHandle = false
+    tool.CanBeDropped = false
+    tool.Parent = player.Backpack
+
+    tool.Activated:Connect(function()
+        PlayAudio(AUDIO_ID)
+        playDemomanLaugh()
+    end)
+
+    tool.Equipped:Connect(function()
+        -- opcional: tocar automaticamente ao equipar
+        -- playDemomanLaugh()
+    end)
+
+    print("✅ Tool completa (Emote + Áudio) criada no Backpack!")
+end
+
+-- Adicionar botão BONI
+feTab:AddButton({
+    Name = "BONI",
+    Callback = function()
+        executeBONI()
+    end
+})

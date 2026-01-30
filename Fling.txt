@@ -1,0 +1,206 @@
+-- Seção Jujutsu Kaiser
+DiversosTab:AddSection({
+    Name = "fling ball test"
+})
+
+-- Variáveis globais
+local selectedPlayerName = ""
+local selectedPlayer = nil
+local flingEnabled = false
+local flingTool = nil
+local flingConnection = nil
+
+-- Função para obter lista de jogadores
+local function getPlayerList()
+    local players = game:GetService("Players"):GetPlayers()
+    local playerNames = {"Selecione um jogador"}
+    for _, player in ipairs(players) do
+        if player ~= game:GetService("Players").LocalPlayer then
+            table.insert(playerNames, player.Name)
+        end
+    end
+    if #playerNames == 1 then
+        table.insert(playerNames, "Nenhum jogador encontrado")
+    end
+    return playerNames
+end
+
+-- Dropdown para selecionar jogador
+local playerDropdown = DiversosTab:AddDropdown({
+    Name = "Selecionar Jogador para Fling",
+    Options = getPlayerList(),
+    Default = "Selecione um jogador",
+    Callback = function(value)
+        if value ~= "Selecione um jogador" and value ~= "Nenhum jogador encontrado" then
+            selectedPlayerName = value
+            selectedPlayer = game:GetService("Players"):FindFirstChild(value)
+            print("Player selecionado para Fling: " .. tostring(value))
+        else
+            selectedPlayerName = ""
+            selectedPlayer = nil
+        end
+    end
+})
+
+-- Botão para atualizar lista de jogadores
+DiversosTab:AddButton({
+    Name = "Atualizar Lista de Jogadores",
+    Callback = function()
+        local list = getPlayerList()
+        if playerDropdown then
+            playerDropdown:Set(list)
+            print("Lista de jogadores atualizada!")
+        end
+    end
+})
+
+-- Função para parar o Fling
+local function stopFling()
+    if flingConnection then
+        flingConnection:Disconnect()
+        flingConnection = nil
+    end
+    if flingTool then
+        flingTool:Destroy()
+        flingTool = nil
+    end
+end
+
+-- Função para executar Fling no jogador selecionado
+local function executeFlingOnPlayer(targetPlayer)
+    if not targetPlayer or targetPlayer == game.Players.LocalPlayer then return end
+    
+    local jogadores = game:GetService("Players")
+    local rep = game:GetService("ReplicatedStorage")
+    local mundo = game:GetService("Workspace")
+    local eu = jogadores.LocalPlayer
+
+    local function FlingBall()
+        local player = jogadores.LocalPlayer
+        local character = player.Character
+        if not character then return end
+        
+        local humanoid = character:FindFirstChild("Humanoid")
+        local hrp = character:FindFirstChild("HumanoidRootPart")
+        local backpack = player:WaitForChild("Backpack")
+        local ServerBalls = mundo:WaitForChild("WorkspaceCom"):WaitForChild("001_SoccerBalls")
+
+        if not humanoid or not hrp then return end
+
+        local function GetBall()
+            if not backpack:FindFirstChild("SoccerBall") and not character:FindFirstChild("SoccerBall") then
+                rep.RE:FindFirstChild("1Too1l"):InvokeServer("PickingTools", "SoccerBall")
+            end
+            repeat task.wait() until backpack:FindFirstChild("SoccerBall") or character:FindFirstChild("SoccerBall")
+            local ballTool = backpack:FindFirstChild("SoccerBall")
+            if ballTool then ballTool.Parent = character end
+            repeat task.wait() until ServerBalls:FindFirstChild("Soccer" .. player.Name)
+            return ServerBalls:FindFirstChild("Soccer" .. player.Name)
+        end
+
+        local Ball = ServerBalls:FindFirstChild("Soccer" .. player.Name) or GetBall()
+        if not Ball then return end
+        
+        Ball.CanCollide = false
+        Ball.Massless = true
+        Ball.Transparency = 1
+        Ball.CustomPhysicalProperties = PhysicalProperties.new(0.0001, 0, 0)
+
+        local tchar = targetPlayer.Character
+        if tchar and tchar:FindFirstChild("HumanoidRootPart") and tchar:FindFirstChild("Humanoid") then
+            local troot = tchar.HumanoidRootPart
+            local thum = tchar.Humanoid
+            
+            -- Remover BodyVelocity anterior se existir
+            if Ball:FindFirstChildWhichIsA("BodyVelocity") then
+                Ball:FindFirstChildWhichIsA("BodyVelocity"):Destroy()
+            end
+            
+            local bv = Instance.new("BodyVelocity")
+            bv.Name = "FlingPower"
+            bv.Velocity = Vector3.new(9e8, 9e8, 9e8)
+            bv.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
+            bv.P = 9e900
+            bv.Parent = Ball
+            
+            -- Mudar câmera para o alvo
+            mundo.CurrentCamera.CameraSubject = thum
+
+            -- Loop principal do Fling
+            repeat
+                if troot.Velocity.Magnitude > 0 then
+                    local pos = troot.Position + (troot.Velocity / 1.5)
+                    Ball.CFrame = CFrame.new(pos)
+                    Ball.Orientation += Vector3.new(45, 60, 30)
+                else
+                    for _, v in pairs(tchar:GetChildren()) do
+                        if v:IsA("BasePart") and v.CanCollide and not v.Anchored then
+                            Ball.CFrame = v.CFrame
+                            task.wait(1/6000)
+                        end
+                    end
+                end
+                task.wait(1/6000)
+            until troot.Velocity.Magnitude > 1000 or thum.Health <= 0 or not tchar:IsDescendantOf(mundo) or targetPlayer.Parent ~= jogadores or not flingEnabled
+
+            -- Restaurar câmera
+            mundo.CurrentCamera.CameraSubject = humanoid
+        end
+    end
+
+    -- Executar Fling
+    FlingBall()
+end
+
+-- Toggle para ativar/desativar Fling automático
+local flingToggle = DiversosTab:AddToggle({
+    Name = "Fling Automático no Jogador",
+    Default = false,
+    Callback = function(value)
+        flingEnabled = value
+        
+        if value then
+            if selectedPlayer then
+                print("Fling ativado no jogador: " .. selectedPlayer.Name)
+                -- Criar ferramenta para o Fling
+                local eu = game.Players.LocalPlayer
+                local mochila = eu:WaitForChild("Backpack")
+                
+                -- Limpar ferramentas existentes
+                for _, ferramentaExistente in pairs(mochila:GetChildren()) do
+                    if ferramentaExistente:IsA("Tool") and ferramentaExistente.Name:lower():find("fling") then
+                        ferramentaExistente:Destroy()
+                    end
+                end
+
+                -- Criar nova ferramenta
+                local ferramenta = Instance.new("Tool")
+                ferramenta.Name = "Admin Fling"
+                ferramenta.RequiresHandle = true
+                ferramenta.CanBeDropped = false
+
+                local handle = Instance.new("Part")
+                handle.Name = "Handle"
+                handle.Size = Vector3.new(1, 1, 1)
+                handle.Transparency = 1
+                handle.Parent = ferramenta
+
+                ferramenta.Parent = mochila
+                flingTool = ferramenta
+
+                -- Iniciar loop do Fling
+                flingConnection = game:GetService("RunService").Heartbeat:Connect(function()
+                    if flingEnabled and selectedPlayer then
+                        executeFlingOnPlayer(selectedPlayer)
+                    end
+                end)
+            else
+                warn("Nenhum jogador selecionado para Fling!")
+                flingToggle:Set(false)
+            end
+        else
+            stopFling()
+            print("Fling desativado")
+        end
+    end
+})

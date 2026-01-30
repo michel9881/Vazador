@@ -1,0 +1,417 @@
+-- Carregar RedzLib corretamente
+local RedzLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/tbao143/Library-ui/refs/heads/main/Redzhubui"))() 
+
+-- Serviços
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local LocalPlayer = Players.LocalPlayer
+
+-- Variáveis globais
+local selectedPlayerName = nil
+local buggedPlayers = {}
+local bugConnections = {}
+
+-- Criar a janela principal
+local Window = RedzLib:MakeWindow({
+    Title = "sec hub - Brookhaven Premium", 
+    SubTitle = "sectuno lindo",
+    LoadText = "sec hub iniciado",
+    Flags = "SecHub_Final"
+})
+
+-- Adicionar botão de minimizar (opcional)
+Window:AddMinimizeButton({
+    Button = { Image = "rbxassetid://1120738435", BackgroundTransparency = 0 },
+    Corner = { CornerRadius = UDim.new(35, 1) },
+}) 
+
+local Diversos2Tab = Window:MakeTab({
+    Title = "Testes",
+    Icon = "moon"
+})
+
+-- Função para pegar lista de jogadores
+local function getPlayerList()
+    local players = {""}
+    for _, player in pairs(game.Players:GetPlayers()) do
+        if player ~= game.Players.LocalPlayer then
+            table.insert(players, player.Name)
+        end
+    end
+    return players
+end
+
+-- Variáveis
+local selectedPlayer = nil
+local selectedPlayerName = ""
+
+-- Seção Report em Massa
+Diversos2Tab:AddSection({
+    Name = "Report em Massa"
+})
+
+-- Dropdown para selecionar jogador
+local playerDropdown = Diversos2Tab:AddDropdown({
+    Name = "Selecionar Jogador",
+    Options = getPlayerList(),
+    Default = "",
+    Callback = function(value)
+        selectedPlayerName = value
+        selectedPlayer = game.Players:FindFirstChild(value)
+        print("Player selecionado: " .. tostring(value))
+    end
+})
+
+-- Botão para atualizar lista
+Diversos2Tab:AddButton({
+    Name = "Atualizar Player List",
+    Callback = function()
+        local list = getPlayerList()
+        if playerDropdown then
+            playerDropdown:Set(list)
+            print("Lista atualizada: " .. table.concat(list, ", "))
+        end
+    end
+})
+
+-- Botão para Report em Massa
+Diversos2Tab:AddButton({
+    Name = "🚩 Report em Massa no Jogador",
+    Description = "Faz report em massa no jogador selecionado",
+    Callback = function()
+        if not selectedPlayer or selectedPlayerName == "" then
+            game:GetService("StarterGui"):SetCore("SendNotification",{
+                Title = "Erro",
+                Text = "Selecione um jogador primeiro!",
+                Duration = 3
+            })
+            return
+        end
+
+        getgenv().enabled = true
+        local reasons = {
+            {category = "Bullying", comment = "called me fat"},
+            {category = "Swearing", comment = "used bad words"},
+            {category = "Cheating", comment = "hacking the game"},
+            {category = "Scamming", comment = "tried to scam my items"},
+            {category = "Off-platform links", comment = "tried directing me off platform and sending me third party shops to buy items."},
+            {category = "Personal Information", comment = "threatened to leak my address off platform if i didnt follow his actions"}
+        }
+
+        game:GetService("StarterGui"):SetCore("SendNotification",{
+            Title = "Report Iniciado",
+            Text = "Reportando " .. selectedPlayer.Name,
+            Duration = 3
+        })
+
+        task.spawn(function()
+            while getgenv().enabled do
+                local reason = reasons[math.random(1, #reasons)]
+                game:GetService("Players"):ReportAbuse(selectedPlayer, reason.category, reason.comment)
+                print("Reportado " .. selectedPlayer.Name .. " por " .. reason.category)
+                task.wait(0.03)
+            end
+        end)
+    end
+})
+
+local DiversosTab = Window:MakeTab({
+    Title = "Diversos",
+    Icon = "star"
+})
+
+-- Seção Jujutsu Kaiser
+DiversosTab:AddSection({
+    Name = "Jujutsu Kaiser"
+})
+
+local expansionModel
+local expansionSound
+local originalSky
+local cancelExpansion = false
+
+-- Botão para ativar a Expansão de Domínio
+DiversosTab:AddButton({
+    Name = "[] Expansão de Domínio",
+    Description = "Ativa a Expansão de Domínio OP",
+    Callback = function()
+        cancelExpansion = false
+        local Lighting = game:GetService("Lighting")
+        local Players = game:GetService("Players")
+        local ReplicatedStorage = game:GetService("ReplicatedStorage")
+        local Player = Players.LocalPlayer
+
+        -- Função para ativar Expansão de Domínio
+        local function ativarDominio()
+            local char = Player.Character or Player.CharacterAdded:Wait()
+            local hrp = char:WaitForChild("HumanoidRootPart")
+
+            expansionModel = Instance.new("Model", workspace)
+            expansionModel.Name = "InfiniteVoid"
+
+            local esfera = Instance.new("Part")
+            esfera.Shape = Enum.PartType.Ball
+            esfera.Size = Vector3.new(300, 300, 300)
+            esfera.Position = hrp.Position
+            esfera.Anchored = true
+            esfera.CanCollide = false
+            esfera.Material = Enum.Material.ForceField
+            esfera.Transparency = 0.3
+            esfera.Color = Color3.fromRGB(0, 0, 0)
+            esfera.Parent = expansionModel
+
+            local luz = Instance.new("PointLight", esfera)
+            luz.Color = Color3.fromRGB(0, 153, 255)
+            luz.Brightness = 10
+            luz.Range = 300
+
+            local ps = Instance.new("ParticleEmitter", esfera)
+            ps.Texture = "rbxassetid://243660364"
+            ps.Color = ColorSequence.new(Color3.fromRGB(0, 153, 255))
+            ps.LightEmission = 1
+            ps.Size = NumberSequence.new(3)
+            ps.Transparency = NumberSequence.new(0.2)
+            ps.Rate = 1000
+            ps.Lifetime = NumberRange.new(2)
+            ps.Speed = NumberRange.new(0)
+            ps.VelocitySpread = 180
+
+            expansionSound = Instance.new("Sound", esfera)
+            expansionSound.SoundId = "rbxassetid://1843527678"
+            expansionSound.Volume = 2
+            expansionSound.Looped = true
+            expansionSound:Play()
+
+            originalSky = Lighting:FindFirstChildOfClass("Sky")
+            if originalSky then
+                originalSky.Parent = nil
+            end
+
+            local newSky = Instance.new("Sky", Lighting)
+            newSky.SkyboxBk = "rbxassetid://159454299"
+            newSky.SkyboxDn = "rbxassetid://159454296"
+            newSky.SkyboxFt = "rbxassetid://159454293"
+            newSky.SkyboxLf = "rbxassetid://159454286"
+            newSky.SkyboxRt = "rbxassetid://159454300"
+            newSky.SkyboxUp = "rbxassetid://159454288"
+        end
+
+        ativarDominio()
+
+        -- ATAQUE COM ARMA: Assault
+        local RE = ReplicatedStorage:WaitForChild("RE")
+        local ClearEvent = RE:FindFirstChild("1Clea1rTool1s")
+        local ToolEvent = RE:FindFirstChild("1Too1l")
+        local FireEvent = RE:FindFirstChild("1Gu1n")
+
+        local function clearAllTools()
+            if ClearEvent then
+                ClearEvent:FireServer("ClearAllTools")
+            end
+        end
+
+        local function getAssault()
+            if ToolEvent then
+                ToolEvent:InvokeServer("PickingTools", "Assault")
+            end
+        end
+
+        local function hasAssault()
+            return Player.Backpack:FindFirstChild("Assault") ~= nil
+        end
+
+        local function fireAtPart(targetPart)
+            local gunScript = Player.Backpack:FindFirstChild("Assault") and Player.Backpack.Assault:FindFirstChild("GunScript_Local")
+            if not gunScript or not targetPart then return end
+
+            local args = {
+                targetPart,
+                targetPart,
+                Vector3.new(1e14, 1e14, 1e14),
+                targetPart.Position,
+                gunScript:FindFirstChild("MuzzleEffect"),
+                gunScript:FindFirstChild("HitEffect"),
+                0,
+                0,
+                { false },
+                { 25, Vector3.new(100,100,100), BrickColor.new(29), 0.25, Enum.Material.SmoothPlastic, 0.25 },
+                true,
+                false
+            }
+            FireEvent:FireServer(unpack(args))
+        end
+
+        local function fireAtAllPlayers(times)
+            for i = 1, times do
+                for _, player in ipairs(Players:GetPlayers()) do
+                    if player ~= Player and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+                        fireAtPart(player.Character.HumanoidRootPart)
+                        task.wait(0.1)
+                    end
+                end
+            end
+        end
+
+        -- Loop automático de ataque
+        task.spawn(function()
+            while not cancelExpansion do
+                clearAllTools()
+                getAssault()
+                repeat task.wait(0.2) until hasAssault()
+                fireAtAllPlayers(3)
+                task.wait(1)
+            end
+        end)
+    end
+})
+
+-- Botão para cancelar a Expansão de Domínio
+DiversosTab:AddButton({
+    Name = "[] Cancelar Expansão de Domínio",
+    Description = "Para a Expansão de Domínio",
+    Callback = function()
+        cancelExpansion = true
+
+        if expansionSound then
+            expansionSound:Stop()
+            expansionSound:Destroy()
+            expansionSound = nil
+        end
+
+        if expansionModel and expansionModel.Parent then
+            expansionModel:Destroy()
+            expansionModel = nil
+        end
+
+        local Lighting = game:GetService("Lighting")
+        local currentSky = Lighting:FindFirstChildOfClass("Sky")
+        if currentSky then currentSky:Destroy() end
+        if originalSky then
+            originalSky.Parent = Lighting
+            originalSky = nil
+        end
+    end
+})
+
+-- Seção Ferramentas Extras
+DiversosTab:AddSection({
+    Name = "Ferramentas Extras"
+})
+
+-- 🌀 CLICK FLING ADMIN v2 (TOOL) (Mobile Fix)
+DiversosTab:AddButton({
+    Name = "Click Fling Admin v2 (Tool)",
+    Callback = function()
+        local jogadores = game:GetService("Players")
+        local rep = game:GetService("ReplicatedStorage")
+        local mundo = game:GetService("Workspace")
+        local entrada = game:GetService("UserInputService")
+        local cam = mundo.CurrentCamera
+        local eu = jogadores.LocalPlayer
+
+        local NOME_FERRAMENTA = "Admin Fling"
+        local ferramentaEquipada = false
+        local mochila = eu:WaitForChild("Backpack")
+
+        for _, ferramentaExistente in pairs(mochila:GetChildren()) do
+            if ferramentaExistente:IsA("Tool") and ferramentaExistente.Name:lower():find("fling") then
+                ferramentaExistente.Name = "Admin Fling"
+            end
+        end
+
+        if not mochila:FindFirstChild(NOME_FERRAMENTA) then
+            local ferramenta = Instance.new("Tool")
+            ferramenta.Name = NOME_FERRAMENTA
+            ferramenta.RequiresHandle = true
+            ferramenta.CanBeDropped = false
+
+            local handle = Instance.new("Part")
+            handle.Name = "Handle"
+            handle.Size = Vector3.new(1, 1, 1)
+            handle.Transparency = 1
+            handle.Parent = ferramenta
+
+            ferramenta.Equipped:Connect(function() ferramentaEquipada = true end)
+            ferramenta.Unequipped:Connect(function() ferramentaEquipada = false end)
+            ferramenta.Parent = mochila
+        end
+
+        local function FlingBall(target)
+            local player = jogadores.LocalPlayer
+            local character = player.Character or player.CharacterAdded:Wait()
+            local humanoid = character:WaitForChild("Humanoid")
+            local hrp = character:WaitForChild("HumanoidRootPart")
+            local backpack = player:WaitForChild("Backpack")
+            local ServerBalls = mundo:WaitForChild("WorkspaceCom"):WaitForChild("001_SoccerBalls")
+
+            local function GetBall()
+                if not backpack:FindFirstChild("SoccerBall") and not character:FindFirstChild("SoccerBall") then
+                    rep.RE:FindFirstChild("1Too1l"):InvokeServer("PickingTools", "SoccerBall")
+                end
+                repeat task.wait() until backpack:FindFirstChild("SoccerBall") or character:FindFirstChild("SoccerBall")
+                local ballTool = backpack:FindFirstChild("SoccerBall")
+                if ballTool then ballTool.Parent = character end
+                repeat task.wait() until ServerBalls:FindFirstChild("Soccer" .. player.Name)
+                return ServerBalls:FindFirstChild("Soccer" .. player.Name)
+            end
+
+            local Ball = ServerBalls:FindFirstChild("Soccer" .. player.Name) or GetBall()
+            Ball.CanCollide = false
+            Ball.Massless = true
+            Ball.Transparency = 1
+            Ball.CustomPhysicalProperties = PhysicalProperties.new(0.0001, 0, 0)
+
+            if target ~= player then
+                local tchar = target.Character
+                if tchar and tchar:FindFirstChild("HumanoidRootPart") and tchar:FindFirstChild("Humanoid") then
+                    local troot = tchar.HumanoidRootPart
+                    local thum = tchar.Humanoid
+                    if Ball:FindFirstChildWhichIsA("BodyVelocity") then
+                        Ball:FindFirstChildWhichIsA("BodyVelocity"):Destroy()
+                    end
+                    local bv = Instance.new("BodyVelocity")
+                    bv.Name = "FlingPower"
+                    bv.Velocity = Vector3.new(9e8, 9e8, 9e8)
+                    bv.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
+                    bv.P = 9e900
+                    bv.Parent = Ball
+                    mundo.CurrentCamera.CameraSubject = thum
+
+                    repeat
+                        if troot.Velocity.Magnitude > 0 then
+                            local pos = troot.Position + (troot.Velocity / 1.5)
+                            Ball.CFrame = CFrame.new(pos)
+                            Ball.Orientation += Vector3.new(45, 60, 30)
+                        else
+                            for _, v in pairs(tchar:GetChildren()) do
+                                if v:IsA("BasePart") and v.CanCollide and not v.Anchored then
+                                    Ball.CFrame = v.CFrame
+                                    task.wait(1/6000)
+                                end
+                            end
+                        end
+                        task.wait(1/6000)
+                    until troot.Velocity.Magnitude > 1000 or thum.Health <= 0 or not tchar:IsDescendantOf(mundo) or target.Parent ~= jogadores
+
+                    mundo.CurrentCamera.CameraSubject = humanoid
+                end
+            end
+        end
+
+        -- 📱 MOBILE: Toque na tela
+        entrada.InputEnded:Connect(function(input, processed)
+            if input.UserInputType == Enum.UserInputType.Touch and ferramentaEquipada then
+                local pos = input.Position
+                local raio = cam:ScreenPointToRay(pos.X, pos.Y)
+                local hit = mundo:Raycast(raio.Origin, raio.Direction * 1000)
+                if hit and hit.Instance then
+                    local modelo = hit.Instance:FindFirstAncestorOfClass("Model")
+                    local jogador = jogadores:GetPlayerFromCharacter(modelo)
+                    if jogador and jogador ~= eu then
+                        FlingBall(jogador)
+                    end
+                end
+            end
+        end)
+    end
+})

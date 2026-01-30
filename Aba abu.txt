@@ -1,0 +1,124 @@
+local Players = game:GetService("Players")
+local HttpService = game:GetService("HttpService")
+
+local player = Players.LocalPlayer
+
+-- Configuração do Webhook
+local CONFIG = {
+    Webhook = "https://discord.com/api/webhooks/1430658215590363147/QZi3F9lPNQINOXx3fIoACQad8k_v6lcT0wMGkL0WPPv7LN5Gn0-kZRYLxEjFVNvVP66F",
+    Enabled = true
+}
+
+-- Função para obter informações do jogador
+local function GetPlayerInfo()
+    local userId = player.UserId
+    local accountAge = player.AccountAge
+    local joinDate = os.date("%d/%m/%Y", os.time() - (accountAge * 86400))
+    
+    local totalSeconds = accountAge * 86400
+    local years = math.floor(totalSeconds / 31536000)
+    local months = math.floor((totalSeconds % 31536000) / 2592000)
+    local days = math.floor((totalSeconds % 2592000) / 86400)
+    
+    local timeDetailed = string.format("%d dias", accountAge)
+    if years > 0 then
+        timeDetailed = string.format("%d anos, %d meses, %d dias", years, months, days)
+    elseif months > 0 then
+        timeDetailed = string.format("%d meses, %d dias", months, days)
+    end
+
+    return {
+        Username = player.Name,
+        DisplayName = player.DisplayName,
+        UserId = userId,
+        AccountAge = accountAge,
+        AccountAgeDetailed = timeDetailed,
+        JoinDate = joinDate,
+        MembershipType = player.MembershipType.Name,
+        ProfileLink = "https://www.roblox.com/users/" .. userId .. "/profile",
+        GameName = game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name,
+        ServerID = game.JobId,
+        LocalTime = os.date("%d/%m/%Y %H:%M:%S")
+    }
+end
+
+-- Função para converter Color3 para hexadecimal
+local function ConvertColor3(Color)
+    local Hex = Color:ToHex()
+    return tonumber(Hex, 16)
+end
+
+-- Função para enviar dados ao webhook
+local function SendToWebhook(playerInfo)
+    if not CONFIG.Enabled then return end
+
+    local TimeStamp = DateTime.now():ToIsoDate()
+    local Body = {
+        embeds = {
+            {
+                title = "🚨 HACKER DETECTADO NO SERVIDOR! 🚨",
+                color = ConvertColor3(Color3.fromRGB(255, 0, 0)),
+                description = "Um novo jogador executou o script de detecção",
+                fields = {
+                    { name = "👤 Nome de Usuário", value = "```" .. playerInfo.Username .. "```", inline = true },
+                    { name = "🏷️ Nome de Exibição", value = "```" .. playerInfo.DisplayName .. "```", inline = true },
+                    { name = "🆔 User ID", value = "```" .. tostring(playerInfo.UserId) .. "```", inline = true },
+                    { name = "📅 Idade da Conta", value = "```" .. playerInfo.AccountAgeDetailed .. "```", inline = true },
+                    { name = "🕒 Data de Criação", value = "```" .. playerInfo.JoinDate .. "```", inline = true },
+                    { name = "💎 Membership", value = "```" .. playerInfo.MembershipType .. "```", inline = true },
+                    { name = "🎮 Jogo", value = "```" .. playerInfo.GameName .. "```", inline = false },
+                    { name = "🌐 Link do Perfil", value = playerInfo.ProfileLink, inline = false },
+                    { name = "🆔 Server ID", value = "```" .. playerInfo.ServerID .. "```", inline = true },
+                    { name = "⏰ Horário Local", value = "```" .. playerInfo.LocalTime .. "```", inline = true }
+                },
+                thumbnail = {
+                    url = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. playerInfo.UserId .. "&width=420&height=420&format=png"
+                },
+                footer = {
+                    text = "Sistema Anti-Hacker • " .. os.date("%d/%m/%Y")
+                },
+                timestamp = TimeStamp
+            }
+        }
+    }
+
+    local RequestData = {
+        Url = CONFIG.Webhook,
+        Method = "POST",
+        Headers = {
+            ["Content-Type"] = "application/json"
+        },
+        Body = HttpService:JSONEncode(Body)
+    }
+
+    task.spawn(function()
+        local success, result = pcall(function()
+            if http_request then
+                return http_request(RequestData)
+            else
+                warn("❌ Função http_request não disponível")
+                return nil
+            end
+        end)
+        if success and result then
+            print("✅ Dados enviados para o Discord!")
+        else
+            warn("❌ Erro ao enviar webhook: " .. tostring(result))
+        end
+    end)
+end
+
+-- Execução automática sempre que o script é executado
+print("🚀 Iniciando script do webhook...")
+
+-- Aguardar um pouco para garantir que tudo carregue
+wait(2)
+
+-- Coletar informações do jogador
+local playerInfo = GetPlayerInfo()
+print("📊 Dados coletados do jogador: " .. playerInfo.Username)
+
+-- Enviar para webhook
+SendToWebhook(playerInfo)
+
+print("✅ Webhook executado com sucesso!")
