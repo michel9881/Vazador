@@ -1,0 +1,658 @@
+-- Discord server foring games: https://discord.gg/quirkycmd
+-- Made by Cynatica
+-- QuirkyCMD on Top!
+-- MODIFICADO: SEC Script com Rayfield UI
+
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+
+-- Variáveis do sistema
+local debugOutput = true
+local flySpeed = 50
+local UGCVS = game:GetService("UGCValidationService")
+local uis = game:GetService("UserInputService")
+local sgui = game:GetService("StarterGui")
+local rs = game:GetService("RunService")
+local rStorage = game:GetService("ReplicatedStorage")
+local players = game:GetService("Players")
+local localPlayer = players.LocalPlayer
+
+local genv = (getgenv and (getgenv() ~= getfenv()) and getgenv()) or _G
+
+local gethiddenproperty
+if pcall(function() gethiddenproperty(localPlayer,"SimulationRadius") end) then
+	gethiddenproperty = gethiddenproperty 
+else
+	gethiddenproperty = function(i, v) return UGCVS:GetPropertyValue(i, v) end
+end
+
+local sethiddenproperty = sethiddenproperty or function(inst,i,v) pcall(function() inst[i] = v end) end
+local isnetworkowner = isnetworkowner or function(part) return part.ReceiveAge == 0 end
+local isMobile = uis.TouchEnabled
+local isTesting = game.PlaceId == 16245218863
+local modernChat = game:GetService("TextChatService").ChatVersion == Enum.ChatVersion.TextChatService
+local chatEvents = (not modernChat) and rStorage:FindFirstChild("DefaultChatSystemChatEvents")
+local prefix = ";"
+local camera = workspace.CurrentCamera
+local character = localPlayer.Character or localPlayer.CharacterAdded:Wait()
+
+-- Sistema de comandos
+local commands = {}
+local privilegeLevels = {}
+local bans = {}
+local slockEnabled = false
+local useSegway = false
+local isFlying = false
+local flyLoop
+
+-- Inicializar sistema de privilégios
+for i,v in pairs(players:GetPlayers()) do
+	privilegeLevels[v.Name] = 0
+end
+privilegeLevels[localPlayer.Name] = 3
+
+-- Funções básicas
+function debugPrint(...)
+	if not debugOutput then return end
+	warn(...)
+end
+
+function notify(title,text,duration)
+	sgui:SetCore("SendNotification", {
+		Title = title or "", 
+		Text = text or "",
+		Duration = duration or 5
+	})
+end
+
+function findPlayers(input)
+	if input == nil or input == "" then return {localPlayer} end 
+	local input = input:lower()
+	local players = players:GetPlayers()
+	local targets = {}
+
+	if input == "me" then return {localPlayer} end
+	if input == "all" then return players end
+	if input == "others" then
+		targets = players
+		table.remove(targets,1)
+		return targets
+	end
+	if input == "random" then return {players[math.random(1,#players)]} end
+
+	for i,v in pairs(players) do
+		local plrName = v.Name:lower()
+		local plrDisplayName = v.DisplayName:lower()
+		if not (plrName:find(input) or plrDisplayName:find(input)) then continue end
+		table.insert(targets, v)
+	end
+	return targets
+end
+
+-- Sistema de comandos
+function addCommand(cmdName, callback, aliases, securityLevel)
+	table.insert(commands,{
+		name = cmdName:lower(),
+		callback = callback,
+		aliases = aliases or {},
+		securityLevel = securityLevel or 3
+	})
+end
+
+function runCommand(cmdName, ...)
+	if type(cmdName) == "table" then
+		cmdName.callback(...)
+		return
+	end
+	for i,v in pairs(commands) do
+		if (v.name ~= cmdName) and (not table.find(v.aliases, cmdName)) then continue end
+		v.callback(...)
+		break
+	end
+end
+
+-- Encontrar remote de destruição
+local function checkRemote(remote)
+	if not remote.Parent then return end
+	if modernChat == false and remote.Parent.Name == "DefaultChatSystemChatEvents" then return end
+	if remote.Parent.Name == "RobloxReplicatedStorage" then return end
+	
+	local currentChar = character
+	if remote.Name == "DestroySegway" then
+		remote:FireServer(localPlayer.StarterGear, {Value = localPlayer.StarterGear})
+	else
+		remote:FireServer(localPlayer.StarterGear)
+	end
+	task.wait(0.33)
+	if localPlayer:FindFirstChild("StarterGear") then return end
+	genv.foundRemote = remote
+	useSegway = remote.Name == "DestroySegway"
+	return true
+end
+
+-- Procurar remote automaticamente
+task.spawn(function()
+	for i,v in pairs(rStorage:GetDescendants()) do
+		if not v:IsA("RemoteEvent") then continue end
+		if checkRemote(v) then break end
+	end
+end)
+
+-- Função delete
+function delete(instance)
+	if instance == genv.foundRemote then return end
+	if genv.foundRemote then
+		genv.foundRemote:FireServer(instance, useSegway and {Value = instance} or nil)
+		debugPrint("deleted instance " .. instance.Name)
+	end
+end
+
+genv.delete = genv.delete or delete
+
+-- COMANDOS PRINCIPAIS
+
+-- Kick All
+addCommand("kickall", function(plrs, input)
+    local allPlayers = players:GetPlayers()
+    local kickedCount = 0
+    
+    for i,v in pairs(allPlayers) do
+        if v == localPlayer then continue end
+        delete(v)
+        kickedCount = kickedCount + 1
+    end
+    
+    Rayfield:Notify({
+        Title = "KICK ALL",
+        Content = "Todos os " .. kickedCount .. " jogadores foram expulsos",
+        Duration = 6.5,
+        Image = 4483362458,
+    })
+end, {"masskick", "kickallplayers", "kall"}, 2)
+
+-- Ban All
+addCommand("banall", function(plrs, input)
+    local allPlayers = players:GetPlayers()
+    local bannedCount = 0
+    
+    for i,v in pairs(allPlayers) do
+        if v == localPlayer then continue end
+        if bans[tostring(v.UserId)] then continue end
+        bans[tostring(v.UserId)] = input or "Banned by BanAll"
+        delete(v)
+        bannedCount = bannedCount + 1
+    end
+    
+    Rayfield:Notify({
+        Title = "BAN ALL",
+        Content = "Todos os " .. bannedCount .. " jogadores foram banidos",
+        Duration = 6.5,
+        Image = 4483362458,
+    })
+end, {"massban", "banallplayers", "ball"}, 2)
+
+-- Nuke
+addCommand("nuke", function()
+    for i,v in pairs(workspace:GetChildren()) do
+        delete(v)
+    end
+    for i,v in pairs(players:GetPlayers()) do
+        if i == 1 then continue end
+        delete(v)
+    end
+    Rayfield:Notify({
+        Title = "NUKE",
+        Content = "Servidor destruído!",
+        Duration = 6.5,
+        Image = 4483362458,
+    })
+end, {}, 2)
+
+-- Shutdown
+addCommand("shutdown", function()
+    for i,v in pairs(players:GetPlayers()) do
+        delete(v)
+    end
+    delete(localPlayer)
+    Rayfield:Notify({
+        Title = "SHUTDOWN",
+        Content = "Servidor desligado!",
+        Duration = 6.5,
+        Image = 4483362458,
+    })
+end, {}, 2)
+
+-- Ban Random
+addCommand("banrandom", function()
+    local allPlayers = players:GetPlayers()
+    local candidates = {}
+    
+    for i,v in pairs(allPlayers) do
+        if v ~= localPlayer and not bans[tostring(v.UserId)] then
+            table.insert(candidates, v)
+        end
+    end
+    
+    if #candidates == 0 then
+        Rayfield:Notify({
+            Title = "BAN RANDOM",
+            Content = "Nenhum jogador disponível para banir",
+            Duration = 6.5,
+            Image = 4483362458,
+        })
+        return
+    end
+    
+    local randomPlayer = candidates[math.random(1, #candidates)]
+    bans[tostring(randomPlayer.UserId)] = "Banned Randomly"
+    delete(randomPlayer)
+    
+    Rayfield:Notify({
+        Title = "BAN RANDOM",
+        Content = randomPlayer.Name .. " foi banido aleatoriamente",
+        Duration = 6.5,
+        Image = 4483362458,
+    })
+end, {"randomban"}, 2)
+
+-- Server Lock
+addCommand("serverlock",function()
+    slockEnabled = true
+    Rayfield:Notify({
+        Title = "SERVER LOCK",
+        Content = "Servidor trancado",
+        Duration = 6.5,
+        Image = 4483362458,
+    })
+end, {"slock"}, 2)
+
+-- Unlock Server
+addCommand("unserverlock", function()
+    slockEnabled = false
+    Rayfield:Notify({
+        Title = "SERVER UNLOCK",
+        Content = "Servidor destrancado",
+        Duration = 6.5,
+        Image = 4483362458,
+    })
+end, {"unslock"}, 2)
+
+-- Clear Bans
+addCommand("clearbans", function()
+    table.clear(bans)
+    Rayfield:Notify({
+        Title = "CLEAR BANS",
+        Content = "Lista de bans limpa",
+        Duration = 6.5,
+        Image = 4483362458,
+    })
+end, {"clearb"}, 2)
+
+-- Fly
+addCommand("fly",function()
+    if isFlying then
+        if flyLoop then 
+            flyLoop:Disconnect()
+            flyLoop = nil
+        end
+        local hum = character:FindFirstChildOfClass("Humanoid")
+        if hum then hum.PlatformStand = false end
+        local hrp = character:FindFirstChild("HumanoidRootPart")
+        if hrp then hrp.Anchored = false end
+        isFlying = false
+        Rayfield:Notify({
+            Title = "FLY",
+            Content = "Modo voo desativado",
+            Duration = 6.5,
+            Image = 4483362458,
+        })
+    else
+        local hum = character:FindFirstChildOfClass("Humanoid")
+        if not hum then return end
+
+        local hrp = character:FindFirstChild("HumanoidRootPart")
+        if not hrp then return end
+
+        hum.PlatformStand = true
+        hrp.Anchored = true
+
+        if flyLoop then flyLoop:Disconnect() end
+        flyLoop = rs.Heartbeat:Connect(function(deltaTime)
+            local moveDir = hum.MoveDirection * (flySpeed * deltaTime)
+            local hrpCF = hrp.CFrame
+            local cameraCF = camera.CFrame
+            local cameraOffset = hrpCF:ToObjectSpace(cameraCF).Position + hum.CameraOffset
+            cameraCF = cameraCF * CFrame.new(-cameraOffset.X, -cameraOffset.Y, -cameraOffset.Z + 1)
+            local cameraPos = cameraCF.Position
+            local hrpPos = hrpCF.Position
+
+            local objectSpaceVelocity = CFrame.new(cameraPos, Vector3.new(hrpPos.X, cameraPos.Y, hrpPos.Z)):VectorToObjectSpace(moveDir)
+            hrp.CFrame = CFrame.new(hrpPos) * (cameraCF - cameraPos) * CFrame.new(objectSpaceVelocity)
+        end)
+        isFlying = true
+        Rayfield:Notify({
+            Title = "FLY",
+            Content = "Modo voo ativado",
+            Duration = 6.5,
+            Image = 4483362458,
+        })
+    end
+end, {}, 3)
+
+-- BTools CORRIGIDO
+addCommand("btools", function()
+	sgui:SetCoreGuiEnabled(Enum.CoreGuiType.Backpack, true)
+	
+	-- Verificar se já existe
+	if localPlayer.Backpack:FindFirstChild("SEC Destroy Tool") or (character and character:FindFirstChild("SEC Destroy Tool")) then
+		Rayfield:Notify({
+			Title = "BTOOLS",
+			Content = "Ferramentas já existem!",
+			Duration = 6.5,
+			Image = 4483362458,
+		})
+		return
+	end
+
+	local selection
+	local selectionLoop
+
+	-- Ferramenta de Destruição
+	local destroyTool = Instance.new("Tool")
+	destroyTool.RequiresHandle = false
+	destroyTool.CanBeDropped = false
+	destroyTool.Name = "SEC Destroy Tool"
+	destroyTool.ToolTip = "Clique para destruir"
+	destroyTool.TextureId = "rbxasset://Textures/Hammer.png"
+
+	destroyTool.Equipped:Connect(function()
+		selection = Instance.new("SelectionBox")
+		selection.Parent = game:GetService("CoreGui")
+		selection.Color3 = Color3.fromRGB(255, 0, 0)
+		selection.Adornee = nil
+		
+		selectionLoop = rs.Heartbeat:Connect(function()
+			local target = localPlayer:GetMouse().Target
+			if target == nil then
+				if selection then selection.Adornee = nil end
+				return 
+			end
+			if selection and selection.Parent then
+				selection.Adornee = target
+			end
+		end)
+	end)
+
+	destroyTool.Unequipped:Connect(function()
+		if selection then
+			selection:Destroy()
+			selection = nil
+		end
+		if selectionLoop then
+			selectionLoop:Disconnect()
+			selectionLoop = nil
+		end
+	end)
+
+	destroyTool.Activated:Connect(function()
+		local target = localPlayer:GetMouse().Target
+		if target == nil then return end
+		delete(target)
+	end)
+
+	-- Ferramenta de Unweld
+	local unweldTool = Instance.new("Tool")
+	unweldTool.RequiresHandle = false
+	unweldTool.CanBeDropped = false
+	unweldTool.Name = "SEC Unweld Tool"
+	unweldTool.ToolTip = "Clique para remover welds"
+	unweldTool.TextureId = "rbxassetid://4989743039"
+
+	unweldTool.Equipped:Connect(function()
+		selection = Instance.new("SelectionBox")
+		selection.Parent = game:GetService("CoreGui")
+		selection.Color3 = Color3.fromRGB(0, 255, 0)
+		selection.Adornee = nil
+		
+		selectionLoop = rs.Heartbeat:Connect(function()
+			local target = localPlayer:GetMouse().Target
+			if target == nil then
+				if selection then selection.Adornee = nil end
+				return 
+			end
+			if selection and selection.Parent then
+				selection.Adornee = target
+			end
+		end)
+	end)
+
+	unweldTool.Unequipped:Connect(function()
+		if selection then
+			selection:Destroy()
+			selection = nil
+		end
+		if selectionLoop then
+			selectionLoop:Disconnect()
+			selectionLoop = nil
+		end
+	end)
+
+	unweldTool.Activated:Connect(function()
+		local target = localPlayer:GetMouse().Target
+		if target == nil then return end
+		for i,v in pairs(target:GetDescendants()) do
+			if not (v:IsA("Weld") or v:IsA("WeldConstraint") or v:IsA("Attachment")) then continue end
+			delete(v)
+		end
+	end)
+
+	-- Adicionar ao backpack
+	destroyTool.Parent = localPlayer.Backpack
+	unweldTool.Parent = localPlayer.Backpack
+
+	Rayfield:Notify({
+		Title = "BTOOLS",
+		Content = "Ferramentas SEC adicionadas!",
+		Duration = 6.5,
+		Image = 4483362458,
+	})
+end, {}, 3)
+
+-- Rejoin
+addCommand("rejoin", function()
+    if #players:GetPlayers() <= 1 then
+        localPlayer:Kick("Rejoining!!")
+        task.wait(.1)
+        game:GetService("TeleportService"):Teleport(game.PlaceId, localPlayer)
+        return
+    end
+    game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId,game.JobId,localPlayer)
+end, {"rj"}, 3)
+
+-- Interface Rayfield
+local Window = Rayfield:CreateWindow({
+   Name = "SEC ADM",
+   Icon = 4483362458,
+   LoadingTitle = "Carregando SEC Script...",
+   LoadingSubtitle = "by sectuno / daqui_dois_anos",
+   ShowText = "SEC",
+   Theme = "Default",
+   ToggleUIKeybind = "K",
+   DisableRayfieldPrompts = false,
+   DisableBuildWarnings = false,
+   ConfigurationSaving = {
+      Enabled = true,
+      FolderName = "SEC_Script",
+      FileName = "SEC_Config"
+   },
+   Discord = {
+      Enabled = false,
+      Invite = "quirkycmd",
+      RememberJoins = true
+   },
+   KeySystem = false
+})
+
+-- Abas principais
+local MainTab = Window:CreateTab("Destruição", 4483362458)
+local UtilTab = Window:CreateTab("Utilidades", 4483362458)
+local FunTab = Window:CreateTab("Diversão", 4483362458)
+local SettingsTab = Window:CreateTab("Configurações", 4483362458)
+
+-- Seção de Destruição Massiva
+local DestructionSection = MainTab:CreateSection("Destruição Massiva")
+
+MainTab:CreateButton({
+   Name = "🎯 KICK ALL",
+   Callback = function()
+      runCommand("kickall")
+   end,
+})
+
+MainTab:CreateButton({
+   Name = "🔨 BAN ALL",
+   Callback = function()
+      runCommand("banall")
+   end,
+})
+
+MainTab:CreateButton({
+   Name = "💣 NUKE SERVER",
+   Callback = function()
+      runCommand("nuke")
+   end,
+})
+
+MainTab:CreateButton({
+   Name = "🚪 SHUTDOWN",
+   Callback = function()
+      runCommand("shutdown")
+   end,
+})
+
+-- Seção de Controle
+local ControlSection = MainTab:CreateSection("Controle do Servidor")
+
+MainTab:CreateButton({
+   Name = "🔒 SERVER LOCK",
+   Callback = function()
+      runCommand("serverlock")
+   end,
+})
+
+MainTab:CreateButton({
+   Name = "🔓 UNLOCK SERVER",
+   Callback = function()
+      runCommand("unserverlock")
+   end,
+})
+
+MainTab:CreateButton({
+   Name = "🧹 CLEAR BANS",
+   Callback = function()
+      runCommand("clearbans")
+   end,
+})
+
+-- Aba de Utilidades
+local UtilitySection = UtilTab:CreateSection("Ferramentas Úteis")
+
+UtilTab:CreateButton({
+   Name = "🛠️ BTOOLS",
+   Callback = function()
+      runCommand("btools")
+   end,
+})
+
+UtilTab:CreateButton({
+   Name = "🕊️ FLY TOGGLE",
+   Callback = function()
+      runCommand("fly")
+   end,
+})
+
+UtilTab:CreateButton({
+   Name = "🔄 REJOIN SERVER",
+   Callback = function()
+      runCommand("rejoin")
+   end,
+})
+
+-- Aba de Diversão
+local FunSection = FunTab:CreateSection("Comandos Divertidos")
+
+FunTab:CreateButton({
+   Name = "🎲 BAN RANDOM",
+   Callback = function()
+      runCommand("banrandom")
+   end,
+})
+
+FunTab:CreateButton({
+   Name = "🎯 KICK RANDOM",
+   Callback = function()
+      local allPlayers = players:GetPlayers()
+      local candidates = {}
+      for i,v in pairs(allPlayers) do
+         if v ~= localPlayer then
+            table.insert(candidates, v)
+         end
+      end
+      if #candidates > 0 then
+         local randomPlayer = candidates[math.random(1, #candidates)]
+         delete(randomPlayer)
+         Rayfield:Notify({
+            Title = "KICK RANDOM",
+            Content = randomPlayer.Name .. " foi kickado aleatoriamente!",
+            Duration = 6.5,
+            Image = 4483362458,
+         })
+      end
+   end,
+})
+
+-- Aba de Configurações
+local InfoSection = SettingsTab:CreateSection("Informações do Sistema")
+
+SettingsTab:CreateLabel("SEC Script Mobile v2.0")
+SettingsTab:CreateLabel("Desenvolvido por Sectuno/daqui_dois_anos")
+SettingsTab:CreateLabel("Discord: não temos discord ainda")
+
+local DebugSection = SettingsTab:CreateSection("Debug")
+
+SettingsTab:CreateButton({
+   Name = "📊 PLAYER COUNT",
+   Callback = function()
+      Rayfield:Notify({
+         Title = "PLAYER COUNT",
+         Content = "Jogadores online: " .. #players:GetPlayers(),
+         Duration = 6.5,
+         Image = 4483362458,
+      })
+   end,
+})
+
+-- Sistema de banimento automático
+players.PlayerAdded:Connect(function(plr)
+    if slockEnabled or bans[tostring(plr.UserId)] then
+        task.wait()
+        delete(plr)
+    end
+end)
+
+-- Atualizar character quando morrer
+localPlayer.CharacterAdded:Connect(function(char)
+    character = char
+end)
+
+-- Carregar configurações
+Rayfield:LoadConfiguration()
+
+-- Notificação de inicialização
+Rayfield:Notify({
+   Title = "SEC Script Carregado",
+   Content = "sec adm carregado e interface.",
+   Duration = 8.0,
+   Image = 4483362458,
+})
+
+debugPrint("SEC Script com Rayfield UI carregado completamente!")

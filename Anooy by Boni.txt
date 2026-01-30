@@ -1,0 +1,307 @@
+local Troll0Tab = Window:MakeTab({
+    Title = "Anooy",
+    Icon = "rbxassetid://6034509993"
+})
+
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local RunService = game:GetService("RunService")
+local LocalPlayer = Players.LocalPlayer
+
+-- Variáveis
+local selectedPlayerName = nil
+local selectedPlayer = nil
+local lagAtivo = false
+local lagConnection
+local lagAllAtivo = false
+local lagAllConnection
+local indice = 1
+local whitelist = {}
+
+local crashAtivo = false
+local crashConnection
+
+----------------------------------------------------
+-- Funções Auxiliares
+----------------------------------------------------
+local function getPlayerList()
+    local list = {}
+    for _, p in pairs(Players:GetPlayers()) do
+        if p ~= LocalPlayer then
+            table.insert(list, p.Name)
+        end
+    end
+    return list
+end
+
+-- Lag Player
+local function AtivarLagPlayer(player)
+    if lagConnection then lagConnection:Disconnect() end
+    selectedPlayer = player
+    lagAtivo = true
+    lagConnection = RunService.Stepped:Connect(function()
+        if not lagAtivo or not selectedPlayer or selectedPlayer == LocalPlayer then return end
+        local character = selectedPlayer.Character
+        if character and character:FindFirstChild("HumanoidRootPart") then
+            local vetorlouco = Vector3.new(math.random(1e14,1e15), math.random(1e14,1e15), math.random(1e14,1e15))
+            local args = {
+                [1] = character.HumanoidRootPart,
+                [2] = character.HumanoidRootPart,
+                [3] = vetorlouco,
+                [4] = character.HumanoidRootPart.Position,
+                [5] = LocalPlayer.Backpack:FindFirstChild("Assault") 
+                        and LocalPlayer.Backpack.Assault:FindFirstChild("GunScript_Local") 
+                        and LocalPlayer.Backpack.Assault.GunScript_Local:FindFirstChild("MuzzleEffect"),
+                [6] = LocalPlayer.Backpack:FindFirstChild("Assault") 
+                        and LocalPlayer.Backpack.Assault:FindFirstChild("GunScript_Local") 
+                        and LocalPlayer.Backpack.Assault.GunScript_Local:FindFirstChild("ImpactEffect"),
+                [7] = 0,[8]=0,[9] = {[1]=false},
+                [10] = {[1]=25,[2]=Vector3.new(100,100,100),[3]=BrickColor.new("Bright red"),[4]=0.25,[5]=Enum.Material.SmoothPlastic,[6]=0.25},
+                [11] = true,[12] = false
+            }
+            if ReplicatedStorage:FindFirstChild("RE") and ReplicatedStorage.RE:FindFirstChild("1Gu1n") then
+                ReplicatedStorage.RE["1Gu1n"]:FireServer(unpack(args))
+            end
+        end
+    end)
+end
+
+local function DesativarLagPlayer()
+    lagAtivo = false
+    selectedPlayer = nil
+    if lagConnection then
+        lagConnection:Disconnect()
+        lagConnection = nil
+    end
+end
+
+-- Lag ALL
+local function AtivarLagAll()
+    if lagAllConnection then lagAllConnection:Disconnect() end
+    lagAllConnection = RunService.Stepped:Connect(function()
+        if not lagAllAtivo then return end
+        local allPlayers = Players:GetPlayers()
+        if #allPlayers < 2 then return end
+        indice += 1
+        if indice > #allPlayers then indice = 1 end
+        local target = allPlayers[indice]
+
+        if target == LocalPlayer or table.find(whitelist, target.Name) then
+            indice += 1
+            if indice > #allPlayers then indice = 1 end
+            target = allPlayers[indice]
+        end
+
+        if target and target.Character and target.Character:FindFirstChild("HumanoidRootPart") then
+            local vetorlouco = Vector3.new(math.random(1e14,1e15), math.random(1e14,1e15), math.random(1e14,1e15))
+            local args = {
+                [1] = target.Character.HumanoidRootPart,
+                [2] = target.Character.HumanoidRootPart,
+                [3] = vetorlouco,
+                [4] = target.Character.HumanoidRootPart.Position,
+                [5] = LocalPlayer.Backpack:FindFirstChild("Assault") 
+                        and LocalPlayer.Backpack.Assault:FindFirstChild("GunScript_Local") 
+                        and LocalPlayer.Backpack.Assault.GunScript_Local:FindFirstChild("MuzzleEffect"),
+                [6] = LocalPlayer.Backpack:FindFirstChild("Assault") 
+                        and LocalPlayer.Backpack.Assault:FindFirstChild("GunScript_Local") 
+                        and LocalPlayer.Backpack.Assault.GunScript_Local:FindFirstChild("ImpactEffect"),
+                [7] = 0,[8]=0,[9] = {[1]=false},
+                [10] = {[1]=25,[2]=Vector3.new(100,100,100),[3]=BrickColor.new("Bright red"),[4]=0.25,[5]=Enum.Material.SmoothPlastic,[6]=0.25},
+                [11] = true,[12] = false
+            }
+            if ReplicatedStorage:FindFirstChild("RE") and ReplicatedStorage.RE:FindFirstChild("1Gu1n") then
+                ReplicatedStorage.RE["1Gu1n"]:FireServer(unpack(args))
+            end
+        end
+    end)
+end
+
+local function ToggleLagAll(state)
+    lagAllAtivo = state
+    if state then
+        AtivarLagAll()
+    elseif lagAllConnection then
+        lagAllConnection:Disconnect()
+        lagAllConnection = nil
+    end
+end
+
+-- Crash Player
+local function GerarVetorCrash()
+    local base = math.random(1e15, 1e16)
+    return Vector3.new(base*math.random(50,150), base*math.random(50,150), base*math.random(50,150))
+end
+
+local function TriggerCrashOn(target, times)
+    if not target or not target.Character or not target.Character:FindFirstChild("HumanoidRootPart") then return end
+    local hrp = target.Character.HumanoidRootPart
+    local remote = ReplicatedStorage:FindFirstChild("RE") and ReplicatedStorage.RE:FindFirstChild("1Gu1n")
+    if not remote then return end
+    times = times or 10
+    for i=1,times do
+        task.spawn(function()
+            local vetorlouco = GerarVetorCrash()
+            local args = {
+                [1]=hrp,[2]=hrp,[3]=vetorlouco,[4]=hrp.Position,
+                [5]=LocalPlayer.Backpack:FindFirstChild("Assault") and LocalPlayer.Backpack.Assault:FindFirstChild("GunScript_Local") and LocalPlayer.Backpack.Assault.GunScript_Local:FindFirstChild("MuzzleEffect"),
+                [6]=LocalPlayer.Backpack:FindFirstChild("Assault") and LocalPlayer.Backpack.Assault:FindFirstChild("GunScript_Local") and LocalPlayer.Backpack.Assault.GunScript_Local:FindFirstChild("ImpactEffect"),
+                [7]=0,[8]=0,[9]={[1]=false},
+                [10]={[1]=25,[2]=Vector3.new(100,100,100),[3]=BrickColor.new("Bright red"),[4]=0.25,[5]=Enum.Material.SmoothPlastic,[6]=0.25},
+                [11]=true,[12]=false
+            }
+            pcall(function() remote:FireServer(unpack(args)) end)
+        end)
+    end
+end
+
+----------------------------------------------------
+-- GUI - Lag Player + Crash
+----------------------------------------------------
+Troll0Tab:AddSection({ Name = "Lag Player" })
+
+local playerDropdown = Troll0Tab:AddDropdown({
+    Name = "Selecionar Jogador",
+    Options = getPlayerList(),
+    Default = "",
+    Callback = function(value)
+        selectedPlayerName = value
+        selectedPlayer = Players:FindFirstChild(value)
+        print("Player selecionado: " .. tostring(value))
+    end
+})
+
+Troll0Tab:AddButton({
+    Name = "Atualizar Player List",
+    Callback = function()
+        local list = getPlayerList()
+        if playerDropdown then
+            playerDropdown:Set(list)
+            print("Lista atualizada: " .. table.concat(list,", "))
+        end
+    end
+})
+
+Troll0Tab:AddToggle({
+    Name = "Ativar Lag",
+    Default = false,
+    Callback = function(value)
+        if value then
+            if selectedPlayer then
+                AtivarLagPlayer(selectedPlayer)
+                print("Lag ativado em: " .. selectedPlayer.Name)
+            else
+                print("Nenhum player selecionado")
+            end
+        else
+            DesativarLagPlayer()
+            print("Lag desativado")
+        end
+    end
+})
+
+-- Crash Player toggle
+Troll0Tab:AddToggle({
+    Name = "Ativar anooy",
+    Default = false,
+    Callback = function(state)
+        crashAtivo = state
+        if crashConnection then
+            crashConnection:Disconnect()
+            crashConnection = nil
+        end
+
+        if crashAtivo then
+            if selectedPlayer then
+                crashConnection = RunService.Stepped:Connect(function()
+                    if selectedPlayer and selectedPlayer.Character then
+                        TriggerCrashOn(selectedPlayer, 10)
+                    end
+                end)
+                print("Crash ativo em: " .. selectedPlayer.Name)
+            else
+                print("Nenhum player selecionado para crash")
+                crashAtivo = false
+            end
+        else
+            print("Crash desativado")
+        end
+    end
+})
+
+    Troll0Tab:AddButton({
+        Name = "Teleportar até o Player",
+        Callback = function()
+            if not selectedPlayerName or not Players:FindFirstChild(selectedPlayerName) then
+                print("Erro: Player não selecionado ou não existe")
+                return
+            end
+            local character = LocalPlayer.Character
+            local humanoidRootPart = character and character:FindFirstChild("HumanoidRootPart")
+            if not humanoidRootPart then
+                warn("Erro: HumanoidRootPart do jogador local não encontrado")
+                return
+            end
+
+            local targetPlayer = Players:FindFirstChild(selectedPlayerName)
+            if targetPlayer and targetPlayer.Character and targetPlayer.Character:FindFirstChild("HumanoidRootPart") then
+                humanoidRootPart.CFrame = targetPlayer.Character.HumanoidRootPart.CFrame
+            else
+                print("Erro: Player alvo não encontrado ou sem HumanoidRootPart")
+            end
+        end
+    })
+
+----------------------------------------------------
+-- GUI - Spectar Player
+----------------------------------------------------
+Troll0Tab:AddSection({ Name = "Spectar Player" })
+
+Troll0Tab:AddToggle({
+    Name = "Spectar Player",
+    Default = false,
+    Callback = function(value)
+        local Camera = workspace.CurrentCamera
+
+        local function UpdateCamera()
+            if value then
+                local targetPlayer = Players:FindFirstChild(selectedPlayerName)
+                if targetPlayer and targetPlayer.Character then
+                    local humanoid = targetPlayer.Character:FindFirstChild("Humanoid")
+                    if humanoid then
+                        Camera.CameraSubject = humanoid
+                    end
+                end
+            else
+                if LocalPlayer.Character then
+                    local humanoid = LocalPlayer.Character:FindFirstChild("Humanoid")
+                    if humanoid then
+                        Camera.CameraSubject = humanoid
+                    end
+                end
+            end
+        end
+
+        if value then
+            if not getgenv().CameraConnection then
+                getgenv().CameraConnection = RunService.Heartbeat:Connect(UpdateCamera)
+            end
+        else
+            if getgenv().CameraConnection then
+                getgenv().CameraConnection:Disconnect()
+                getgenv().CameraConnection = nil
+            end
+            UpdateCamera()
+        end
+    end
+})
+
+----------------------------------------------------
+-- Atualiza dropdowns quando players entram/saem
+----------------------------------------------------
+Players.PlayerAdded:Connect(function()
+    playerDropdown:Set(getPlayerList())
+end)
+
+Players.PlayerRemoving:Connect(function()
+    playerDropdown:Set(getPlayerList())
+end)
